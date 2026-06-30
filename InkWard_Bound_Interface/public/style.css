@@ -1,0 +1,57 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: #000;
+  overflow: hidden;
+  font-family: 'Courier New', monospace;
+}
+
+canvas {
+  display: block;
+}
+
+/* ── HUD status bar ── */
+#hud {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.85);
+  border-top: 1px solid #111;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 20px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #333;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#hud .v {
+  color: #666;
+}
+
+#ws-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #222;
+  flex-shrink: 0;
+}
+#ws-dot.on  { background: #3a6; }
+#ws-dot.off { background: #622; }
+#ws-dot.try { background: #653; animation: blink 0.9s infinite; }
+
+@keyframes blink {
+  50% { opacity: 0.2; }
+}
+
+#state-txt {
+  margin-left: auto;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #2a2a2a;
+  transition: color 1.2s ease;
+}

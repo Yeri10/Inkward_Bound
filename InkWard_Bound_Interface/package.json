@@ -1,0 +1,18 @@
+{
+  "name": "inkward-bound-interface",
+  "version": "1.0.0",
+  "description": "Static p5.js interface served by Express",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"No tests configured\" && exit 0"
+  },
+  "keywords": ["p5.js", "express", "interface"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1",
+    "ws": "^8.18.0"
+  }
+}
