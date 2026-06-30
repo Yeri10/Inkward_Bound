@@ -1,6 +1,4 @@
 // ── CONFIG ───────────────────────────────────────────────────────
-const WS_PORT   = 9980;
-const WS_HOST   = window.location.hostname || 'localhost';
 const SEND_FPS  = 30;
 const N_PART    = 180;
 const HUD_H     = 36;
@@ -13,7 +11,8 @@ function connectWS() {
   const dot = document.getElementById('ws-dot');
   dot.className = 'try';
   try {
-    ws = new WebSocket(`ws://${WS_HOST}:${WS_PORT}`);
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    ws = new WebSocket(`${protocol}//${window.location.host}`);
     ws.onopen    = () => { dot.className = 'on'; };
     ws.onclose   = () => { dot.className = 'off'; setTimeout(connectWS, 2000); };
     ws.onerror   = () => { dot.className = 'off'; };
