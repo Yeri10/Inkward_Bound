@@ -214,6 +214,13 @@ function draw() {
 }
 
 // ── INPUT ─────────────────────────────────────────────────────────
+function keyPressed() {
+  if (key === 'f' || key === 'F') {
+    fullscreen(!fullscreen());
+    return false;
+  }
+}
+
 function mousePressed() {
   startTouch(mouseX / width, mouseY / height);
   return false;
