@@ -47,6 +47,11 @@ Inkward_Bound/
 │       ├── index.html
 │       ├── sketch.js           # 交互、状态和数据逻辑
 │       └── style.css
+├── ink_dataset/                # 实拍墨水照片与 LoRA caption（见 ink_dataset/README.zh-CN.md）
+│   ├── 01_pure_diffusion/
+│   ├── 02_layered_ink/
+│   ├── 03_disturbed_ink/
+│   └── 04_gathering_ink/
 └── docs/
     ├── images/                 # 过程草图、模型与截图
     ├── PROCESS_LOG.md

@@ -47,6 +47,11 @@ Inkward_Bound/
 │       ├── index.html
 │       ├── sketch.js           # Interaction, state and data logic
 │       └── style.css
+├── ink_dataset/                # Captured ink photographs with LoRA captions (see ink_dataset/README.md)
+│   ├── 01_pure_diffusion/
+│   ├── 02_layered_ink/
+│   ├── 03_disturbed_ink/
+│   └── 04_gathering_ink/
 └── docs/
     ├── images/                 # Process sketches, models and screenshots
     ├── PROCESS_LOG.md

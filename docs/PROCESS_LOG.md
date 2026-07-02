@@ -334,6 +334,35 @@ The complete frame improved manufacturability and provided a shared boundary for
 
 This direction is more unified than the early stacked-screen design, but the real material transmission, projection brightness, screen mounting, heat dissipation and maintenance access still require physical tests.
 
+### 2 July 2026 — LoRA caption pass over the ink dataset
+
+**Intention**
+
+Prepare the 101 captured ink photographs in `ink_dataset/` for LoRA training, so that the trained model can generate the pre-baked latent atlas navigable by the convergence value.
+
+**Work completed**
+
+- Wrote a same-name `.txt` caption for every image (kohya / AI Toolkit format), reviewed image by image via contact sheets.
+- Fixed the caption structure as `inkwb, <state phrase>, <phase phrase>, <per-image morphology>, monochrome, high contrast`.
+- Assigned temporal phase phrases (`early / developing / advanced / final phase`) from each frame's position within its experiment sequence, e.g. `1-1.jpg` → `1-4.jpg` as one diffusion process.
+- Renamed `04_gathering_ink/3-2-.jpg` to `3-2.jpg`.
+- Documented the structure in [`ink_dataset/README.md`](../ink_dataset/README.md) and [`ink_dataset/README.zh-CN.md`](../ink_dataset/README.zh-CN.md).
+
+**Decision and reason**
+
+Chose the meaningless trigger word `inkwb` to absorb the overall style without colliding with existing concepts, and natural-language captions to stay compatible with Flux / SDXL-style training. Encoding sequence position as a phase phrase turns the capture sessions' temporal progression into a promptable control, which maps directly onto the c-value axis (e.g. `final phase of gathering` for temporary return). Near-black frames were kept because the phase phrase gives them semantic value as end states of diffusion.
+
+**Evidence**
+
+- 101 `.txt` caption files across the four `ink_dataset/` subfolders.
+- [`ink_dataset/README.md`](../ink_dataset/README.md) — structure, caption format, and c-value mapping.
+
+**Reflection / next step**
+
+Captions are consistent and verified one-to-one with the images, but their effectiveness is untested. Run a first LoRA training pass, then evaluate whether the state and phase vocabulary is actually steerable in generation before producing the atlas images.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:

@@ -334,6 +334,35 @@ WebSocket 使用 Node.js 中继，而不是让 TD 直接作为 WebSocket 服务�
 
 当前方向比早期多屏堆叠更统一，但半透明材料的实际透光率、投影亮度、屏幕固定方式、散热和维护空间仍需通过实体材料测试确认。
 
+### 2026 年 7 月 2 日 — 墨水数据集 LoRA 打标
+
+**开发意图**
+
+为 `ink_dataset/` 中的 101 张实拍墨水照片完成 LoRA 训练打标，使训练出的模型能够生成可由收束值导航的 pre-baked latent atlas。
+
+**已完成工作**
+
+- 通过拼接缩略图逐张核对图像，为每张图写同名 `.txt` caption（kohya / AI Toolkit 格式）。
+- 确定 caption 结构：`inkwb, <状态短语>, <阶段短语>, <单图形态描述>, monochrome, high contrast`。
+- 按帧在实验序列中的位置分配时间阶段短语（`early / developing / advanced / final phase`），例如 `1-1.jpg` → `1-4.jpg` 为同一次扩散过程。
+- 将 `04_gathering_ink/3-2-.jpg` 改名为 `3-2.jpg`。
+- 在 [`ink_dataset/README.md`](../ink_dataset/README.md) 与 [`ink_dataset/README.zh-CN.md`](../ink_dataset/README.zh-CN.md) 中记录结构说明。
+
+**决策及原因**
+
+选用无既有语义的触发词 `inkwb` 吸收整体风格、避免与既有概念冲突；caption 采用自然语言以兼容 Flux / SDXL 类训练。把序列位置编码为阶段短语，使拍摄的时间推进变为可提示控制的参数，直接映射 c 值轴（如 `final phase of gathering` 对应临时回流）。接近全黑的帧予以保留，阶段短语使其作为扩散终态具有语义价值。
+
+**证据**
+
+- `ink_dataset/` 四个子文件夹中的 101 个 `.txt` caption 文件。
+- [`ink_dataset/README.zh-CN.md`](../ink_dataset/README.zh-CN.md) — 结构、caption 格式与 c 值映射。
+
+**反思 / 下一步**
+
+Caption 已与图像一一对应并通过完整性验证，但效果尚未检验。下一步先跑一轮 LoRA 训练，评估状态与阶段词汇在生成中是否真正可控，再批量产出 atlas 图像。
+
+---
+
 ## 当前验证清单
 
 仓库能够证明代码和版本历史。下一次完整系统测试应补充以下运行证据：
