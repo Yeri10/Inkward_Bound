@@ -21,7 +21,7 @@ Each entry separates:
 - [Current server and WebSocket relay](../InkWard_Bound_Interface/app.js)
 - [Current TouchDesigner system](../InWard%20Bound%20System/InWard%20Bound%20System.toe)
 - [TouchDesigner iteration backups](../InWard%20Bound%20System/Backup)
-- [Dataset capture and production log](DATASET_CAPTURE_LOG.md)
+- [Dataset capture and production log](../ink_dataset/DATASET_CAPTURE_LOG.md)
 - [Live Render deployment](https://inkward-bound.onrender.com)
 
 ## Development timeline
@@ -163,12 +163,12 @@ Capture ink-diffusion forms produced by different materials and forces, creating
 
 **Evidence**
 
-- [Dataset capture and production log](DATASET_CAPTURE_LOG.md)
-- [Dataset contact sheets](images/dataset/)
+- [Dataset capture and production log](../ink_dataset/DATASET_CAPTURE_LOG.md)
+- [Dataset contact sheets](images/dataset_record/)
 
 **Reflection / next step**
 
-The records establish material, tool, device and lighting variables, but raw file counts, resolution, frame rate, material quantities, location and rejection criteria remain incomplete. The next step is to test explicit mappings between representative forms and TouchDesigner states or Latent Atlas categories.
+The records establish material, tool, device and lighting variables, but raw file counts, resolution, frame rate, material quantities and rejection criteria remain incomplete. The next step is to test explicit mappings between representative forms and TouchDesigner states or Latent Atlas categories.
 
 ---
 
@@ -347,6 +347,8 @@ Prepare the 101 captured ink photographs in `ink_dataset/` for LoRA training, so
 - Assigned temporal phase phrases (`early / developing / advanced / final phase`) from each frame's position within its experiment sequence, e.g. `1-1.jpg` → `1-4.jpg` as one diffusion process.
 - Renamed `04_gathering_ink/3-2-.jpg` to `3-2.jpg`.
 - Documented the structure in [`ink_dataset/README.md`](../ink_dataset/README.md) and [`ink_dataset/README.zh-CN.md`](../ink_dataset/README.zh-CN.md).
+- Consolidated dataset documentation: moved `DATASET_CAPTURE_LOG` (EN / zh-CN) from `docs/` into `ink_dataset/`, so capture, captioning and training evidence live alongside the images.
+- Updated all cross-references in the main READMEs and this log, and repaired contact-sheet image links broken by the earlier `docs/images/dataset` → `docs/images/dataset_record` folder rename.
 
 **Decision and reason**
 
@@ -388,7 +390,7 @@ For each meaningful development session:
 
 Avoid committing generated dependencies such as `node_modules`; keep `package.json` and `package-lock.json` as the reproducible dependency evidence instead.
 
-Dataset recording is documented separately in the [dataset capture and production log](DATASET_CAPTURE_LOG.md). This keeps capture conditions, permissions, file selection and processing decisions visible without overloading the software-development timeline.
+Dataset recording is documented separately in the [dataset capture and production log](../ink_dataset/DATASET_CAPTURE_LOG.md). This keeps capture conditions, permissions, file selection and processing decisions visible without overloading the software-development timeline.
 
 ## Entry template
 

@@ -6,7 +6,7 @@
 
 本文档记录 Inkward Bound 使用的所有摄影、录像、扫描或其他形式的 Dataset 制作过程。它用于证明源代码 Commit 无法直接呈现的工作：前期规划、拍摄设置、拍摄 Session、废弃素材、筛选标准、后期处理、授权，以及 Dataset 与最终交互系统之间的关系。
 
-当前仓库保存了 8 张 Dataset contact sheet 截图，记录 2026 年 6 月 22、26、29 日的墨水扩散实验。原始照片或视频、完整文件数量和拍摄地点尚未存入仓库，因此未知项目继续标为 `待补充`。
+当前仓库保存了 8 张 Dataset contact sheet 截图，记录 2026 年 6 月 22、26、29 日的墨水扩散实验。全部拍摄均在家中完成。原始照片或视频和完整文件数量尚未存入仓库，因此未知项目继续标为 `待补充`。
 
 ## Dataset 概览
 
@@ -16,13 +16,13 @@
 | 在 Inkward Bound 中的用途 | 为墨迹扩散视觉、Latent Atlas 素材选择和 TouchDesigner 状态设计提供形态参考 |
 | 拍摄素材类型 | 水中黑色墨水的扩散、聚集、搅动与抽吸过程 |
 | 拍摄周期 | 2026-06-22、2026-06-26、2026-06-29；2026-07-01 整理 contact sheets |
-| 地点 | 待补充 |
+| 地点 | 家中 |
 | 参与者 / 拍摄对象 | 无人物；水、墨水、盐/盐水、洗手液及搅动工具 |
-| 拍摄设备 | 相机、手机 |
-| 灯光 | 两个手机灯、傍晚柔光 |
+| 拍摄设备 | 两种设备对照：相机与手机 |
+| 灯光 | 两种环境对照：受控灯光环境（暗室 + 手机灯补光）与自然光柔光环境（窗边日光 / 傍晚柔光） |
 | 文件格式 | 原始格式待补充；过程证据为 PNG contact sheets |
 | 负责人 | 待补充 |
-| 存储位置 | 原始素材位置待补充；公开预览位于 `docs/images/dataset/` |
+| 存储位置 | 原始素材位置待补充；公开预览位于 `docs/images/dataset_record/` |
 
 ## 拍摄意图
 
@@ -30,7 +30,8 @@
 
 - 比较纯水、盐/盐水和洗手液条件下的边缘、密度与扩散速度。
 - 比较自然扩散、向四周搅动、中心小范围搅动和滴管操作产生的形态差异。
-- 测试相机配合两个手机灯，以及手机配合傍晚柔光时的黑白对比和细节表现。
+- 对比两种灯光环境——受控灯光环境（暗室 + 手机灯补光）与自然光柔光环境（窗边日光、傍晚柔光）——下的黑白对比与细节表现。
+- 对比相机与手机两种设备在上述两种灯光环境下的成像差异。
 - 收集可用于墨迹视觉研究及后续 Latent Atlas/TouchDesigner 测试的代表性形态。
 
 ## 拍摄计划
@@ -38,13 +39,13 @@
 | 项目 | 计划方案 | 原因 | 状态 |
 | --- | --- | --- | --- |
 | 对象 / 材料 | 水、墨水、盐/盐水、洗手液、筷子/小棍子、滴管 | 制造不同扩散、聚集和扰动形态 | 已记录 |
-| 相机 / 传感器 | 相机与手机 | 比较不同拍摄方式 | 已记录 |
+| 相机 / 传感器 | 相机与手机 | 在两种灯光环境下比较两种设备 | 已记录 |
 | 分辨率 / 帧率 | 待补充 | 待补充 | 未记录 |
-| 灯光 | 两个手机灯；傍晚柔光 | 比较受控补光与自然柔光 | 已记录 |
-| 背景 / 环境 | 透明容器与明亮背景；具体地点待补充 | 保持墨水轮廓可见 | 部分记录 |
+| 灯光 | 两种环境：暗室 + 手机灯补光；窗边自然柔光 | 比较受控灯光与自然柔光 | 已记录 |
+| 背景 / 环境 | 透明容器与明亮背景，在家中拍摄 | 保持墨水轮廓可见 | 部分记录 |
 | 动作清单 | 自然滴入、向四周搅动、中间小范围搅动、滴管吸取/释放墨水 | 产生不同流动方向和密度 | 已记录 |
 | 命名与存储方式 | 原始命名待补充；contact sheets 已规范命名 | 保持过程证据可追踪 | 部分记录 |
-| 同意书 / 场地许可 | 不涉及人物；场地与素材许可待确认 | 记录公开使用条件 | 待补充 |
+| 同意书 / 场地许可 | 不涉及人物；拍摄地点为自己家中，无需场地许可 | 记录公开使用条件 | 已记录 |
 
 ## Session 索引
 
@@ -52,9 +53,9 @@
 
 | Session | 日期 | 地点 | 拍摄文件数 | 选中数 | 主要结果 | 证据 |
 | --- | --- | --- | ---: | ---: | --- | --- |
-| 01 | 2026-06-22 | 待补充 | 待补充 | 代表帧已整理 | 相机 + 两个手机灯；自然扩散与搅动测试 | Contact sheets 03、05 |
-| 02 | 2026-06-26 | 待补充 | 待补充 | 代表帧已整理 | 手机/相机；盐、搅动、滴管和小棍子变量 | Contact sheets 01、02、04、06、07 |
-| 03 | 2026-06-29 | 待补充 | 待补充 | 代表帧已整理 | 手机 + 傍晚柔光；洗手液、滴管和局部搅动 | Contact sheets 04、08 |
+| 01 | 2026-06-22 | 家中 | 待补充 | 代表帧已整理 | 相机 + 两个手机灯；自然扩散与搅动测试 | Contact sheets 03、05 |
+| 02 | 2026-06-26 | 家中 | 待补充 | 代表帧已整理 | 手机/相机；盐、搅动、滴管和小棍子变量 | Contact sheets 01、02、04、06、07 |
+| 03 | 2026-06-29 | 家中 | 待补充 | 代表帧已整理 | 手机 + 傍晚柔光；洗手液、滴管和局部搅动 | Contact sheets 04、08 |
 
 ## 详细 Session 记录
 
@@ -66,9 +67,11 @@
 **材料：** 水、墨水；水、盐/盐水、墨水；筷子  
 **方法：** 自然扩散与向四周搅动
 
-本次实验测试受控补光下的基础墨水形态。代表帧包含细长烟雾状纹理、底部聚集的黑色墨团以及搅动后形成的方向性云层。原始文件数量、镜头参数和地点仍待补充。
+本次实验测试受控补光下的基础墨水形态。代表帧包含细长烟雾状纹理、底部聚集的黑色墨团以及搅动后形成的方向性云层。原始文件数量和镜头参数仍待补充。
 
-**证据：** [Contact sheet 03](images/dataset/2026-07-01-ink-dataset-contact-sheet-03.png)、[Contact sheet 05](images/dataset/2026-07-01-ink-dataset-contact-sheet-05.png)
+**现场布置：** 相机架在桌边三脚架上，取景铺有白色泡沫板的桌面上的透明亚克力容器；一个手机灯立于容器侧面作为硬质侧光，在白板和背景上投射交叉阴影，房间其余部分保持黑暗；另一个手机灯备用。
+
+**证据：** [Contact sheet 03](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-03.png)、[Contact sheet 05](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-05.png)、[现场照片 01](../docs/images/dataset_record/2026-06-22-capture-setup-01.jpg)、[现场照片 02](../docs/images/dataset_record/2026-06-22-capture-setup-02.jpg)
 
 ### Session 02 — 盐度、搅动工具与滴管变量测试
 
@@ -80,7 +83,9 @@
 
 本次实验扩大变量范围。盐和盐水用于改变墨水边界与聚集方式；筷子和小棍子制造不同尺度的机械扰动；滴管用于产生集中注入或抽吸形成的高密度形态。代表帧显示了从平滑大面积黑区到细丝、卷曲和云状结构的明显差异。
 
-**证据：** [Contact sheet 01](images/dataset/2026-07-01-ink-dataset-contact-sheet-01.png)、[02](images/dataset/2026-07-01-ink-dataset-contact-sheet-02.png)、[04](images/dataset/2026-07-01-ink-dataset-contact-sheet-04.png)、[06](images/dataset/2026-07-01-ink-dataset-contact-sheet-06.png)、[07](images/dataset/2026-07-01-ink-dataset-contact-sheet-07.png)
+**现场布置：** 手机水平固定在容器正上方的三脚架上进行俯拍录制，靠窗利用自然光；容器放在白色泡沫板底座上；另一部手机装在迷你三脚架上作为补光灯置于一侧。
+
+**证据：** [现场照片 01](../docs/images/dataset_record/2026-06-26-capture-setup-01.jpg)、[现场照片 02](../docs/images/dataset_record/2026-06-26-capture-setup-02.jpg)、 [Contact sheet 01](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-01.png)、[02](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-02.png)、[04](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-04.png)、[06](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-06.png)、[07](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-07.png)
 
 ### Session 03 — 洗手液与局部扰动测试
 
@@ -92,7 +97,9 @@
 
 本次实验加入洗手液，并重复滴管和局部搅动方法，以观察表面活性材料及局部外力对墨水轮廓的影响。代表帧用于补充更薄、更散和局部聚集的形态。原始参数和各材料用量仍待补充。
 
-**证据：** [Contact sheet 04](images/dataset/2026-07-01-ink-dataset-contact-sheet-04.png)、[08](images/dataset/2026-07-01-ink-dataset-contact-sheet-08.png)
+**现场布置：** 手机固定在三脚架上，靠窗在傍晚柔光下侧拍容器；注水的亚克力容器放在垫高于桌面的白板上，录制时墨水已在水中扩散；窗边右侧立有灯架。
+
+**证据：** [现场照片 01](../docs/images/dataset_record/2026-06-29-capture-setup-01.jpg)、[现场照片 02](../docs/images/dataset_record/2026-06-29-capture-setup-02.jpg)、 [Contact sheet 04](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-04.png)、[08](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-08.png)
 
 ### 2026-07-01 — Contact sheet 整理
 
@@ -131,7 +138,7 @@ YYYYMMDD_session##_subject##_take##_description.ext
 
 - [x] Dataset 不包含人物或个人身份信息。
 - [x] 当前公开预览只包含液体与材料实验。
-- [ ] 如拍摄场地需要许可，应补充场地授权记录。
+- [x] 拍摄地点为自己家中，无需外部场地许可。
 - [ ] 已记录 Dataset 授权和再使用条件。
 - [ ] 已定义备份和删除流程。
 

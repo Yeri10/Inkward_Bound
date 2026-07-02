@@ -51,13 +51,13 @@ Inkward_Bound/
 │   ├── 01_pure_diffusion/
 │   ├── 02_layered_ink/
 │   ├── 03_disturbed_ink/
-│   └── 04_gathering_ink/
+│   ├── 04_gathering_ink/
+│   ├── DATASET_CAPTURE_LOG.md
+│   └── DATASET_CAPTURE_LOG.zh-CN.md
 └── docs/
     ├── images/                 # Process sketches, models and screenshots
     ├── PROCESS_LOG.md
-    ├── PROCESS_LOG.zh-CN.md
-    ├── DATASET_CAPTURE_LOG.md
-    └── DATASET_CAPTURE_LOG.zh-CN.md
+    └── PROCESS_LOG.zh-CN.md
 ```
 
 ## Run locally
@@ -102,6 +102,6 @@ The [process log](docs/PROCESS_LOG.md) links development decisions to dated comm
 ## Additional links
 
 - [Development process documentation](docs/PROCESS_LOG.md)
-- [Dataset capture and production log](docs/DATASET_CAPTURE_LOG.md)
+- [Dataset capture and production log](ink_dataset/DATASET_CAPTURE_LOG.md)
 - [Commit history](https://github.com/Yeri10/Inkward_Bound/commits/main)
 - [Live browser interface](https://inkward-bound.onrender.com)

@@ -4,6 +4,8 @@
 
 Photographic dataset of black ink in water, captured for LoRA training. The trained model generates the pre-baked latent atlas used by the TouchDesigner system (see [project README](../README.md)).
 
+Capture conditions, materials, permissions and selection decisions are documented in the [dataset capture and production log](DATASET_CAPTURE_LOG.md).
+
 ## Structure
 
 ```text

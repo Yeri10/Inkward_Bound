@@ -21,7 +21,7 @@
 - [当前服务器与 WebSocket 中继](../InkWard_Bound_Interface/app.js)
 - [当前 TouchDesigner 系统](../InWard%20Bound%20System/InWard%20Bound%20System.toe)
 - [TouchDesigner 迭代备份](../InWard%20Bound%20System/Backup)
-- [Dataset 拍摄与制作日志](DATASET_CAPTURE_LOG.zh-CN.md)
+- [Dataset 拍摄与制作日志](../ink_dataset/DATASET_CAPTURE_LOG.zh-CN.md)
 - [Render 在线部署](https://inkward-bound.onrender.com)
 
 ## 开发时间线
@@ -163,12 +163,12 @@ WebSocket 使用 Node.js 中继，而不是让 TD 直接作为 WebSocket 服务�
 
 **证据**
 
-- [Dataset 拍摄与制作日志](DATASET_CAPTURE_LOG.zh-CN.md)
-- [Dataset contact sheets](images/dataset/)
+- [Dataset 拍摄与制作日志](../ink_dataset/DATASET_CAPTURE_LOG.zh-CN.md)
+- [Dataset contact sheets](images/dataset_record/)
 
 **反思 / 下一步**
 
-现有记录能够证明材料、工具、设备和灯光变量，但原始文件数量、分辨率、帧率、材料用量、地点及筛选淘汰过程仍需补充。下一步应将代表形态与具体 TouchDesigner 状态或 Latent Atlas 分类建立可测试的映射。
+现有记录能够证明材料、工具、设备和灯光变量，但原始文件数量、分辨率、帧率、材料用量及筛选淘汰过程仍需补充。下一步应将代表形态与具体 TouchDesigner 状态或 Latent Atlas 分类建立可测试的映射。
 
 ---
 
@@ -347,6 +347,8 @@ WebSocket 使用 Node.js 中继，而不是让 TD 直接作为 WebSocket 服务�
 - 按帧在实验序列中的位置分配时间阶段短语（`early / developing / advanced / final phase`），例如 `1-1.jpg` → `1-4.jpg` 为同一次扩散过程。
 - 将 `04_gathering_ink/3-2-.jpg` 改名为 `3-2.jpg`。
 - 在 [`ink_dataset/README.md`](../ink_dataset/README.md) 与 [`ink_dataset/README.zh-CN.md`](../ink_dataset/README.zh-CN.md) 中记录结构说明。
+- 归并数据集文档：将 `DATASET_CAPTURE_LOG`（中英）从 `docs/` 移入 `ink_dataset/`，使拍摄、打标与训练证据集中在图像旁边。
+- 更新主 README 与本日志中的全部交叉引用，并修复此前 `docs/images/dataset` → `docs/images/dataset_record` 改名导致的 contact sheet 图片链接失效。
 
 **决策及原因**
 
@@ -388,7 +390,7 @@ Caption 已与图像一一对应并通过完整性验证，但效果尚未检验
 
 不要提交 `node_modules` 等生成依赖；保留 `package.json` 和 `package-lock.json` 即可提供可复现的依赖证据。
 
-Dataset 拍摄单独记录在 [Dataset 拍摄与制作日志](DATASET_CAPTURE_LOG.zh-CN.md) 中，以便清晰展示拍摄条件、授权、素材筛选和处理决策，同时避免软件开发时间线过度膨胀。
+Dataset 拍摄单独记录在 [Dataset 拍摄与制作日志](../ink_dataset/DATASET_CAPTURE_LOG.zh-CN.md) 中，以便清晰展示拍摄条件、授权、素材筛选和处理决策，同时避免软件开发时间线过度膨胀。
 
 ## 记录模板
 

@@ -4,6 +4,8 @@
 
 水中墨水的实拍摄影数据集,用于 LoRA 训练。训练出的模型负责生成 TouchDesigner 系统调用的 pre-baked latent atlas(见[项目 README](../README.zh-CN.md))。
 
+拍摄条件、材料、授权与素材筛选决策记录在 [Dataset 拍摄与制作日志](DATASET_CAPTURE_LOG.zh-CN.md)。
+
 ## 结构
 
 ```text

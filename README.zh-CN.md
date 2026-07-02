@@ -51,13 +51,13 @@ Inkward_Bound/
 │   ├── 01_pure_diffusion/
 │   ├── 02_layered_ink/
 │   ├── 03_disturbed_ink/
-│   └── 04_gathering_ink/
+│   ├── 04_gathering_ink/
+│   ├── DATASET_CAPTURE_LOG.md
+│   └── DATASET_CAPTURE_LOG.zh-CN.md
 └── docs/
     ├── images/                 # 过程草图、模型与截图
     ├── PROCESS_LOG.md
-    ├── PROCESS_LOG.zh-CN.md
-    ├── DATASET_CAPTURE_LOG.md
-    └── DATASET_CAPTURE_LOG.zh-CN.md
+    └── PROCESS_LOG.zh-CN.md
 ```
 
 ## 本地运行
@@ -102,6 +102,6 @@ TouchDesigner 本地连接：WebSocket DAT 的 Network Address 设为 `localhost
 ## 附加链接
 
 - [开发流程文档](docs/PROCESS_LOG.zh-CN.md)
-- [Dataset 拍摄与制作日志](docs/DATASET_CAPTURE_LOG.zh-CN.md)
+- [Dataset 拍摄与制作日志](ink_dataset/DATASET_CAPTURE_LOG.zh-CN.md)
 - [Git 提交历史](https://github.com/Yeri10/Inkward_Bound/commits/main)
 - [在线浏览器界面](https://inkward-bound.onrender.com)
