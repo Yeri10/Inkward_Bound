@@ -60,19 +60,40 @@ Inkward_Bound/
     └── PROCESS_LOG.zh-CN.md
 ```
 
-## Run locally
+## How to run
 
-Requirements: Node.js and npm.
+The system has two parts: the browser touch interface (input) and the TouchDesigner file (visual output), connected through a WebSocket relay. There are two ways to run it.
 
-```bash
-cd InkWard_Bound_Interface
-npm ci
-npm start
-```
+### Option A — Use the deployed service (quickest)
 
-Open `http://localhost:3000`.
+No installation needed for the interface.
 
-For a local TouchDesigner connection, configure a WebSocket DAT with network address `localhost` and port `3000`. For the deployed service, use network address `inkward-bound.onrender.com` and port `443`.
+1. Open the live browser interface: [https://inkward-bound.onrender.com](https://inkward-bound.onrender.com). Press `F` for fullscreen. (The free Render instance sleeps when idle; the first load may take up to a minute.)
+2. Download or clone this repository, then open `InWard Bound System/InWard Bound System.toe` in TouchDesigner.
+3. In the TouchDesigner WebSocket DAT (`ws_touch_input`), set network address `inkward-bound.onrender.com`, port `443`, and enable TLS/secure connection.
+4. Touch and hold on the browser canvas; the values in `touch_store` should update in real time.
+
+### Option B — Run everything locally
+
+Requirements: Node.js and npm, plus TouchDesigner.
+
+1. Download or clone the repository:
+
+   ```bash
+   git clone https://github.com/Yeri10/Inkward_Bound.git
+   ```
+
+2. Start the local server and relay:
+
+   ```bash
+   cd Inkward_Bound/InkWard_Bound_Interface
+   npm ci
+   npm start
+   ```
+
+3. Open `http://localhost:3000` in a browser.
+4. Open `InWard Bound System/InWard Bound System.toe` in TouchDesigner and set the WebSocket DAT to network address `localhost`, port `3000` (no TLS).
+5. Touch the browser canvas to drive the TouchDesigner visuals.
 
 ## WebSocket message format
 

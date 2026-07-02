@@ -60,19 +60,40 @@ Inkward_Bound/
     └── PROCESS_LOG.zh-CN.md
 ```
 
-## 本地运行
+## 如何运行
 
-环境要求：Node.js 和 npm。
+系统由两部分组成：浏览器触摸界面（输入）和 TouchDesigner 文件（视觉输出），二者通过 WebSocket 中继连接。有两种运行方式。
 
-```bash
-cd InkWard_Bound_Interface
-npm ci
-npm start
-```
+### 方式 A — 使用线上部署版（最快）
 
-打开 `http://localhost:3000`。
+界面无需任何安装。
 
-TouchDesigner 本地连接：WebSocket DAT 的 Network Address 设为 `localhost`，Network Port 设为 `3000`。连接部署版本时，Network Address 使用 `inkward-bound.onrender.com`，Network Port 使用 `443`。
+1. 打开在线浏览器界面：[https://inkward-bound.onrender.com](https://inkward-bound.onrender.com)，按 `F` 进入全屏。（Render 免费实例闲置时会休眠，首次加载可能需要约一分钟。）
+2. 下载或克隆本仓库，用 TouchDesigner 打开 `InWard Bound System/InWard Bound System.toe`。
+3. 在 TouchDesigner 的 WebSocket DAT（`ws_touch_input`）中，Network Address 设为 `inkward-bound.onrender.com`，Network Port 设为 `443`，并启用 TLS/安全连接。
+4. 在浏览器画布上按住并移动，`touch_store` 中的数值应实时更新。
+
+### 方式 B — 完全本地运行
+
+环境要求：Node.js 和 npm，以及 TouchDesigner。
+
+1. 下载或克隆仓库：
+
+   ```bash
+   git clone https://github.com/Yeri10/Inkward_Bound.git
+   ```
+
+2. 启动本地服务器与中继：
+
+   ```bash
+   cd Inkward_Bound/InkWard_Bound_Interface
+   npm ci
+   npm start
+   ```
+
+3. 在浏览器中打开 `http://localhost:3000`。
+4. 用 TouchDesigner 打开 `InWard Bound System/InWard Bound System.toe`，将 WebSocket DAT 的 Network Address 设为 `localhost`，Network Port 设为 `3000`（不启用 TLS）。
+5. 触摸浏览器画布即可驱动 TouchDesigner 视觉。
 
 ## WebSocket 消息格式
 
