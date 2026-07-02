@@ -25,13 +25,13 @@ ink_dataset/
 ## Caption 格式
 
 ```
-inkwb, <状态短语>, <阶段短语>, <单图形态描述>, monochrome, high contrast
+inkwb, <状态短语>, <阶段短语>, <视角>, <单图形态描述>, monochrome, high contrast
 ```
 
 示例(`01_pure_diffusion/1-2.txt`):
 
 ```
-inkwb, black ink diffusing freely across still water, developing phase of diffusion, ink flooding in from the upper left, marbled ripples along the lower right edge, monochrome, high contrast
+inkwb, black ink diffusing freely across still water, developing phase of diffusion, top-down view, ink flooding in from the upper left, marbled ripples along the lower right edge, monochrome, high contrast
 ```
 
 | 部分 | 作用 |
@@ -39,6 +39,7 @@ inkwb, black ink diffusing freely across still water, developing phase of diffus
 | `inkwb` | 触发词(Inkward Bound 缩写)。无既有语义的词,吸收整体视觉风格。 |
 | 状态短语 | 每个文件夹一条:自由扩散 / 悬浮分层 / 湍流扰动 / 凝聚收束,对应装置的系统状态。 |
 | 阶段短语 | `early / developing / advanced / final phase of <过程>`,按序列内帧位置分配,生成时可控制时间阶段。 |
+| 视角 | `top-down view`（01 俯拍）或 `side view`（02–04 侧拍），对应各拍摄 session 的机位。 |
 | 形态描述 | 逐张手写:形状、方向、密度、留白。只有被描述过的差异在训练后才可通过提示词控制。 |
 | 风格标签 | 全部 caption 共用 `monochrome, high contrast`。 |
 
