@@ -365,6 +365,33 @@ Caption 已与图像一一对应并通过完整性验证，但效果尚未检验
 
 ---
 
+### 2026 年 7 月 6 日 — 从 The-Latent-Mycelium 迁移 LoRA 训练管线
+
+**开发意图**
+
+复用此前项目 [The-Latent-Mycelium](https://github.com/Yeri10/The-Latent-Mycelium) 已验证的 SD 1.5 训练管线，为 `inkwb` LoRA 搭建训练基础设施，而不是从零构建。
+
+**已完成工作**
+
+- 审读 The-Latent-Mycelium，确认可复用部分：diffusers LoRA 训练脚本、conda 环境、生成器类、NDI 发送与缓冲播放代码，以及 `mycelium_lora_structure_v1`（80 张图）成功训练的超参数。
+- 新建 `training/`：`train_text_to_image_lora.py`（原样复制）、`prepare_dataset.py` 和训练 README。
+- `prepare_dataset.py` 将 `ink_dataset/` 的 kohya 式 caption 转换为 diffusers 格式（`training/dataset/images/` 最长边 1024 px + `metadata.jsonl`）；已运行并生成 101 条记录。
+
+**决策及原因**
+
+沿用 mycelium 超参数（512 分辨率、rank 16、lr 5e-5、batch 1 + 梯度累积 4、12 epochs）作为已验证的起点。禁用 `random_flip`，因为墨水 caption 编码了左右方位。映射层后续重写：PM2.5 → density/tangle 短语改为 c 值 → 状态/阶段/视角短语，正好对应 7 月 2 日定义的 caption 词汇。
+
+**证据**
+
+- [`training/README.md`](../training/README.md)、[`training/prepare_dataset.py`](../training/prepare_dataset.py)
+- `training/dataset/metadata.jsonl` — 由 caption 生成的 101 条记录。
+
+**反思 / 下一步**
+
+管线尚未在本数据集上实测。下一步：在 Mac Studio 上跑 `inkwb_lora_v1`，用训练 README 的清单评估（状态 / 阶段 / 视角可控性），再决定 caption 词汇是否需要二次调整，然后批量生成 latent atlas。
+
+---
+
 ## 当前验证清单
 
 仓库能够证明代码和版本历史。下一次完整系统测试应补充以下运行证据：

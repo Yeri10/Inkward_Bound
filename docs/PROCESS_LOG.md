@@ -365,6 +365,33 @@ Captions are consistent and verified one-to-one with the images, but their effec
 
 ---
 
+### 6 July 2026 — LoRA training pipeline carried over from The-Latent-Mycelium
+
+**Intention**
+
+Set up the training infrastructure for the `inkwb` LoRA by reusing the proven SD 1.5 pipeline from the earlier project [The-Latent-Mycelium](https://github.com/Yeri10/The-Latent-Mycelium), instead of building a new one.
+
+**Work completed**
+
+- Reviewed The-Latent-Mycelium and identified reusable parts: the diffusers LoRA training script, conda environments, generator class, NDI sender / buffered playback, and hyperparameters from the successful `mycelium_lora_structure_v1` run (80 images).
+- Created `training/` with `train_text_to_image_lora.py` (copied unchanged), `prepare_dataset.py` and a training README.
+- `prepare_dataset.py` converts the kohya-style captions in `ink_dataset/` into the diffusers format (`training/dataset/images/` at max 1024 px + `metadata.jsonl`); ran it and produced 101 records.
+
+**Decision and reason**
+
+Kept the mycelium hyperparameters (512 resolution, rank 16, lr 5e-5, batch 1 with gradient accumulation 4, 12 epochs) as a tested starting point. Disabled `random_flip` because the ink captions encode left/right positions. The mapping layer will be rewritten later: PM2.5 → density/tangle phrases becomes c value → state/phase/viewpoint phrases, which matches the caption vocabulary defined on 2 July.
+
+**Evidence**
+
+- [`training/README.md`](../training/README.md), [`training/prepare_dataset.py`](../training/prepare_dataset.py)
+- `training/dataset/metadata.jsonl` — 101 records generated from the captions.
+
+**Reflection / next step**
+
+The pipeline is untested against this dataset. Next: run `inkwb_lora_v1` on the Mac Studio, evaluate with the checklist in the training README (state / phase / viewpoint steerability), then decide whether the caption vocabulary needs a second pass before baking the latent atlas.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:
