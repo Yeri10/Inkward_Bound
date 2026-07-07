@@ -22,16 +22,18 @@ ink_dataset/
 
 Filenames encode experiment sequences: `<experiment>-<frame>.jpg`. For example `1-1.jpg` → `1-4.jpg` in `01_pure_diffusion` is one diffusion process over time. Frame order within a sequence maps to a temporal phase, which is written into the caption.
 
+In `04_gathering_ink`, series 1–3 were physically drawn together with a pipette; series 4–8 are frames from reversed diffusion videos (see the [capture log](DATASET_CAPTURE_LOG.md)).
+
 ## Caption format
 
 ```
-inkwb, <state phrase>, <phase phrase>, <viewpoint>, <per-image morphology>, monochrome, high contrast
+inkwb, <state phrase>, <phase phrase>, <viewpoint>, <container context>, <measured density>, <per-image morphology>, monochrome, high contrast
 ```
 
 Example (`01_pure_diffusion/1-2.txt`):
 
 ```
-inkwb, black ink diffusing freely across still water, developing phase of diffusion, top-down view, ink flooding in from the upper left, marbled ripples along the lower right edge, monochrome, high contrast
+inkwb, black ink diffusing freely across still water, developing phase of diffusion, top-down view, inside a shallow pale basin, dense ink covering much of the frame, ink flooding in from the upper left, marbled ripples along the lower right edge, monochrome, high contrast
 ```
 
 | Part | Purpose |
@@ -40,6 +42,8 @@ inkwb, black ink diffusing freely across still water, developing phase of diffus
 | State phrase | One per folder: diffusing freely / layered suspended / turbulent agitated / gathering and condensing. Aligns with the installation's five system states. |
 | Phase phrase | `early / developing / advanced / final phase of <process>`, assigned by frame position within each sequence. Enables temporal control at generation time. |
 | Viewpoint | `top-down view` (01) or `side view` (02–04), matching the camera angle of each capture session. |
+| Container context | `inside a shallow pale basin` (01) or `inside a clear water tank` (02–04), plus extras like `water surface line at the top` where visible. Binds vessel features to words so they can be excluded (negative prompt) at generation time. |
+| Measured density | One of five coverage phrases (`sparse ink traces…` → `ink almost filling the entire frame`), assigned by `training/measure_ink_coverage.py` from the measured dark-pixel ratio. Gives the temporal axis a visual anchor that abstract phase words lack. |
 | Morphology | Hand-written per image: shape, direction, density, negative space. Only these described variations remain promptable after training. |
 | Style tags | `monochrome, high contrast` shared across all captions. |
 

@@ -101,6 +101,17 @@ This session introduced hand soap and repeated pipette and local-stirring method
 
 **Evidence:** [Setup photo 01](../docs/images/dataset_record/2026-06-29-capture-setup-01.jpg), [setup photo 02](../docs/images/dataset_record/2026-06-29-capture-setup-02.jpg), [Contact sheet 04](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-04.png), [08](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-08.png)
 
+### Source note — `ink_dataset/04_gathering_ink`
+
+The gathering material comes from two production methods:
+
+| Series | Source | Method |
+| --- | --- | --- |
+| 1–3 | Pipette-drawn | Ink physically drawn together by suction with a pipette during capture |
+| 4–8 | Reversed video | Frames extracted from diffusion videos played in reverse |
+
+The reversal is a deliberate production decision, not a capture artefact: playing diffusion backwards produces the condensing motion that visualises *temporary return*, echoing the work's premise that the return of consciousness is a temporary, constructed state. For still-image LoRA training the two sources are visually equivalent and are not distinguished in the captions; for the later video atlas the reversed clips are the source of condensing motion and must remain traceable.
+
 ### 1 July 2026 — Contact-sheet assembly
 
 Representative frames from the three experiment dates were assembled into eight screenshots labelled with device, lighting, materials, method and date. The screenshots were created between 21:35 and 21:36 BST on 1 July; they document earlier experiments and do not indicate that capture occurred on 1 July.

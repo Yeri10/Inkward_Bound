@@ -392,6 +392,127 @@ Caption 已与图像一一对应并通过完整性验证，但效果尚未检验
 
 ---
 
+### 2026 年 7 月 6 日 — 首次训练复盘：容器特征泄漏进触发词
+
+**问题**
+
+`inkwb_lora_v1` 的首批预览图复现了拍摄容器的特征——缸壁、弧形容器底、水面线和气泡。原因是这些反复出现的特征没有写进 caption，被模型吸收进了触发词。
+
+**已完成工作**
+
+- 为全部 101 条 caption 增加容器语境部分：`inside a shallow pale basin`（01）/ `inside a clear water tank`（02–04），并对明显可见的图补充 `curved basin rim visible`、`water surface line at the top`、`reflective tank floor below`。
+- 在 notebook 的 Inference Test cell 加入负面提示（glass、tank、vessel walls、rim、surface line、reflection、bubbles）。
+- 更新 ink_dataset README 的 caption 格式说明，重新生成含 Container 列的 `ink_dataset_captions.xlsx`。
+
+**决策及原因**
+
+先不裁剪照片，而是把容器特征绑定到明确的 caption 词汇上，生成时用负面提示排除。裁剪保留为 v2 预览仍受污染时的后备方案，因为裁剪会同时改变形态描述所依赖的构图信息（留白、方位）。
+
+**证据**
+
+- [v1 预览：缸壁与水面线](images/2026-07-06-inkwb-lora-v1-baseline-01-container-leak.png)、[v1 预览：弧形容器底](images/2026-07-06-inkwb-lora-v1-baseline-02-container-leak.png)
+- `ink_dataset/` 全部 caption 文件；[`ink_dataset/README.zh-CN.md`](../ink_dataset/README.zh-CN.md) 格式表。
+- [`training/Inkward Bound LoRA Training.ipynb`](../training/Inkward%20Bound%20LoRA%20Training.ipynb) 中的负面提示。
+
+**反思 / 下一步**
+
+重跑 `prepare_dataset.py`，训练 `inkwb_lora_v2`，用相同 seed 与 v1 预览对比。若容器特征仍存在，则在 `prepare_dataset.py` 中加入逐图裁剪，并同步修改受影响 caption 的方位词。
+
+---
+
+### 2026 年 7 月 6 日 — v1/v2 预览对比：真实感、prompt 调整与验收标准
+
+**问题**
+
+对比两次训练的 phase-control 预览发现 v1 看起来比 v2 更"真实"。v1 的真实感很大程度上正来自泄漏的容器特征——水面折射、玻璃光泽和高光反射本身就是摄影证据，去掉容器时它们也被一并去掉。v2 的负面提示同时存在误伤：`glass`、`reflection` 这类宽泛词压掉了密实墨水的湿润光泽。v2 预览仍残留缸壁和底部墨渍横条。另外，相同 seed 下四个阶段 prompt 生成的图几乎一致，说明阶段词单独使用可控性很弱。
+
+**已完成工作**
+
+- 收窄负面提示至具体特征（`tank walls, basin rim, water surface line, bubbles, table edge, dark smears at the bottom edge`），去掉 `glass / reflection / vessel`。
+- 所有测试 prompt 加入正面摄影词（`macro photograph, wet glossy ink, soft light`），把真实感变为明确要求而非依赖容器泄漏。
+- 强化 phase-control prompt：每个阶段词配对相应的形态描述（小墨团下沉 → 墨叶下漂 → 重块凝聚 → 墨丘沉底）。
+- 仅修改 prompt，无需重训即可重新评估。
+
+**决策及原因**
+
+真实感不是训练目标。为 LoRA 定义了验收标准，按重要性排序：（1）词汇可控——状态、阶段、视角各自产生可区分的结果，c 值导航依赖于此；（2）风格干净——容器特征仅在 prompt 提及时出现；（3）seed 多样性——同一 prompt 换 seed 产生不同构图；（4）不过拟合——生成图不是训练照片的复印。真实感只需在观展距离下成立，且 atlas 经人工筛选，60–70% 可用率即足够。
+
+**证据**
+
+- [v1 阶段预览：early](images/2026-07-06-inkwb-lora-v1-phase-early.png)、[v1 阶段预览：final](images/2026-07-06-inkwb-lora-v1-phase-final.png) —— 摄影感由泄漏的容器线索承载；early 与 final 几乎一致。
+- [v2 阶段预览：early](images/2026-07-06-inkwb-lora-v2-phase-early.png)、[v2 阶段预览：final](images/2026-07-06-inkwb-lora-v2-phase-final.png) —— 更干净但更平；残留缸壁与底部墨渍横条。
+- [v1 完整预览总览](images/2026-07-06-inkwb-lora-v1-preview-sheet.png) —— 第一次训练的 baseline、状态、阶段、视角四组。
+- [v2 完整预览总览](images/2026-07-06-inkwb-lora-v2-preview-sheet.png) —— caption 修正后的同四组。
+- [`training/Inkward Bound LoRA Training.ipynb`](../training/Inkward%20Bound%20LoRA%20Training.ipynb) 更新后的 Inference Test cell。
+
+**完整评估（查看 v1、v2 全部预览组后补充）**
+
+对比完整预览集修正了此前的判断。v1：状态可分且具有摄影级"水中感"，视角切换有效（俯拍圆渍 vs 侧拍漏斗），阶段无差异，容器不受控泄漏。v2：状态仍可分但漂向"纸上水墨"审美，视角失效（两个 prompt 都生成扁平墨渍），阶段依旧无差异，容器泄漏大减但残留画面黑边。关键认识：v1 的水中质感和有效视角正是由泄漏的容器语境承载的；v2 把语境绑定到词汇后，不写这些词的 prompt 就完全失去水下空间。修正方向不是封杀容器，而是主动使用这些词——已在全部侧视 prompt 中加入 `suspended in clear water` 锚点，并在负面提示中加入 `paper texture, ink on paper, photo border, dark frame edges`。
+
+**反思 / 下一步**
+
+用加了水体锚点的 prompt 重跑 Inference Test。v2 的 caption 修正把容器语境从不可控泄漏变成了推理时的开关，这正是预期行为——待解决的是阶段可控性（两次训练均无差异；若形态配对仍不够则回训练侧）以及确认水体锚点能否恢复视角切换。可控性过关后，固定 3–4 个 seed 生成 4 状态 × 4 阶段评估矩阵，随后进入 latent atlas 批量生成。
+
+---
+
+### 2026 年 7 月 6 日 — v3 实测密度打标：为阶段轴提供视觉锚点
+
+**开发意图**
+
+解决两次训练中阶段轴均无差异的问题。抽象阶段词（`early / developing / final phase`）无法给文本编码器提供视觉锚点，而序列中真正随时间变化的是墨水覆盖率。
+
+**已完成工作**
+
+- 编写 `training/measure_ink_coverage.py`：测量每张图的暗像素占比（灰度阈值 100），按五档写入覆盖率短语，从 `sparse ink traces, mostly clear water` 到 `ink almost filling the entire frame`。可重复运行，自动替换旧密度短语。
+- 应用到全部 101 条 caption。五档分布：10 / 19 / 36 / 15 / 21，且序列内按预期递进（如 `01/1-1 → 1-4`：dense → dense → heavy → filling）。
+- 更新 notebook 的 phase-control 与评估矩阵 prompt，使每个阶段词配对相应的实测密度短语。
+- 在 ink_dataset README 中记录新的 caption 组成部分。
+
+**决策及原因**
+
+密度由测量而非人眼判断分配：短语来自真实的暗像素占比，保证每条 caption 的描述客观成立。阶段词与密度短语并存，生成时两套词汇都可使用。
+
+**证据**
+
+- [`training/measure_ink_coverage.py`](../training/measure_ink_coverage.py)；`ink_dataset/` 全部更新后的 caption。
+- [`ink_dataset/README.zh-CN.md`](../ink_dataset/README.zh-CN.md) 格式表。
+
+**反思 / 下一步**
+
+重跑 `prepare_dataset.py` 并训练 `inkwb_lora_v3`，用评估矩阵检验阶段轴。若密度短语能有效控制覆盖率，c 值映射可直接使用它们（低 c → 稀疏/湍流，高 c → 浓重/凝聚）。
+
+---
+
+### 2026 年 7 月 6 日 — v3 评估：风格与多样性通过，阶段小幅改善，状态随 seed 塌缩
+
+**开发意图**
+
+用评估矩阵 cell（固定 seed 的 4 状态 × 4 阶段 + seed 多样性条）按验收标准检验以密度分档 caption 训练的 `inkwb_lora_v3`。
+
+**结果**
+
+- 风格干净：通过。`suspended in clear water` 锚点 + 正面摄影词找回了湿润的水中光泽；所有预览均无容器特征和纸纹理。
+- 多样性：通过。三个 seed 构图明显不同，无复印训练图迹象。
+- 阶段轴：小幅改善。seed 42 的 gathering 行出现可见的密度递进（early 帧较亮、后续渐重）——三次训练中阶段词第一次对画面产生影响——但推进仍然细微。
+- 状态轴：部分 seed 退步。seed 42 下四状态可区分；seed 123 下整个矩阵塌缩为近乎相同的垂帘状构图。
+- Caption 长度检查：CLIP token 估算最长约 70,低于 77 上限，训练期截断不能解释塌缩。
+
+**诊断与决策**
+
+seed 相关塌缩的可能原因是 prompt 共享后缀过重（水体锚点 + 三个摄影短语 + 风格标签）在推理时稀释了状态短语。这是生成侧问题，不计划重训。对策：需要状态区分时精简摄影后缀；atlas 生成时多扫 seed——atlas 为策展式筛选，seed 级塌缩只降低可用率。
+
+**证据**
+
+- [v3 状态 × 阶段矩阵，seed 42](images/2026-07-06-inkwb-lora-v3-matrix-seed42.png) —— 状态可分，阶段轻微递进。
+- [v3 状态 × 阶段矩阵，seed 123](images/2026-07-06-inkwb-lora-v3-matrix-seed123.png) —— 该 seed 下状态塌缩。
+- [v3 seed 多样性条](images/2026-07-06-inkwb-lora-v3-diversity.png)、[v3 baseline](images/2026-07-06-inkwb-lora-v3-baseline.png)。
+
+**反思 / 下一步**
+
+v3 已可开始试验性 atlas 生成：按状态扫 seed、人工筛选可用图，用实测密度短语驱动覆盖率。同时测试精简共享摄影后缀能否在塌缩 seed 上恢复状态区分。
+
+---
+
 ## 当前验证清单
 
 仓库能够证明代码和版本历史。下一次完整系统测试应补充以下运行证据：

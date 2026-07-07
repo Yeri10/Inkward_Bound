@@ -101,6 +101,17 @@
 
 **证据：** [现场照片 01](../docs/images/dataset_record/2026-06-29-capture-setup-01.jpg)、[现场照片 02](../docs/images/dataset_record/2026-06-29-capture-setup-02.jpg)、 [Contact sheet 04](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-04.png)、[08](../docs/images/dataset_record/2026-07-01-ink-dataset-contact-sheet-08.png)
 
+### 来源说明 — `ink_dataset/04_gathering_ink`
+
+Gathering 素材来自两种制作方式：
+
+| 系列 | 来源 | 方法 |
+| --- | --- | --- |
+| 1–3 | 滴管吸取 | 拍摄时用滴管以吸力将墨水物理聚拢 |
+| 4–8 | 视频倒放 | 从倒放的扩散视频中截取的帧 |
+
+倒放是有意的制作决策而非拍摄瑕疵：将扩散倒放产生的凝聚运动正是"临时回流"的可视化，呼应作品中"本心的回归是临时的、被构造的状态"这一前提。对静态图 LoRA 训练而言两种来源在视觉上等价，caption 中不作区分；但对后续的视频 atlas，倒放片段是凝聚动态的来源，必须保持可追溯。
+
 ### 2026-07-01 — Contact sheet 整理
 
 将三个实验日期的代表帧整理为 8 张带有设备、灯光、材料、方法和日期说明的截图。截图创建时间为 2026-07-01 21:35–21:36（BST），它们记录的是早期实验，不代表拍摄发生在 7 月 1 日。

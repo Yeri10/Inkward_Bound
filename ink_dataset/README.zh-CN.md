@@ -22,16 +22,18 @@ ink_dataset/
 
 文件名编码实验序列:`<实验>-<帧>.jpg`。例如 `01_pure_diffusion` 中的 `1-1.jpg` → `1-4.jpg` 是同一次扩散过程的时间推进。序列内的帧序对应时间阶段,并写入 caption。
 
+`04_gathering_ink` 中，系列 1–3 为滴管物理吸取；系列 4–8 为扩散视频倒放截帧（见[拍摄日志](DATASET_CAPTURE_LOG.zh-CN.md)）。
+
 ## Caption 格式
 
 ```
-inkwb, <状态短语>, <阶段短语>, <视角>, <单图形态描述>, monochrome, high contrast
+inkwb, <状态短语>, <阶段短语>, <视角>, <容器语境>, <实测密度>, <单图形态描述>, monochrome, high contrast
 ```
 
 示例(`01_pure_diffusion/1-2.txt`):
 
 ```
-inkwb, black ink diffusing freely across still water, developing phase of diffusion, top-down view, ink flooding in from the upper left, marbled ripples along the lower right edge, monochrome, high contrast
+inkwb, black ink diffusing freely across still water, developing phase of diffusion, top-down view, inside a shallow pale basin, dense ink covering much of the frame, ink flooding in from the upper left, marbled ripples along the lower right edge, monochrome, high contrast
 ```
 
 | 部分 | 作用 |
@@ -40,6 +42,8 @@ inkwb, black ink diffusing freely across still water, developing phase of diffus
 | 状态短语 | 每个文件夹一条:自由扩散 / 悬浮分层 / 湍流扰动 / 凝聚收束,对应装置的系统状态。 |
 | 阶段短语 | `early / developing / advanced / final phase of <过程>`,按序列内帧位置分配,生成时可控制时间阶段。 |
 | 视角 | `top-down view`（01 俯拍）或 `side view`（02–04 侧拍），对应各拍摄 session 的机位。 |
+| 容器语境 | `inside a shallow pale basin`（01）或 `inside a clear water tank`（02–04），个别图另加 `water surface line at the top` 等。把容器特征绑定到词汇上，生成时即可用负面提示排除。 |
+| 实测密度 | 五档覆盖率短语（`sparse ink traces…` → `ink almost filling the entire frame`），由 `training/measure_ink_coverage.py` 按实测暗像素占比自动分配，为时间轴提供抽象阶段词所缺的视觉锚点。 |
 | 形态描述 | 逐张手写:形状、方向、密度、留白。只有被描述过的差异在训练后才可通过提示词控制。 |
 | 风格标签 | 全部 caption 共用 `monochrome, high contrast`。 |
 

@@ -43,12 +43,12 @@ conda activate ml-art
      --validation_prompt "inkwb, black ink gathering and condensing in water, final phase of gathering, side view, a dense black mound with a twisting tendril column above, monochrome, high contrast" \
      --validation_epochs 2 --num_validation_images 2 \
      --report_to tensorboard \
-     --output_dir training/runs/inkwb_lora_v1
+     --output_dir training/runs/inkwb_lora_v3
    ```
 
    Do not add `--random_flip`: captions encode left/right positions.
 
-3. Test the weights (`training/runs/inkwb_lora_v1/pytorch_lora_weights.safetensors`) by loading them with `StableDiffusionPipeline.load_lora_weights`, then sweep the caption vocabulary: state phrase × phase phrase × viewpoint (see [ink_dataset README](../ink_dataset/README.md) for the c-value mapping).
+3. Test the weights (`training/runs/inkwb_lora_v3/pytorch_lora_weights.safetensors`) by loading them with `StableDiffusionPipeline.load_lora_weights`, then sweep the caption vocabulary: state phrase × phase phrase × viewpoint (see [ink_dataset README](../ink_dataset/README.md) for the c-value mapping).
 
 ## Evaluation checklist
 

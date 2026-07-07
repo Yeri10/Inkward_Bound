@@ -392,6 +392,127 @@ The pipeline is untested against this dataset. Next: run `inkwb_lora_v1` on the 
 
 ---
 
+### 6 July 2026 — First training run review: container features leak into the trigger word
+
+**Problem**
+
+The first `inkwb_lora_v1` previews reproduced vessel features from the capture setup — glass walls, curved container bottoms, water surface lines and bubbles — because these recurring features were not described in the captions, so the model absorbed them into the trigger word.
+
+**Work completed**
+
+- Added a container-context part to all 101 captions: `inside a shallow pale basin` (01) / `inside a clear water tank` (02–04), with targeted extras (`curved basin rim visible`, `water surface line at the top`, `reflective tank floor below`) where clearly visible.
+- Added a negative prompt to the notebook's Inference Test cell (glass, tank, vessel walls, rim, surface line, reflection, bubbles).
+- Updated the caption format documentation in the ink_dataset READMEs and regenerated `ink_dataset_captions.xlsx` with a Container column.
+
+**Decision and reason**
+
+Rather than cropping the photographs immediately, the vessel features were bound to explicit caption words so they can be excluded at generation time. Cropping is kept as the fallback if v2 previews are still contaminated, because it would also alter the composition information (negative space, positions) that the morphology captions describe.
+
+**Evidence**
+
+- [v1 preview with glass walls and water surface](images/2026-07-06-inkwb-lora-v1-baseline-01-container-leak.png), [v1 preview with curved vessel bottom](images/2026-07-06-inkwb-lora-v1-baseline-02-container-leak.png)
+- Updated caption files across `ink_dataset/`; [`ink_dataset/README.md`](../ink_dataset/README.md) caption-format table.
+- Negative prompt in [`training/Inkward Bound LoRA Training.ipynb`](../training/Inkward%20Bound%20LoRA%20Training.ipynb).
+
+**Reflection / next step**
+
+Re-run `prepare_dataset.py`, train `inkwb_lora_v2`, and compare previews against v1 with the same seeds. If container features persist, add per-image cropping to `prepare_dataset.py` and adjust position words in the affected captions.
+
+---
+
+### 6 July 2026 — v1/v2 preview comparison: realism, prompt tuning and acceptance criteria
+
+**Problem**
+
+Comparing the two runs' phase-control previews showed v1 looking more "photographic" than v2. The realism in v1 largely came from the leaked container features themselves — water-surface refraction, glass gloss and specular highlights are photographic evidence, and removing the container removed them too. The v2 negative prompt also over-suppressed: broad words like `glass` and `reflection` killed the wet, glossy quality of dense ink. v2 previews still showed residual tank walls and a dark ink-smear band along the bottom edge. Separately, the four phase prompts produced near-identical images under the same seed, showing that the phase axis alone is weakly steerable.
+
+**Work completed**
+
+- Narrowed the negative prompt to concrete features only (`tank walls, basin rim, water surface line, bubbles, table edge, dark smears at the bottom edge`), dropping `glass / reflection / vessel`.
+- Added positive photographic terms to all test prompts (`macro photograph, wet glossy ink, soft light`), so realism is requested explicitly instead of arriving through container leakage.
+- Reinforced the phase-control prompts by pairing each phase phrase with a matching morphology description (compact clump sinking → lobes drifting down → heavy mass condensing → settled mound).
+- Prompt-only changes; no retraining required to re-evaluate.
+
+**Decision and reason**
+
+Realism is not the training target. Acceptance criteria were defined for the LoRA, in order of importance: (1) vocabulary steerability — state, phase and viewpoint words each produce distinct results, since c-value navigation depends on this; (2) clean style — container features appear only when prompted; (3) seed diversity — one prompt yields varied compositions; (4) no overfitting — outputs are not copies of the training photographs. Realism only needs to hold at exhibition viewing distance, and the atlas is hand-curated, so a 60–70% usable rate is sufficient.
+
+**Evidence**
+
+- [v1 phase preview, early](images/2026-07-06-inkwb-lora-v1-phase-early.png), [v1 phase preview, final](images/2026-07-06-inkwb-lora-v1-phase-final.png) — photographic look carried by leaked container cues; early and final nearly identical.
+- [v2 phase preview, early](images/2026-07-06-inkwb-lora-v2-phase-early.png), [v2 phase preview, final](images/2026-07-06-inkwb-lora-v2-phase-final.png) — cleaner but flatter; residual tank walls and bottom smear band.
+- [v1 full preview sheet](images/2026-07-06-inkwb-lora-v1-preview-sheet.png) — baseline, state, phase and viewpoint groups of the first run.
+- [v2 full preview sheet](images/2026-07-06-inkwb-lora-v2-preview-sheet.png) — the same groups after the caption pass.
+- Updated Inference Test cell in [`training/Inkward Bound LoRA Training.ipynb`](../training/Inkward%20Bound%20LoRA%20Training.ipynb).
+
+**Full-set assessment (added after reviewing all v1 and v2 preview groups)**
+
+Comparing complete preview sets revised the picture. v1: states distinct with a photographic in-water look, viewpoint switching worked (top-down pool vs side funnel), phases flat, containers leaked uncontrollably. v2: states still distinct but drifting toward an ink-on-paper aesthetic, viewpoint collapsed (both prompts produced flat blots), phases still flat, container leakage reduced with residual frame edges. The key insight: v1's in-water feel and working viewpoint were carried by the leaked container context; v2 bound that context to words, so prompts that omit them lose the aquatic space entirely. The fix is not banning containers but using the words deliberately — a `suspended in clear water` anchor was added to all side-view prompts, and `paper texture, ink on paper, photo border, dark frame edges` to the negative prompt.
+
+**Reflection / next step**
+
+Re-run the Inference Test with the water-anchored prompts. The v2 caption pass turned container context from uncontrollable leakage into an inference-time switch, which is the intended behaviour — the open issues are phase steerability (flat in both runs; if morphology pairing is not enough, revisit training) and confirming the water anchor restores viewpoint switching. Once steerability passes, fix 3–4 seeds, generate the 4-state × 4-phase evaluation matrix, and move to batch-generating the latent atlas.
+
+---
+
+### 6 July 2026 — Measured density captions for v3: giving the phase axis a visual anchor
+
+**Intention**
+
+Fix the flat phase axis observed in both training runs. Abstract phase words (`early / developing / final phase`) give the text encoder no visual anchor, while what actually changes across a captured sequence is ink coverage.
+
+**Work completed**
+
+- Wrote `training/measure_ink_coverage.py`: measures each image's dark-pixel ratio (grayscale threshold 100) and inserts one of five coverage phrases into its caption, from `sparse ink traces, mostly clear water` to `ink almost filling the entire frame`. Safe to re-run; replaces previous density phrases.
+- Applied it to all 101 captions. Distribution across the five bins: 10 / 19 / 36 / 15 / 21, and sequences progress through bins as expected (e.g. `01/1-1 → 1-4`: dense → dense → heavy → filling).
+- Updated the notebook's phase-control and evaluation-matrix prompts to pair each phase word with its corresponding measured density phrase.
+- Documented the new caption part in the ink_dataset READMEs.
+
+**Decision and reason**
+
+Density is assigned by measurement rather than by eye: the phrase is derived from the actual dark-pixel ratio, making the caption claim objectively true for every image. The phase words are kept alongside the density phrases so both vocabularies remain usable at generation time.
+
+**Evidence**
+
+- [`training/measure_ink_coverage.py`](../training/measure_ink_coverage.py); updated captions across `ink_dataset/`.
+- Caption-format table in [`ink_dataset/README.md`](../ink_dataset/README.md).
+
+**Reflection / next step**
+
+Re-run `prepare_dataset.py` and train `inkwb_lora_v3`, then judge the phase axis with the evaluation matrix. If density phrases steer coverage successfully, the c-value mapping can use them directly (low c → sparse/turbulent, high c → heavy/condensed).
+
+---
+
+### 6 July 2026 — v3 evaluation: style and diversity pass, phase mildly improved, seed-dependent state collapse
+
+**Intention**
+
+Evaluate `inkwb_lora_v3` (trained on the density-graded captions) against the acceptance criteria using the evaluation-matrix cell: 4 states × 4 phases at fixed seeds, plus a seed-diversity strip.
+
+**Results**
+
+- Clean style: pass. The wet, glossy in-water look returned via the `suspended in clear water` anchor and positive photographic terms; no container features or paper texture in any preview.
+- Diversity: pass. The three diversity-strip seeds produce clearly different compositions; no memorisation observed.
+- Phase axis: mildly improved. At seed 42 the gathering row shows a visible density progression (brighter early frame, heavier later frames) — the first run in which phase prompts move the image at all — but the progression is still subtle.
+- State axis: regressed at some seeds. Seed 42 keeps the four states distinguishable; at seed 123 the whole matrix collapses into near-identical draped-veil compositions.
+- Caption-length check: a CLIP-token estimate puts the longest caption at ≈70 tokens, under the 77-token limit, so training-time truncation does not explain the collapse.
+
+**Diagnosis and decision**
+
+The likely cause of the seed-dependent collapse is the heavy shared prompt suffix (`suspended in clear water` + three photographic phrases + style tags) diluting the state phrase at inference. This is a generation-side issue; no retraining planned. Countermeasures: trim the photographic suffix when state separation matters, and sweep more seeds during atlas generation — the atlas is curated, so seed-level collapse only lowers the usable rate.
+
+**Evidence**
+
+- [v3 state × phase matrix, seed 42](images/2026-07-06-inkwb-lora-v3-matrix-seed42.png) — states distinguishable, mild phase progression.
+- [v3 state × phase matrix, seed 123](images/2026-07-06-inkwb-lora-v3-matrix-seed123.png) — state collapse at this seed.
+- [v3 seed-diversity strip](images/2026-07-06-inkwb-lora-v3-diversity.png), [v3 baseline](images/2026-07-06-inkwb-lora-v3-baseline.png).
+
+**Reflection / next step**
+
+v3 is good enough to begin trial atlas generation: per state, sweep seeds, curate the usable images, and drive density with the measured coverage phrases. In parallel, test whether trimming the shared photographic suffix restores state separation at collapsing seeds.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:
