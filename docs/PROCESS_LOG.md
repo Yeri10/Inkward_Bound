@@ -505,7 +505,7 @@ The likely cause of the seed-dependent collapse is the heavy shared prompt suffi
 
 - [v3 state × phase matrix, seed 42](images/2026-07-06-inkwb-lora-v3-matrix-seed42.png) — states distinguishable, mild phase progression.
 - [v3 state × phase matrix, seed 123](images/2026-07-06-inkwb-lora-v3-matrix-seed123.png) — state collapse at this seed.
-- [v3 state × phase matrix, seed 777](images/2026-07-06-inkwb-lora-v3-matrix-seed777.png) — for comparison with the v4 run at the same seed.
+- [v3 state × phase matrix, seed 777](images/2026-07-09-inkwb-lora-v3-matrix-seed777.png) — for comparison with the v4 run at the same seed.
 - [v3 seed-diversity strip](images/2026-07-06-inkwb-lora-v3-diversity.png), [v3 baseline](images/2026-07-06-inkwb-lora-v3-baseline.png).
 - [v3 full preview sheet](images/2026-07-06-inkwb-lora-v3-preview-sheet.png) — baseline, state, phase and viewpoint groups.
 
@@ -515,7 +515,7 @@ v3 is good enough to begin trial atlas generation: per state, sweep seeds, curat
 
 ---
 
-### 6 July 2026 — v4 experiment: trimmed captions
+### 9 July 2026 — v4 experiment: trimmed captions
 
 **Intention**
 
@@ -541,8 +541,8 @@ v4 was trained on the trimmed captions and evaluated at seeds 42 / 123 / 777. St
 
 **Evidence**
 
-- [v4 matrix seed 42](images/2026-07-06-inkwb-lora-v4-matrix-seed42.png), [seed 123](images/2026-07-06-inkwb-lora-v4-matrix-seed123.png), [seed 777](images/2026-07-06-inkwb-lora-v4-matrix-seed777.png)
-- [v4 diversity strip](images/2026-07-06-inkwb-lora-v4-diversity.png), [v4 full preview sheet](images/2026-07-06-inkwb-lora-v4-preview-sheet.png)
+- [v4 matrix seed 42](images/2026-07-09-inkwb-lora-v4-matrix-seed42.png), [seed 123](images/2026-07-09-inkwb-lora-v4-matrix-seed123.png), [seed 777](images/2026-07-09-inkwb-lora-v4-matrix-seed777.png)
+- [v4 diversity strip](images/2026-07-09-inkwb-lora-v4-diversity.png), [v4 full preview sheet](images/2026-07-09-inkwb-lora-v4-preview-sheet.png)
 - [`training/generate_atlas.py`](../training/generate_atlas.py) — v4 vocabulary and measured-coverage manifest.
 
 **Reflection / next step**

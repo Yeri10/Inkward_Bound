@@ -505,7 +505,7 @@ seed 相关塌缩的可能原因是 prompt 共享后缀过重（水体锚点 + �
 
 - [v3 状态 × 阶段矩阵，seed 42](images/2026-07-06-inkwb-lora-v3-matrix-seed42.png) —— 状态可分，阶段轻微递进。
 - [v3 状态 × 阶段矩阵，seed 123](images/2026-07-06-inkwb-lora-v3-matrix-seed123.png) —— 该 seed 下状态塌缩。
-- [v3 状态 × 阶段矩阵，seed 777](images/2026-07-06-inkwb-lora-v3-matrix-seed777.png) —— 供与 v4 同 seed 对比。
+- [v3 状态 × 阶段矩阵，seed 777](images/2026-07-09-inkwb-lora-v3-matrix-seed777.png) —— 供与 v4 同 seed 对比。
 - [v3 seed 多样性条](images/2026-07-06-inkwb-lora-v3-diversity.png)、[v3 baseline](images/2026-07-06-inkwb-lora-v3-baseline.png)。
 - [v3 完整预览总览](images/2026-07-06-inkwb-lora-v3-preview-sheet.png) —— baseline、状态、阶段、视角四组。
 
@@ -515,7 +515,7 @@ v3 已可开始试验性 atlas 生成：按状态扫 seed、人工筛选可用�
 
 ---
 
-### 2026 年 7 月 6 日 — v4 实验：精简 caption
+### 2026 年 7 月 9 日 — v4 实验：精简 caption
 
 **开发意图**
 
@@ -541,8 +541,8 @@ v3 已可开始试验性 atlas 生成：按状态扫 seed、人工筛选可用�
 
 **证据**
 
-- [v4 矩阵 seed 42](images/2026-07-06-inkwb-lora-v4-matrix-seed42.png)、[seed 123](images/2026-07-06-inkwb-lora-v4-matrix-seed123.png)、[seed 777](images/2026-07-06-inkwb-lora-v4-matrix-seed777.png)
-- [v4 多样性条](images/2026-07-06-inkwb-lora-v4-diversity.png)、[v4 完整预览总览](images/2026-07-06-inkwb-lora-v4-preview-sheet.png)
+- [v4 矩阵 seed 42](images/2026-07-09-inkwb-lora-v4-matrix-seed42.png)、[seed 123](images/2026-07-09-inkwb-lora-v4-matrix-seed123.png)、[seed 777](images/2026-07-09-inkwb-lora-v4-matrix-seed777.png)
+- [v4 多样性条](images/2026-07-09-inkwb-lora-v4-diversity.png)、[v4 完整预览总览](images/2026-07-09-inkwb-lora-v4-preview-sheet.png)
 - [`training/generate_atlas.py`](../training/generate_atlas.py) —— v4 词汇表与实测覆盖率 manifest。
 
 **反思 / 下一步**
