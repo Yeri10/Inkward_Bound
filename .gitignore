@@ -3,3 +3,4 @@
 node_modules/
 training/dataset/
 training/runs/
+training/atlas_candidates/

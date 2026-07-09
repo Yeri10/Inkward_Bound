@@ -505,11 +505,49 @@ seed 相关塌缩的可能原因是 prompt 共享后缀过重（水体锚点 + �
 
 - [v3 状态 × 阶段矩阵，seed 42](images/2026-07-06-inkwb-lora-v3-matrix-seed42.png) —— 状态可分，阶段轻微递进。
 - [v3 状态 × 阶段矩阵，seed 123](images/2026-07-06-inkwb-lora-v3-matrix-seed123.png) —— 该 seed 下状态塌缩。
+- [v3 状态 × 阶段矩阵，seed 777](images/2026-07-06-inkwb-lora-v3-matrix-seed777.png) —— 供与 v4 同 seed 对比。
 - [v3 seed 多样性条](images/2026-07-06-inkwb-lora-v3-diversity.png)、[v3 baseline](images/2026-07-06-inkwb-lora-v3-baseline.png)。
+- [v3 完整预览总览](images/2026-07-06-inkwb-lora-v3-preview-sheet.png) —— baseline、状态、阶段、视角四组。
 
 **反思 / 下一步**
 
 v3 已可开始试验性 atlas 生成：按状态扫 seed、人工筛选可用图，用实测密度短语驱动覆盖率。同时测试精简共享摄影后缀能否在塌缩 seed 上恢复状态区分。
+
+---
+
+### 2026 年 7 月 6 日 — v4 实验：精简 caption
+
+**开发意图**
+
+测试更短的 caption 能否改善状态区分。v3 caption 估算最长约 70 CLIP token，精简可减少大量共享 token 对注意力的稀释。
+
+**已完成工作**
+
+- 为 `prepare_dataset.py` 加入 `--trim` 开关：构建训练数据时删除抽象阶段短语（时间轴由实测密度短语承担）和全数据集共有的风格标签（由触发词吸收）。源 caption 文件不动，随时可去掉开关重建 v3 版数据。
+- 最长 caption 估算从约 70 降至约 61 token。
+- notebook 更新：Dataset Validation 增加 `TRIM_CAPTIONS` 开关，输出目录改为 `training/runs/inkwb_lora_v4`，validation prompt 改写为精简词汇。
+
+**判定标准**
+
+用精简 caption 训练 v4，与 v3 做相同 seed 的评估矩阵对比。若状态区分改善（尤其在此前塌缩的 seed 上）且不损失水中质感与密度可控性，则采用 v4；否则将 `TRIM_CAPTIONS` 设回 `False`，继续用 v3 生成 atlas。
+
+**证据**
+
+- [`training/prepare_dataset.py`](../training/prepare_dataset.py)（`trim_caption`）、[`training/Inkward Bound LoRA Training.ipynb`](../training/Inkward%20Bound%20LoRA%20Training.ipynb)。
+
+**结果与决定（v4 训练后补充）**
+
+用精简 caption 训练 v4，并在 seed 42 / 123 / 777 上评估。状态区分在最关键处改善：v3 下完全塌缩的 seed 123，现在 diffusion 与 settling 两行清晰可分；seed 777 的 settling 行（从水面层垂下的柱状）是至今最强的状态表达。水中质感与 seed 多样性保持。遗留问题：disturbance 与 gathering 在所有 seed 下仍难以区分——属于数据层面的混淆（两类素材都含相似的浓团形态）；密度/阶段列在行内变化依然很小。**决定：采用 v4。** atlas 生成脚本已切换到 v4 权重并改用精简词汇表；鉴于 prompt 侧密度控制弱，脚本现在会把每张生成图的实测暗像素覆盖率写入 manifest，atlas 筛选时按实测值重新归档，而不依赖 prompt。
+
+**证据**
+
+- [v4 矩阵 seed 42](images/2026-07-06-inkwb-lora-v4-matrix-seed42.png)、[seed 123](images/2026-07-06-inkwb-lora-v4-matrix-seed123.png)、[seed 777](images/2026-07-06-inkwb-lora-v4-matrix-seed777.png)
+- [v4 多样性条](images/2026-07-06-inkwb-lora-v4-diversity.png)、[v4 完整预览总览](images/2026-07-06-inkwb-lora-v4-preview-sheet.png)
+- [`training/generate_atlas.py`](../training/generate_atlas.py) —— v4 词汇表与实测覆盖率 manifest。
+
+**反思 / 下一步**
+
+用 v4 进入 atlas 候选图生成。disturbance 与 gathering 的区分若对装置重要，需要数据层面的解法（补拍更具区分度的素材），而非继续调整 caption；密度改由测量输出解决，不再依赖 prompt 控制。
 
 ---
 

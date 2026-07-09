@@ -505,11 +505,49 @@ The likely cause of the seed-dependent collapse is the heavy shared prompt suffi
 
 - [v3 state × phase matrix, seed 42](images/2026-07-06-inkwb-lora-v3-matrix-seed42.png) — states distinguishable, mild phase progression.
 - [v3 state × phase matrix, seed 123](images/2026-07-06-inkwb-lora-v3-matrix-seed123.png) — state collapse at this seed.
+- [v3 state × phase matrix, seed 777](images/2026-07-06-inkwb-lora-v3-matrix-seed777.png) — for comparison with the v4 run at the same seed.
 - [v3 seed-diversity strip](images/2026-07-06-inkwb-lora-v3-diversity.png), [v3 baseline](images/2026-07-06-inkwb-lora-v3-baseline.png).
+- [v3 full preview sheet](images/2026-07-06-inkwb-lora-v3-preview-sheet.png) — baseline, state, phase and viewpoint groups.
 
 **Reflection / next step**
 
 v3 is good enough to begin trial atlas generation: per state, sweep seeds, curate the usable images, and drive density with the measured coverage phrases. In parallel, test whether trimming the shared photographic suffix restores state separation at collapsing seeds.
+
+---
+
+### 6 July 2026 — v4 experiment: trimmed captions
+
+**Intention**
+
+Test whether shorter captions improve state separation. The v3 captions reach an estimated ~70 CLIP tokens; trimming reduces attention dilution across the many shared tokens.
+
+**Work completed**
+
+- Added a `--trim` flag to `prepare_dataset.py`: at dataset-build time it drops the abstract phase phrases (the measured density phrase carries the temporal axis) and the dataset-wide style tags (absorbed by the trigger word). Source caption files stay untouched, so v3 can be rebuilt at any time by running without the flag.
+- Longest caption estimate drops from ~70 to ~61 tokens.
+- Notebook updated: `TRIM_CAPTIONS` switch in Dataset Validation, output to `training/runs/inkwb_lora_v4`, validation prompt rewritten in the trimmed vocabulary.
+
+**Decision criterion**
+
+Train v4 on the trimmed captions and compare same-seed evaluation matrices against v3. Adopt v4 if state separation improves (especially at previously collapsing seeds) without losing the wet in-water look or density steerability; otherwise return to v3 by setting `TRIM_CAPTIONS = False` and continue atlas generation with v3.
+
+**Evidence**
+
+- [`training/prepare_dataset.py`](../training/prepare_dataset.py) (`trim_caption`), [`training/Inkward Bound LoRA Training.ipynb`](../training/Inkward%20Bound%20LoRA%20Training.ipynb).
+
+**Result and decision (added after the v4 run)**
+
+v4 was trained on the trimmed captions and evaluated at seeds 42 / 123 / 777. State separation improved where it mattered most: at seed 123, which had fully collapsed under v3, the diffusion and settling rows are now clearly distinct; seed 777's settling row (columns dropping from a surface layer) is the strongest state expression so far. The wet in-water look and seed diversity are preserved. Remaining issues: disturbance and gathering stay hard to tell apart at every seed — a dataset-level confusion, since both categories contain similar dense-plume material — and the density/phase columns still change little within a row. **Decision: adopt v4.** The atlas generation script was switched to the v4 weights and its prompts rewritten in the trimmed vocabulary; because prompt-side density control is weak, the script now also measures each generated image's dark-pixel coverage into the manifest, so atlas curation can re-bin by measured coverage instead of trusting the prompt.
+
+**Evidence**
+
+- [v4 matrix seed 42](images/2026-07-06-inkwb-lora-v4-matrix-seed42.png), [seed 123](images/2026-07-06-inkwb-lora-v4-matrix-seed123.png), [seed 777](images/2026-07-06-inkwb-lora-v4-matrix-seed777.png)
+- [v4 diversity strip](images/2026-07-06-inkwb-lora-v4-diversity.png), [v4 full preview sheet](images/2026-07-06-inkwb-lora-v4-preview-sheet.png)
+- [`training/generate_atlas.py`](../training/generate_atlas.py) — v4 vocabulary and measured-coverage manifest.
+
+**Reflection / next step**
+
+Proceed to atlas candidate generation with v4. Disturbance-vs-gathering separation, if it matters for the installation, needs a data-level fix (more distinctive capture material) rather than further caption work; density is handled by measuring outputs rather than steering prompts.
 
 ---
 

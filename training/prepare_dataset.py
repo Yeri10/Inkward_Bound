@@ -12,6 +12,7 @@ or from training/:
     python3 training/prepare_dataset.py
 """
 
+import argparse
 import json
 import re
 from pathlib import Path
@@ -33,7 +34,25 @@ CATEGORIES = [
 ]
 
 
+PHASE_RE = re.compile(r"^(early|developing|middle|advanced|final) phase of \w+$")
+STYLE_PARTS = {"monochrome", "high contrast"}
+
+
+def trim_caption(caption: str) -> str:
+    """v4 experiment: drop the abstract phase phrase (the measured density phrase
+    carries the temporal axis) and the dataset-wide style tags (absorbed by the
+    trigger word). The source .txt files stay untouched."""
+    parts = caption.split(", ")
+    parts = [p for p in parts if not PHASE_RE.match(p) and p not in STYLE_PARTS]
+    return ", ".join(parts)
+
+
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--trim", action="store_true",
+                    help="drop phase phrases and style tags from captions (v4 experiment)")
+    args = ap.parse_args()
+
     IMG_DST.mkdir(parents=True, exist_ok=True)
     records = []
 
@@ -45,6 +64,8 @@ def main() -> None:
             caption = txt.read_text(encoding="utf-8").strip()
             if not caption.startswith("inkwb"):
                 raise SystemExit(f"Caption does not start with trigger word: {txt}")
+            if args.trim:
+                caption = trim_caption(caption)
 
             stem = re.sub(r"[^\w-]", "_", f"{cat}_{jpg.stem}")
             out_name = f"images/{stem}.jpg"

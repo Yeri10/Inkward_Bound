@@ -9,6 +9,8 @@ Trains the `inkwb` LoRA on the [ink dataset](../ink_dataset/README.md), reusing 
 | `Inkward Bound LoRA Training.ipynb` | End-to-end training notebook (same format as the Mycelium one): Environment Setup → Hardware Check → Dataset Validation → Training Configuration → Start Training → Inference Test → Result Packaging |
 | `prepare_dataset.py` | Converts `ink_dataset/` (per-image `.txt` captions) into `training/dataset/` (resized images + `metadata.jsonl`, diffusers format) |
 | `train_text_to_image_lora.py` | Official diffusers LoRA training script; the notebook re-downloads the version matching the installed diffusers, this copy is the offline fallback |
+| `measure_ink_coverage.py` | Measures each image's dark-pixel ratio and writes the five-level density phrase into its caption |
+| `generate_atlas.py` | Batch-generates latent-atlas candidates along the c-value grid (6 bins × N seeds) into `atlas_candidates/`, with a `manifest.jsonl` recording every prompt/seed |
 | `dataset/` | Generated training data, not committed to git (re-run `prepare_dataset.py` after caption changes) |
 | `runs/` | Training outputs (weights, checkpoints, logs) |
 
