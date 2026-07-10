@@ -37,6 +37,16 @@ CATEGORIES = [
 PHASE_RE = re.compile(r"^(early|developing|middle|advanced|final) phase of \w+$")
 STYLE_PARTS = {"monochrome", "high contrast"}
 
+# v5: the 01 top-down aesthetic (pale field + pooled blob) was entangled with the
+# container phrase — prompting without it recalled wispy threads, prompting with
+# it produced photos of basins. Dropping the phrase that appears on EVERY 01
+# image lets "top-down view" itself absorb the pale-basin look (v1 lesson:
+# shared un-named features bind to the remaining tokens). "curved basin rim
+# visible" only appears where the rim is prominent, so it stays as a negatable
+# switch. The 01 category is also duplicated to strengthen the top-down signal.
+V5_DROP_01 = "inside a shallow pale basin"
+V5_WEIGHT_01 = 2
+
 
 def trim_caption(caption: str) -> str:
     """v4 experiment: drop the abstract phase phrase (the measured density phrase
@@ -51,6 +61,8 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--trim", action="store_true",
                     help="drop phase phrases and style tags from captions (v4 experiment)")
+    ap.add_argument("--v5", action="store_true",
+                    help="v5: drop the shared basin phrase from 01 captions and duplicate the 01 category ×2")
     args = ap.parse_args()
 
     IMG_DST.mkdir(parents=True, exist_ok=True)
@@ -66,6 +78,8 @@ def main() -> None:
                 raise SystemExit(f"Caption does not start with trigger word: {txt}")
             if args.trim:
                 caption = trim_caption(caption)
+            if args.v5 and cat == "01_pure_diffusion":
+                caption = ", ".join(p for p in caption.split(", ") if p != V5_DROP_01)
 
             stem = re.sub(r"[^\w-]", "_", f"{cat}_{jpg.stem}")
             out_name = f"images/{stem}.jpg"
@@ -78,6 +92,14 @@ def main() -> None:
                 im.save(out_path, "JPEG", quality=92)
 
             records.append({"file_name": out_name, "text": caption})
+
+            # v5 weighting: physical duplicate copies so the imagefolder loader
+            # counts the 01 category twice (duplicate file_name rows are unsafe).
+            if args.v5 and cat == "01_pure_diffusion":
+                for w in range(2, V5_WEIGHT_01 + 1):
+                    dup_name = f"images/{stem}_w{w}.jpg"
+                    Image.open(out_path).save(DST / dup_name, "JPEG", quality=92)
+                    records.append({"file_name": dup_name, "text": caption})
 
     with open(DST / "metadata.jsonl", "w", encoding="utf-8") as f:
         for r in records:

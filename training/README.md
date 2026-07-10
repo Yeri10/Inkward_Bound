@@ -27,8 +27,10 @@ conda activate ml-art
 1. Prepare the dataset (re-run whenever captions change):
 
    ```bash
-   python3 training/prepare_dataset.py
+   python3 training/prepare_dataset.py --trim --v5
    ```
+
+   `--trim` drops phase phrases and style tags (v4); `--v5` drops the shared basin phrase from the 01 captions and duplicates the 01 category ×2 (decoupling the top-down pooled-blob look from the container words).
 
 2. Launch training from the repository root:
 
@@ -45,12 +47,12 @@ conda activate ml-art
      --validation_prompt "inkwb, black ink gathering and condensing in water, final phase of gathering, side view, a dense black mound with a twisting tendril column above, monochrome, high contrast" \
      --validation_epochs 2 --num_validation_images 2 \
      --report_to tensorboard \
-     --output_dir training/runs/inkwb_lora_v3
+     --output_dir training/runs/inkwb_lora_v5
    ```
 
    Do not add `--random_flip`: captions encode left/right positions.
 
-3. Test the weights (`training/runs/inkwb_lora_v3/pytorch_lora_weights.safetensors`) by loading them with `StableDiffusionPipeline.load_lora_weights`, then sweep the caption vocabulary: state phrase × phase phrase × viewpoint (see [ink_dataset README](../ink_dataset/README.md) for the c-value mapping).
+3. Test the weights (`training/runs/inkwb_lora_v5/pytorch_lora_weights.safetensors`) by loading them with `StableDiffusionPipeline.load_lora_weights`, then sweep the caption vocabulary: state phrase × phase phrase × viewpoint (see [ink_dataset README](../ink_dataset/README.md) for the c-value mapping).
 
 ## Evaluation checklist
 

@@ -4,3 +4,4 @@ node_modules/
 training/dataset/
 training/runs/
 training/atlas_candidates/
+ink_dataset/_source_videos/

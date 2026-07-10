@@ -551,6 +551,268 @@ Proceed to atlas candidate generation with v4. Disturbance-vs-gathering separati
 
 ---
 
+### 9 July 2026 — Atlas prompt vocabulary tuned per c bin against capture references
+
+**Problem**
+
+The first atlas prompts used only state + density words, and the generated states still looked too similar: disturbance came out as sharp glossy swirls instead of the soft mist-like dispersion of stirred ink, gathering lacked the centripetal "being drawn back" motion of the pipette material, and diffusion was rendered side-on although the source material is top-down.
+
+**Work completed**
+
+Each c bin in `generate_atlas.py` was given a distinctive morphology phrase, matched against reference frames from the capture sessions and written in that category's own caption vocabulary:
+
+- c 0.0 diffusion: top-down view restored; ink pool drifting outward with marbled swirls; side-view water anchor disabled for this bin.
+- c 0.2 disturbance: murky churned clouds dissolving like mist; the glossy photo suffix is disabled for this bin because it contradicts the hazy quality.
+- c 0.4 settling: surface canopy with droplet fringes, translucent veils sinking in distinct layers toward a settled base.
+- c 0.6 → 1.0 gathering: a centripetal progression — strands converging toward the centre, threads spiraling inward into a solid mass, a vast black mass absorbing the last curling threads.
+
+**Decision and reason**
+
+All changes are generation-side; the v4 weights are untouched. The morphology phrases reuse wording that exists in the training captions, so the model has seen each combination. Training v5 is deferred until this prompt-level recall is tested: if the hazy disturbance or centripetal gathering cannot be recalled by vocabulary the model was trained on, the fix is data-level (weighting or re-shooting those categories), not caption-level.
+
+**Evidence**
+
+- Per-bin `morph` / `photo` / `water` fields in [`training/generate_atlas.py`](../training/generate_atlas.py).
+
+**Reflection / next step**
+
+Run all six bins (`--seeds 6`) and judge against the reference frames: mist-like c 0.2, layered c 0.4, centripetal c 0.6–1.0, top-down c 0.0. Pass → start full atlas candidate production and curation; fail on specific bins → plan v5 with data-level fixes for those categories.
+
+---
+
+### 9 July 2026 — First atlas batch reviewed: viewpoint recall works, shared seeds anchor the gathering bins
+
+**Problem**
+
+The first full atlas batch (6 bins × 6 seeds, tuned prompts, v4 weights) needed to be judged against the four capture reference frames before deciding between atlas production and a v5 retrain.
+
+**Work completed**
+
+- Ran `generate_atlas.py --seeds 6` (36 candidates + `manifest.jsonl`) and assembled a 6 × 6 overview sheet.
+- Review against the references: c 0.0 diffusion now renders as a genuine top-down marbled surface, clearly separated from every side-view bin — the strongest confirmation yet that trained viewpoint vocabulary is recallable. c 0.2 shows softer mist-like billows on several seeds; c 0.4 shows sinking layered strands. But c 0.6 → 0.8 → 1.0 barely progress, and c 1.0 never produces the settled solid mass.
+- Diagnosis: all six bins shared the same seed list (1000–1005), so within each seed column the initial noise anchored the composition and the three gathering grades could not diverge. A prompt-wording issue was also found: the c 1.0 morphology phrase was invented wording rather than the training-caption wording.
+- Fixes in `generate_atlas.py`: each bin now draws from its own seed range (`seed_start + bin_index × 1000`), and the c 1.0 morphology reuses the exact final-phase caption phrasing ("a dense settled black mound…, twisting tendril column above").
+
+**Decision and reason**
+
+Still no retrain: the failed axis (gathering progression) had not yet been tested under fair conditions — independent noise per bin and trained recall wording. v5 is only justified if the axis fails after these two generation-side fixes.
+
+**Evidence**
+
+- [Batch 1 overview, 6 bins × 6 seeds](images/2026-07-09-atlas-batch1-overview.jpg)
+- Seed-offset and c 1.0 morphology changes in [`training/generate_atlas.py`](../training/generate_atlas.py).
+
+**Reflection / next step**
+
+Re-run the three gathering bins (`--bins 0.6 0.8 1.0 --seeds 8`) with independent seeds. If the mound at c 1.0 and the centripetal progression appear, begin full production and curation; if not, this is data-level evidence for v5 (weight or re-shoot the gathering category).
+
+---
+
+### 9 July 2026 — Gathering re-run passes: independent seeds unlock the centripetal progression, no v5 needed
+
+**Intention / question**
+
+Test whether the gathering axis (c 0.6 → 1.0) diverges once the two generation-side fixes are in place: independent seed ranges per bin and the trained caption phrasing for the c 1.0 mound.
+
+**Work completed**
+
+- Re-ran the three gathering bins with 8 fresh seeds each (`--bins 0.6 0.8 1.0 --seeds 8`; seed ranges 4000+, 5000+, 6000+).
+- Review: the progression now reads — c 0.6 scattered strands with an inward pull, c 0.8 threads visibly drawn into dark masses (seeds 5002, 5003), and at c 1.0 the settled solid mound finally appears (seed 6005 matches the reference frame almost exactly: dense black mound below, single tendril column above; 6001 and 6002 also carry solid mass).
+
+**Decision and reason**
+
+The prompt-recall test passes on all six bins, so v5 retraining is dropped from the plan. The failure in batch 1 was seed anchoring, not missing capability in the weights — confirming the earlier diagnosis that shared initial noise, not the LoRA, was flattening the axis. Remaining weak seeds are handled by curation, consistent with the acceptance criteria (the atlas is hand-picked; a 60–70 % usable rate suffices).
+
+**Evidence**
+
+- [Gathering bins re-run, 3 bins × 8 independent seeds](images/2026-07-09-atlas-batch2-gathering.jpg)
+- `training/atlas_candidates/manifest.jsonl` records both batches with prompts, seeds and measured coverage.
+
+**Reflection / next step**
+
+Full atlas production: a larger seed sweep across all six bins, then hand-curation into the TouchDesigner `latent_atlas` folders. Batch-1 images in the gathering bins (seeds 1000–1005, anchored) should be removed during curation; the manifest keeps them as process evidence.
+
+---
+
+### 9 July 2026 — Curation review drives per-bin prompt iteration: c 0.0 through four passes, mist added to c 0.4–0.6
+
+**Intention / question**
+
+During curation review of the full production batch, per-bin visual mismatches against the capture references surfaced and were corrected at the prompt level, one generation-side pass at a time. The c 0.0 top-down diffusion bin took four passes to pin down.
+
+**Work completed**
+
+- **c 0.0, pass 1 → 2**: the original "marbled swirls" wording was misread as full-frame paper-marbling texture — everything looked like ink, nothing like water. Rewrote to a solid black blob with gray ripple rings, and added per-bin negative-prompt support to `generate_atlas.py` (a `neg` field appended to the shared negative).
+- **c 0.0, pass 2 → 3**: "ripple rings" pulled the model toward water-droplet splash photography. The water is now described as calm and still; ripples moved into the negative prompt. Blob/water separation became clean but the images went static.
+- **c 0.0, pass 3 → 4**: restoring diffusion with "feathered edges + translucent gray halo" brought back movement but read as wispy threads and veil membranes. Final wording: *an already-pooled solid black mass spreading slowly outward as one body, rounded lobed edges bleeding softly into the calm pale water* — with thin threads, wispy tendrils, translucent veils and bubble membranes all pushed into the bin's negative prompt. This matches the 01 source material: the ink has already massed together and diffuses as a body, not as filaments.
+- **c 0.4 / c 0.6**: kept the layered-settling and centripetal-gathering structures but added mist-like dispersing edges ("edges softly blurring and diffusing like mist" / "surrounded by soft hazy ink clouds still dispersing"), and disabled the glossy photo suffix on both bins, which contradicts the hazy quality — the 0.4–0.6 range should read as ink still actively dispersing.
+
+**Decision and reason**
+
+Every correction stayed on the generation side; the v4 weights were never touched. The pattern across the four c 0.0 passes: each wording choice imports the visual cliché of its nearest photographic genre (marbling paper, droplet photography, veil macro), and the fix is to name the wanted structure precisely and push the neighbouring genre into the negative prompt.
+
+**Evidence**
+
+- [c 0.0 pass 2: blob + ripple rings](images/2026-07-09-atlas-c00-pass2-blob-ripples.jpg)
+- [c 0.0 pass 3: calm water, static blobs](images/2026-07-09-atlas-c00-pass3-calm-water.jpg)
+- [c 0.0 pass 4 input: halo diffusion, still too wispy](images/2026-07-09-atlas-c00-pass4-halo.jpg)
+- Per-bin `neg` field and final morphology wording in [`training/generate_atlas.py`](../training/generate_atlas.py).
+
+**Reflection / next step**
+
+Re-run c 0.0, 0.4 and 0.6 with the final wording (`--bins 0.0 0.4 0.6 --seeds 12`), then hand-curate all six bins into the TouchDesigner `latent_atlas` folders.
+
+---
+
+### 9 July 2026 — c 0.0 hits the prompt-level ceiling: basin entanglement confirmed, v5 retrain planned
+
+**Intention / question**
+
+After four prompt passes the c 0.0 bin still failed review. A fifth pass tested the remaining hypothesis: the 01 top-down aesthetic (pale field + pooled blob) lives in the trained container phrase `inside a shallow pale basin`, which the shared negative prompt had been suppressing all along.
+
+**Work completed**
+
+- Pass 5 rebuilt the c 0.0 prompt entirely from trained 01 caption phrases (`inside a shallow pale basin`, `a large rounded ink blob … on a bright pale field`, `ink spreading across part of the frame`) and lifted the basin terms from the negative prompt for this bin only (new `container` and `neg_full` fields in `generate_atlas.py`).
+- Result: the container took over the frame — basin rims, bowls, a drain, a glass — with the ink blob incidental. Combined with passes 1–4 (no basin → wispy threads and veils), both directions are now bracketed: the 01 look cannot be recalled without the container words, and the container words summon the container itself.
+- Alongside, the c 0.2/0.4 bins were swapped at the user's direction (settling now at c 0.2, disturbance at c 0.4), the c 0.2 mist-edge variant was rolled back to the sharp layered look, and all superseded candidates were moved to `atlas_candidates/_superseded/`. Final candidate pool: 120 images across six bins.
+- v5 preparation: `prepare_dataset.py --v5` drops the basin phrase (present on every 01 image) at build time so `top-down view` absorbs the pale-basin look, keeps `curved basin rim visible` as a negatable per-image switch, and duplicates the 01 category ×2 (24 → 48 records, 125 total). Notebook and README updated to `inkwb_lora_v5`.
+
+**Decision and reason**
+
+This is exactly the v5 trigger condition defined earlier: trained vocabulary cannot recall the desired look, so the fix moves to the data level. The entanglement follows from the v1 lesson in reverse — naming the container on every 01 image bound the whole category aesthetic to those tokens; un-naming it should transfer that binding to the viewpoint phrase.
+
+**Evidence**
+
+- [c 0.0 pass 5: container takes over the frame](images/2026-07-09-atlas-c00-pass5-basin.jpg)
+- `--v5` build mode in [`training/prepare_dataset.py`](../training/prepare_dataset.py); `container` / `neg_full` fields in [`training/generate_atlas.py`](../training/generate_atlas.py).
+
+**Reflection / next step**
+
+Train v5 via the notebook (dataset rebuild with `--trim --v5`, output `training/runs/inkwb_lora_v5`), then re-run the evaluation matrix. Acceptance focuses on one question: does `top-down view` now recall the pale-field pooled-blob look without container words? Other bins already pass with v4 vocabulary and are not expected to regress, but the matrix will verify.
+
+---
+
+### 9 July 2026 — v5 trained: basin-free captions, top-down look recalled without container words
+
+**Intention / question**
+
+Train the v5 LoRA on the rebuilt dataset (`--trim --v5`: basin phrase dropped from all 01 captions, 01 category duplicated ×2 → 125 records) and check the single acceptance question from the previous entry.
+
+**Work completed**
+
+- Trained `inkwb_lora_v5` with the same hyperparameters as v3/v4 (rank 16, lr 5e-5, 12 epochs, no random flip) on the 125-record v5 dataset.
+- Evaluation matrices at seeds 42/123/777, diversity strip, and the four control groups were generated by the notebook.
+- Review: in the seed-42 matrix the diffusion row now renders a flat top-down marbled water surface with a solid poured ink mass — clearly separated from the three side-view rows — **with no container words in the prompt**, which was impossible in v4 (prompting the look required the basin phrase, which then summoned basins, drains and glasses). No regression visible in the settling / disturbance / gathering rows: layered veils, hazy plumes and converging strands still read as in v4, and seed diversity is intact. Phase columns remain near-identical, as expected for trimmed captions (the temporal axis lives in the density phrases).
+- Generation side updated: `generate_atlas.py` now defaults to the v5 weights; the c 0.0 bin drops the `container` field and moves `curved basin rim` into its negative prompt (the rim phrase survives in the captions per-image, so it stays negatable).
+
+**Decision and reason**
+
+The v1 lesson applied in reverse worked: un-naming a feature shared by every image in a category transfers its look onto the remaining tokens — here from `inside a shallow pale basin` onto `top-down view`. Category weighting (×2) gave the 01 look enough gradient signal to survive without its container anchor.
+
+**Evidence**
+
+- [v5 matrix seed 42](images/2026-07-09-inkwb-lora-v5-matrix-seed42.png), [seed 123](images/2026-07-09-inkwb-lora-v5-matrix-seed123.png), [seed 777](images/2026-07-09-inkwb-lora-v5-matrix-seed777.png)
+- [v5 diversity strip](images/2026-07-09-inkwb-lora-v5-diversity.png), [v5 preview sheet](images/2026-07-09-inkwb-lora-v5-preview-sheet.png)
+- Weights and log: `training/runs/inkwb_lora_v5/` (not committed).
+
+**Reflection / next step**
+
+Final acceptance runs through the atlas prompt itself: `generate_atlas.py --bins 0.0 --seeds 12` with the v5 blob vocabulary. If c 0.0 passes, re-sweep all six bins with v5 for a stylistically consistent candidate pool, then hand-curate into the TouchDesigner `latent_atlas` folders.
+
+---
+
+### 10 July 2026 — v5 atlas refinement round: c 0.0 direction accepted, mist vocabulary rebuilt for c 0.4 / 0.6
+
+**Intention / question**
+
+Run the atlas prompts against the v5 weights and refine each bin against the user's reading of the source material — including a correction of what the gray zones in the 01 photographs actually are.
+
+**Work completed**
+
+- **c 0.0 under v5, first attempt failed differently**: carrying over the heavy v4-era negative list (threads, veils, ripples…) plus the blob morphology pushed v5 into flat graphic collages — bowls, glass rings, even cut-paper leaf patterns. Diagnosis: the v4-era negatives suppress texture language that v5 needs; every weight version requires its own prompt calibration.
+- **c 0.0 direction accepted**: from the v5 blob batch the user picked three frames (solid pooled blob on a pale basin-like field) as "close". An irregular-edge + ripple variant was tried and rolled back — the original phrasing reads better.
+- **Correction from the source material**: the gray zones around the blob in the 01 photographs are *not* water ripples — they are layers of already-dispersed ink. The morphology now reads "translucent gray layers of dispersed ink pushed apart outward from the center, layer by layer" (拨开), with matte even light; specular reflections (glossy sheen, light glare) joined the bin's negative prompt, along with a cleanliness pass (dust, specks, stains added to the shared negative for all bins).
+- **c 0.4 mist rebuilt**: the v5 re-sweep produced sharp glossy swirls with no mist. Haze words now lead the morphology ("soft murky clouds … dissolving into hazy gray mist, smoke-like billows with blurred diffuse edges") and the sharp-swirl look is excluded per-bin ("sharp crisp edges, glossy hard-edged swirls, thin defined filaments").
+- **c 0.6 rebuilt as broken-apart mist**: scattered hazy fragments and drifting mist clouds lead, with loose strands *just beginning* to converge — preserving the centripetal progression into c 0.8/1.0 while adding the 打散 (broken-apart) quality.
+- All refinement runs use fresh seed ranges (1200+/3100+/4100+) so earlier batches survive for comparison during curation.
+
+**Decision and reason**
+
+Same principle as the v4 round, now confirmed across weight versions: name the wanted structure precisely, push the neighbouring genre into the negative prompt — but negatives calibrated for one weight version do not transfer to the next.
+
+**Evidence**
+
+- [v5 c 0.0 blob batch (user-picked direction)](images/2026-07-10-atlas-v5-c00-blob-batch.jpg)
+- [v5 c 0.4 before the mist rebuild: sharp glossy swirls](images/2026-07-10-atlas-v5-c04-before-mist.jpg)
+- Final per-bin wording in [`training/generate_atlas.py`](../training/generate_atlas.py).
+
+**Reflection / next step**
+
+Generate the refined c 0.0 / 0.4 / 0.6 batches, review against the references, then final curation of all six bins into the TouchDesigner `latent_atlas` folders.
+
+---
+
+### 10 July 2026 — Full v5 re-sweep and a fog gradient across the middle bins; 216-candidate pool assembled for curation
+
+**Intention / question**
+
+Rebuild the whole candidate pool on v5 with the final per-bin wording, then tune the middle of the c axis, where the user wanted the "mist" quality to intensify with convergence rather than sit in a single bin.
+
+**Work completed**
+
+- Cleared all earlier atlas candidates (mixed v4/v5 generations); the old manifest was archived as `manifest_archive_2026-07-10.jsonl` and a fresh full sweep was generated: 6 bins × 24 seeds on v5, per-bin independent seed ranges.
+- **Fog gradient, three iterations**: first the c 0.6 morphology was rebuilt around fog vocabulary (smoke-like haze, forms dissolving, the gathering mass only faintly visible) — accepted. Then, at the user's direction, the gradient was rebalanced: c 0.4 adopted that fog level while keeping its stirring identity ("fog of ink churned up by stirring"), and c 0.6 was pushed one layer further ("the whole frame veiled in dense gray ink fog… only a faint dark shadow of a gathering mass deep behind the fog", with "clear outlines" added to its negatives). The middle of the axis now reads: stirred fog (0.4) → denser fog with a gathering shadow (0.6) → defined convergence (0.8).
+- Each iteration ran on a fresh seed range, so competing versions coexist for curation: c 0.4 holds 48 candidates (sharp + fog), c 0.6 holds 72 (structured + fog + dense fog).
+- Assembled six labelled selection sheets (216 candidates in total) for the final hand-pick.
+- Alongside: the six capture-session setup photos (22/26/29 June) were placed into `docs/images/dataset_record/`, completing the evidence links in the dataset capture log.
+
+**Decision and reason**
+
+The mist is treated as an axis property rather than a bin property: fog density now increases monotonically from c 0.4 to c 0.6, mirroring the installation's narrative where disturbance dissolves the ink before the system begins to re-gather it. Keeping superseded batches in place (fresh seed ranges instead of overwrites) turns curation into a comparison across prompt versions, not just across seeds.
+
+**Evidence**
+
+- [c 0.6 fog rebuild, first accepted batch](images/2026-07-10-atlas-c06-fog1.jpg)
+- [c 0.4 with the adopted fog level](images/2026-07-10-atlas-c04-fog.jpg)
+- [c 0.6 pushed one fog layer further](images/2026-07-10-atlas-c06-fog2.jpg)
+- Final wording per bin in [`training/generate_atlas.py`](../training/generate_atlas.py); full generation record in `training/atlas_candidates/manifest.jsonl`.
+
+**Reflection / next step**
+
+Hand-pick the six bins from the 216-candidate pool, copy the selection into the TouchDesigner `latent_atlas` folders, and connect the atlas to the c-value navigation.
+
+---
+
+### 10 July 2026 — The c axis grows to eight bins; a failed loop, a fog that wasn't darkness, and prompts rebuilt from trained captions
+
+**Intention / question**
+
+Continue shaping the middle of the c axis against the capture references, and test the idea of closing the axis into a loop.
+
+**Work completed**
+
+- **Loop attempt failed instructively**: a c 1.2 "re-release" bin (the settled mound dissolving back into diffusion) was tried using the diffusion state phrase in side view — a combination absent from the training data, and the model collapsed into graphic water-surface illustrations. The bin was removed; the plan changed from a loop to a **fog arc**: c 0.7 "fog_receding" now bridges full fog back into the defined gathering states.
+- **Partial clean rebuild**: mixed-version folders (c 0.4, c 0.6) were cleared and re-swept so every bin folder holds exactly one prompt version; c 0.5 "fog_deepening" was added between the stirred fog and the full fog, growing the axis to eight bins (0.0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0).
+- **Prompts rebuilt from trained captions** (extending the c 1.0 lesson to more bins): c 0.0 now uses the 01-caption phrases verbatim ("a large rounded ink mass centered on a pale field with a soft halo", "soft gray washes", "scalloped lobed edge"); c 0.6 first borrowed the densest 03-caption fog phrases ("cloudy agitated murk", "hazy churned billows glowing faintly", then the final-phase "dense murky darkness", "near-black churned murk").
+- **The decisive correction came from the user**: the c 0.6 fog kept reading lighter than c 0.4 no matter how dark the words became, because the intent was never darkness — *the 0.6 fog is ink strands broken apart into particles*. The morphology was rewritten as a granular cloud ("ink strands broken apart into countless distinct fine black particles, each grain sharply visible") suspended against a hazy fog background, with sharpness assigned to the grains and softness to the atmosphere. This required a per-bin negative override: the shared negative bans dust/specks/grain (added earlier for cleanliness), which would have suppressed exactly this texture.
+
+**Decision and reason**
+
+Two working rules consolidated this round: prompts recall best when assembled from caption phrases the model was actually trained on, and axis semantics must be stated as material states (particles, layers, washes), not as adjective intensities ("heavier", "darker") — intensity words saturate quickly, material words do not.
+
+**Evidence**
+
+- [c 1.2 loop attempt: collapse into graphic illustration](images/2026-07-10-atlas-c12-loop-failed.jpg)
+- [c 0.7 fog receding, first batch](images/2026-07-10-atlas-c07-fog-receding.jpg)
+- [c 0.6 during the "darker" dead end (murky darkness wording)](images/2026-07-10-atlas-c06-murky-darkness.jpg)
+- Final eight-bin wording in [`training/generate_atlas.py`](../training/generate_atlas.py); every attempt recorded in `training/atlas_candidates/manifest.jsonl`.
+
+**Reflection / next step**
+
+Generate the granular-fog c 0.6 and the new c 0.5, review the four-step fog arc (0.4 → 0.5 → 0.6 → 0.7) side by side, then final curation of all eight bins into the TouchDesigner `latent_atlas` folders.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:

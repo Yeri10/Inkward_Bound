@@ -551,6 +551,268 @@ v3 已可开始试验性 atlas 生成：按状态扫 seed、人工筛选可用�
 
 ---
 
+### 2026 年 7 月 9 日 — 按拍摄参考逐档调整 atlas prompt 词汇
+
+**问题**
+
+第一版 atlas prompt 只用状态 + 密度词，生成的各状态仍然过于相似：disturbance 呈现为锐利的光泽漩涡而非搅动后雾状化开的柔和弥散；gathering 缺少滴管素材那种向心"被收回"的运动感；diffusion 被渲染为侧视，而源素材是俯拍。
+
+**已完成工作**
+
+对照拍摄参考帧，用各类别 caption 自身的词汇，为 `generate_atlas.py` 的每个 c 档配置了特征形态短语：
+
+- c 0.0 diffusion：恢复俯拍视角；墨池向外漂移、大理石纹漩涡；该档禁用侧视水体锚点。
+- c 0.2 disturbance：搅浑的墨云如雾化开；该档禁用光泽摄影后缀（与雾状质感相悖）。
+- c 0.4 settling：表面墨幕带滴坠边缘，半透明纱缕成层下沉至沉积底层。
+- c 0.6 → 1.0 gathering：向心递进——墨缕向中心汇聚、细线向内旋绕被吸入实心墨团、巨大黑团吸收最后卷入的细线。
+
+**决策及原因**
+
+全部改动在生成侧，v4 权重不动。形态短语复用训练 caption 中已有的措辞，模型见过每种组合。v5 训练推迟到本轮 prompt 召回测试之后：若模型学过的词汇都唤不起雾状扰动或向心收拢，则问题在数据层面（类别加权或补拍），而非 caption 层面。
+
+**证据**
+
+- [`training/generate_atlas.py`](../training/generate_atlas.py) 中逐档的 `morph` / `photo` / `water` 字段。
+
+**反思 / 下一步**
+
+全量六档测试（`--seeds 6`），对照参考帧验收：c 0.2 雾状、c 0.4 分层、c 0.6–1.0 向心、c 0.0 俯拍。通过 → 开始 atlas 候选图量产与筛选；个别档不通过 → 针对该类别规划 v5 的数据层面修正。
+
+---
+
+### 2026 年 7 月 9 日 — 首批 atlas 验收：视角召回成功，共享 seed 锚定了 gathering 三档
+
+**问题**
+
+首批完整 atlas（6 档 × 6 seed，调整后的 prompt，v4 权重）需要对照四张拍摄参考帧验收，以决定进入 atlas 量产还是 v5 重训。
+
+**已完成工作**
+
+- 运行 `generate_atlas.py --seeds 6`（36 张候选图 + `manifest.jsonl`），拼合 6 × 6 总览图。
+- 对照参考帧的评审：c 0.0 diffusion 呈现出真正的俯拍大理石纹水面，与所有侧视档明显区分——这是"训练过的视角词汇可召回"迄今最有力的确认。c 0.2 多个 seed 出现更柔和的雾状翻卷；c 0.4 出现下沉的分层墨缕。但 c 0.6 → 0.8 → 1.0 几乎没有递进，c 1.0 始终没有出现沉积的实心墨团。
+- 诊断：六档共用同一批 seed（1000–1005），同一 seed 列的初始噪声锚定了构图，导致 gathering 三档无法分化。另发现一处 prompt 措辞问题：c 1.0 的形态短语是自创措辞，而非训练 caption 的原句。
+- `generate_atlas.py` 两处修正：每档改用独立 seed 段（`seed_start + 档序号 × 1000`）；c 1.0 形态短语复用 final 阶段 caption 原句（"dense settled black mound…, twisting tendril column above"）。
+
+**决策及原因**
+
+仍不重训：失败的轴（gathering 递进）尚未在公平条件下测试过——每档独立噪声 + 训练过的召回措辞。只有这两项生成侧修正之后该轴仍失败，v5 才有依据。
+
+**证据**
+
+- [首批总览，6 档 × 6 seed](images/2026-07-09-atlas-batch1-overview.jpg)
+- [`training/generate_atlas.py`](../training/generate_atlas.py) 中的 seed 偏移与 c 1.0 形态短语修改。
+
+**反思 / 下一步**
+
+用独立 seed 重跑 gathering 三档（`--bins 0.6 0.8 1.0 --seeds 8`）。若 c 1.0 出现墨团、向心递进出现，则开始量产与筛选；若仍无，即为 v5 的数据层面证据（对 gathering 类别加权或补拍）。
+
+---
+
+### 2026 年 7 月 9 日 — gathering 重跑通过：独立 seed 解锁向心递进，无需 v5
+
+**意图 / 问题**
+
+验证两项生成侧修正（每档独立 seed 段、c 1.0 复用训练 caption 原句）之后，gathering 轴（c 0.6 → 1.0）能否分化。
+
+**已完成工作**
+
+- 用每档 8 个全新 seed 重跑 gathering 三档（`--bins 0.6 0.8 1.0 --seeds 8`；seed 段 4000+、5000+、6000+）。
+- 评审：递进关系成立——c 0.6 散乱墨缕带向内趋势，c 0.8 细线明显被拽入暗团（seed 5002、5003），c 1.0 终于出现沉积实心墨团（seed 6005 与参考帧几乎一致：底部致密黑团、上方单根卷须柱；6001、6002 也具备实体感）。
+
+**决策及原因**
+
+六档全部通过 prompt 召回测试，v5 重训从计划中移除。首批的失败是 seed 锚定而非权重能力缺失——印证了此前的诊断：拉平递进轴的是共享初始噪声，不是 LoRA 本身。个别不达标 seed 交给人工筛选处理，符合验收标准（atlas 为人工精选，60–70% 可用率即可）。
+
+**证据**
+
+- [gathering 三档重跑，3 档 × 8 独立 seed](images/2026-07-09-atlas-batch2-gathering.jpg)
+- `training/atlas_candidates/manifest.jsonl` 完整记录两批的 prompt、seed 与实测覆盖率。
+
+**反思 / 下一步**
+
+进入 atlas 量产：全六档更大规模的 seed 扫描，再人工筛选进 TouchDesigner 的 `latent_atlas` 文件夹。gathering 三档里首批的 seed 1000–1005（被锚定的一批）应在筛选时删除；manifest 保留其记录作为过程证据。
+
+---
+
+### 2026 年 7 月 9 日 — 筛选评审驱动逐档 prompt 迭代：c 0.0 四轮打磨，c 0.4–0.6 加入雾感
+
+**意图 / 问题**
+
+在量产批次的筛选评审中，各档相对拍摄参考的视觉偏差逐一暴露，全部在生成侧逐轮修正。其中俯视 diffusion（c 0.0）用了四轮才定稿。
+
+**已完成工作**
+
+- **c 0.0 第 1 → 2 轮**：原措辞 "marbled swirls" 被误读为满幅大理石花纹纸——满画面都像墨，没有水。改写为实心黑墨团 + 灰色波纹圈，同时给 `generate_atlas.py` 增加逐档负面词支持（`neg` 字段拼接到共享负面词后）。
+- **c 0.0 第 2 → 3 轮**："波纹圈"把模型拉向水滴飞溅摄影。水面改述为平静清水，波纹推入负面词。墨/水区分干净了，但画面变得静止。
+- **c 0.0 第 3 → 4 轮**：用"羽化边缘 + 半透明灰晕"找回扩散感，但呈现为细丝和纱膜。最终措辞：*已聚成一体的大块实心墨团，作为整体缓慢向外扩散，圆钝分瓣的边缘柔化渗入平静的浅色水中*——细丝、须状、透明纱膜、泡膜全部推入该档负面词。这与 01 组源素材一致：墨已经成团，以整体扩散，而非丝缕。
+- **c 0.4 / c 0.6**：保留分层下沉与向心聚拢的结构，边缘加入雾状弥散（"edges softly blurring and diffusing like mist" / "surrounded by soft hazy ink clouds still dispersing"），并关闭这两档的光泽摄影后缀（与雾感相悖）——0.4–0.6 区段应呈现墨仍在扩散的状态。
+
+**决策及原因**
+
+所有修正都停留在生成侧，v4 权重始终未动。c 0.0 四轮的共同规律：每种措辞都会带入最接近它的摄影门类的视觉俗套（大理石纹纸、水滴摄影、纱膜微距），解法是精确命名想要的结构，并把相邻门类推入负面词。
+
+**证据**
+
+- [c 0.0 第 2 轮：墨团 + 波纹圈](images/2026-07-09-atlas-c00-pass2-blob-ripples.jpg)
+- [c 0.0 第 3 轮：水面平静但静止](images/2026-07-09-atlas-c00-pass3-calm-water.jpg)
+- [c 0.0 第 4 轮输入：灰晕扩散但仍偏丝状](images/2026-07-09-atlas-c00-pass4-halo.jpg)
+- [`training/generate_atlas.py`](../training/generate_atlas.py) 中的逐档 `neg` 字段与最终形态措辞。
+
+**反思 / 下一步**
+
+用最终措辞重跑 c 0.0、0.4、0.6（`--bins 0.0 0.4 0.6 --seeds 12`），然后六档人工筛选进 TouchDesigner 的 `latent_atlas` 文件夹。
+
+---
+
+### 2026 年 7 月 9 日 — c 0.0 触及 prompt 层面天花板：确认容器纠缠，规划 v5 重训
+
+**意图 / 问题**
+
+四轮 prompt 打磨后 c 0.0 仍未通过评审。第五轮测试了最后一个假设：01 组俯拍美学（浅色底 + 成团墨块）绑定在训练过的容器短语 `inside a shallow pale basin` 上，而共享负面词一直在压制它。
+
+**已完成工作**
+
+- 第五轮把 c 0.0 的 prompt 完全用 01 组训练 caption 原句重建（`inside a shallow pale basin`、`a large rounded ink blob … on a bright pale field`、`ink spreading across part of the frame`），并仅对该档解除负面词中的 basin 项（`generate_atlas.py` 新增 `container` 与 `neg_full` 字段）。
+- 结果：容器占据了画面——盆沿、碗、排水口、玻璃杯，墨团反而次要。结合第 1–4 轮（不带 basin → 丝状纱膜），两个方向都试到头了：不带容器词召不回 01 的质感，带上容器词就召来容器本身。
+- 同期按用户指示对调了 c 0.2/0.4 档（settling 现在在 c 0.2，disturbance 在 c 0.4），c 0.2 的雾化边缘变体回退为清晰分层版，全部被取代的候选图移入 `atlas_candidates/_superseded/`。最终候选池：六档共 120 张。
+- v5 准备：`prepare_dataset.py --v5` 在构建时删掉 01 组每张都有的 basin 短语（让 `top-down view` 自己吸收浅盆底色的外观），保留 `curved basin rim visible` 作为可负面排除的逐图开关，并将 01 类别复制 ×2（24 → 48 条，共 125 条）。Notebook 与 README 已更新为 `inkwb_lora_v5`。
+
+**决策及原因**
+
+这正是此前定义的 v5 触发条件：训练过的词汇召不回想要的外观，修正必须下沉到数据层。这个纠缠是 v1 教训的反面——01 组每张图都命名容器，把整个类别的美学绑到了这些 token 上；取消命名应能把绑定转移到视角短语上。
+
+**证据**
+
+- [c 0.0 第五轮：容器占据画面](images/2026-07-09-atlas-c00-pass5-basin.jpg)
+- [`training/prepare_dataset.py`](../training/prepare_dataset.py) 的 `--v5` 构建模式；[`training/generate_atlas.py`](../training/generate_atlas.py) 的 `container` / `neg_full` 字段。
+
+**反思 / 下一步**
+
+用 notebook 训练 v5（`--trim --v5` 重建数据集，输出 `training/runs/inkwb_lora_v5`），然后重跑评估矩阵。验收聚焦一个问题：不带容器词时，`top-down view` 能否召回浅色底成团墨块的外观？其余各档已用 v4 词汇通过，预期不回退，由矩阵验证。
+
+---
+
+### 2026 年 7 月 9 日 — v5 训练完成：无容器词 caption，俯拍外观成功召回
+
+**意图 / 问题**
+
+在重建的数据集上训练 v5 LoRA（`--trim --v5`：01 组全部 caption 删除 basin 短语，01 类别复制 ×2 → 125 条），验证上一条日志的唯一验收问题。
+
+**已完成工作**
+
+- 以与 v3/v4 相同的超参（rank 16、lr 5e-5、12 epochs、不开随机翻转）在 125 条 v5 数据集上训练 `inkwb_lora_v5`。
+- Notebook 生成 seed 42/123/777 评估矩阵、多样性条和四组控制测试。
+- 评审：seed 42 矩阵中 diffusion 行呈现平视俯拍的大理石纹水面 + 实心倾注墨团，与三个侧视行明显区分——**prompt 中没有任何容器词**。这在 v4 中做不到（召回该外观必须用 basin 短语，而 basin 短语会召来盆、排水口、玻璃杯）。settling / disturbance / gathering 三行无回退：分层纱幕、雾状墨云、汇聚墨缕与 v4 表现一致，seed 多样性完好。phase 各列几乎相同，符合裁剪 caption 的预期（时间轴由密度短语承担）。
+- 生成侧同步更新：`generate_atlas.py` 默认权重切换为 v5；c 0.0 档删除 `container` 字段，`curved basin rim` 移入该档负面词（该短语在 caption 中按图保留，因此可负面排除）。
+
+**决策及原因**
+
+v1 教训的反向应用成立：取消命名一个类别中每张图共有的特征，会把它的外观转移到其余 token 上——这里是从 `inside a shallow pale basin` 转移到 `top-down view`。类别加权（×2）为 01 组外观提供了脱离容器锚点后仍足够的训练信号。
+
+**证据**
+
+- [v5 矩阵 seed 42](images/2026-07-09-inkwb-lora-v5-matrix-seed42.png)、[seed 123](images/2026-07-09-inkwb-lora-v5-matrix-seed123.png)、[seed 777](images/2026-07-09-inkwb-lora-v5-matrix-seed777.png)
+- [v5 多样性条](images/2026-07-09-inkwb-lora-v5-diversity.png)、[v5 预览总览](images/2026-07-09-inkwb-lora-v5-preview-sheet.png)
+- 权重与日志：`training/runs/inkwb_lora_v5/`（不提交）。
+
+**反思 / 下一步**
+
+最终验收用 atlas prompt 本身：`generate_atlas.py --bins 0.0 --seeds 12`（v5 墨团词汇）。c 0.0 通过后，六档全部用 v5 重新扫描以保证候选池风格一致，再人工筛选进 TouchDesigner 的 `latent_atlas` 文件夹。
+
+---
+
+### 2026 年 7 月 10 日 — v5 atlas 精修轮：c 0.0 方向确认，c 0.4 / 0.6 重建雾感词汇
+
+**意图 / 问题**
+
+用 v5 权重跑 atlas prompt，并按用户对源素材的解读逐档精修——其中包含一次对 01 组照片中灰色区域的关键纠正。
+
+**已完成工作**
+
+- **c 0.0 在 v5 下首跑以另一种方式失败**：沿用 v4 时代的长负面清单（细丝、纱膜、波纹……）加墨团形态词，把 v5 挤成了平面拼贴——碗、玻璃圈、甚至剪纸树叶纹。诊断：v4 时代的负面词压制了 v5 需要的纹理语言；每个权重版本都需要重新校准 prompt。
+- **c 0.0 方向确认**：用户从 v5 墨团批次中选出三张（浅盆状亮底上的实心成团墨块）作为"接近"。尝试过"边缘不规则 + 波纹"变体后回退——原版措辞更好。
+- **来自源素材的纠正**：01 组照片中墨团周围的灰色区域*不是*水波——是已经散开的一层层墨。形态词改为"半透明灰色墨层从中心被拨开似地一层层向外推开"，哑光均匀光线；镜面反光（光泽、眩光）加入该档负面词，同时为全部档位增加洁净约束（灰尘、斑点、污渍进入共享负面词）。
+- **c 0.4 雾感重建**：v5 重扫产出锐利光泽漩涡、毫无雾感。雾词现在打头（"soft murky clouds … dissolving into hazy gray mist, smoke-like billows with blurred diffuse edges"），锐利漩涡按档排除（"sharp crisp edges, glossy hard-edged swirls, thin defined filaments"）。
+- **c 0.6 重建为打散的雾**：打散的雾状碎片与漂散雾云打头，松散墨缕*刚开始*向中心汇聚——既加入"打散"质感，又保住向 c 0.8/1.0 的向心递进。
+- 全部精修批次使用全新 seed 段（1200+/3100+/4100+），旧批次保留供筛选时对比。
+
+**决策及原因**
+
+与 v4 轮相同的原则，现已跨权重版本验证：精确命名想要的结构、把相邻风格推入负面词——但为一个权重版本校准的负面词不能照搬给下一个版本。
+
+**证据**
+
+- [v5 c 0.0 墨团批次（用户选定方向）](images/2026-07-10-atlas-v5-c00-blob-batch.jpg)
+- [v5 c 0.4 雾感重建前：锐利光泽漩涡](images/2026-07-10-atlas-v5-c04-before-mist.jpg)
+- 各档最终措辞见 [`training/generate_atlas.py`](../training/generate_atlas.py)。
+
+**反思 / 下一步**
+
+生成精修后的 c 0.0 / 0.4 / 0.6 批次，对照参考评审，然后六档最终筛选进 TouchDesigner 的 `latent_atlas` 文件夹。
+
+---
+
+### 2026 年 7 月 10 日 — v5 全量重扫与中段雾感梯度；216 张候选池就绪待筛选
+
+**意图 / 问题**
+
+用 v5 权重和各档定稿措辞重建整个候选池，然后调校 c 轴中段——用户希望"雾"的质感随收敛程度递增，而不是只属于某一个档位。
+
+**已完成工作**
+
+- 清空全部旧候选图（v4/v5 混杂的各批次）；旧 manifest 存档为 `manifest_archive_2026-07-10.jsonl`，随后全量重扫：6 档 × 24 seed，v5 权重，每档独立 seed 段。
+- **雾感梯度，三轮迭代**：先围绕雾词汇重建 c 0.6 形态（烟雾状薄霭、形体消散、聚拢的团只隐约可见）——通过。随后按用户指示重新分配梯度：c 0.4 采用该雾感等级但保留搅动身份（"fog of ink churned up by stirring"），c 0.6 再推进一层（"整幅被浓灰墨雾笼罩……聚拢的团只是雾深处一个模糊的影子"，负面词加 "clear outlines"）。轴的中段现在读作：搅起的雾（0.4）→ 更浓的雾与聚拢的影子（0.6）→ 清晰的收敛（0.8）。
+- 每轮迭代使用全新 seed 段，多个版本并存供筛选对比：c 0.4 共 48 张（锐利版+雾版），c 0.6 共 72 张（结构版+雾版+浓雾版）。
+- 拼合六张带标题的选图板（共 216 张候选）用于最终人工挑选。
+- 同期：三次拍摄的六张现场布置照片（6 月 22/26/29 日）放入 `docs/images/dataset_record/`，拍摄日志的证据链接全部补全。
+
+**决策及原因**
+
+雾被当作**轴属性**而非档位属性处理：雾的浓度从 c 0.4 到 c 0.6 单调递增，呼应装置叙事——扰动先把墨溶解为雾，系统才开始重新聚拢。被取代的批次不覆盖而是保留（靠新 seed 段区分），使筛选变成跨 prompt 版本的比较，而不只是跨 seed 的比较。
+
+**证据**
+
+- [c 0.6 雾感重建，首个通过批次](images/2026-07-10-atlas-c06-fog1.jpg)
+- [c 0.4 采用同级雾感](images/2026-07-10-atlas-c04-fog.jpg)
+- [c 0.6 再加一层雾](images/2026-07-10-atlas-c06-fog2.jpg)
+- 各档最终措辞见 [`training/generate_atlas.py`](../training/generate_atlas.py)；完整生成记录见 `training/atlas_candidates/manifest.jsonl`。
+
+**反思 / 下一步**
+
+从 216 张候选池中六档人工挑选，选图拷入 TouchDesigner 的 `latent_atlas` 文件夹，接通 c 值导航。
+
+---
+
+### 2026 年 7 月 10 日 — c 轴扩展到八档：一次失败的循环、一场"不是黑度"的雾、以及全面转向训练原句
+
+**意图 / 问题**
+
+继续对照拍摄参考打磨 c 轴中段，并测试把轴闭合成循环的想法。
+
+**已完成工作**
+
+- **循环尝试的失败很有启发**：c 1.2"再释放"档（沉积墨团重新溶解回扩散）用了 diffusion 状态词 + 侧视——训练数据里不存在的组合，模型崩塌成水面倒影插画风。删除该档；计划从"循环"改为**雾之弧线**：新增 c 0.7 "fog_receding"，把全雾接回清晰的聚拢状态。
+- **局部清洗重建**：混杂多版本的文件夹（c 0.4、c 0.6）清空重扫，每个档位文件夹只保留一个 prompt 版本；在搅动雾与全雾之间新增 c 0.5 "fog_deepening"，c 轴扩展为八档（0.0、0.2、0.4、0.5、0.6、0.7、0.8、1.0）。
+- **Prompt 全面转向训练原句**（把 c 1.0 的经验推广到更多档）：c 0.0 逐字使用 01 组 caption 原句（"a large rounded ink mass centered on a pale field with a soft halo"、"soft gray washes"、"scalloped lobed edge"）；c 0.6 先后借用 03 组最浓雾帧的原句（"cloudy agitated murk"、"hazy churned billows glowing faintly"，再到 final 阶段的 "dense murky darkness"、"near-black churned murk"）。
+- **决定性的纠正来自用户**：无论措辞多"黑"，c 0.6 的雾始终显得比 c 0.4 轻——因为意图从来不是黑度：*0.6 的雾是墨丝被打散成颗粒*。形态词改写为颗粒云（"ink strands broken apart into countless distinct fine black particles, each grain sharply visible"）悬浮于雾状背景之中——锐度给颗粒、柔度给氛围。这需要该档专属负面词覆盖：共享负面词里禁着 dust/specks/grain（早前为洁净加的），恰好会掐死这种质地。
+
+**决策及原因**
+
+本轮沉淀两条工作法则：prompt 用模型真正训练过的 caption 原句拼装时召回最强；轴的语义要用**物质状态**表述（颗粒、层、晕），不要用**形容词强度**（更重、更黑）——强度词很快饱和，物质词不会。
+
+**证据**
+
+- [c 1.2 循环尝试：崩塌为图形插画](images/2026-07-10-atlas-c12-loop-failed.jpg)
+- [c 0.7 雾退聚现首批](images/2026-07-10-atlas-c07-fog-receding.jpg)
+- [c 0.6 "更黑"死胡同期间（murky darkness 措辞）](images/2026-07-10-atlas-c06-murky-darkness.jpg)
+- 八档最终措辞见 [`training/generate_atlas.py`](../training/generate_atlas.py)；每次尝试均记录于 `training/atlas_candidates/manifest.jsonl`。
+
+**反思 / 下一步**
+
+生成颗粒雾版 c 0.6 与新档 c 0.5，并排评审四级雾弧（0.4 → 0.5 → 0.6 → 0.7），然后八档全部人工筛选进 TouchDesigner 的 `latent_atlas` 文件夹。
+
+---
+
 ## 当前验证清单
 
 仓库能够证明代码和版本历史。下一次完整系统测试应补充以下运行证据：
