@@ -31,8 +31,8 @@ def coverage(image) -> float:
     return round(sum(hist[:DARK_THRESHOLD]) / sum(hist), 3)
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_LORA = ROOT / "training" / "runs" / "inkwb_lora_v5"
-DEFAULT_OUT = ROOT / "training" / "atlas_candidates"
+DEFAULT_LORA = ROOT / "training" / "runs" / "inkwb_lora_v6"
+DEFAULT_OUT = ROOT / "training" / "atlas_candidates_v6"
 MODEL_ID = "runwayml/stable-diffusion-v1-5"
 
 TRIGGER = "inkwb"
@@ -52,18 +52,21 @@ BINS = [
      "state": "black ink diffusing freely across still water", "process": "diffusion",
      "phase": "developing", "density": "ink spreading across part of the frame",
      "viewpoint": "top-down view",
-     # Rebuilt from trained 01 caption phrases (v5 build removes the basin
-     # phrase, so these recall without container words): 6-2 "a large rounded
-     # ink mass centered on a pale field with a soft halo", 5-2 "soft gray
-     # washes", 4-2 "scalloped lobed edge". Gray = dispersed ink layers.
-     "morph": ("a large rounded ink mass centered on a pale field with a soft halo, "
-               "soft gray washes of dispersed ink spreading around it, "
-               "a scalloped lobed edge advancing slowly over the pale water"),
-     "neg_full": ("curved basin rim, tank walls, bubbles, table edge, paper texture, ink on paper, photo border, "
-                  "dark frame edges, marbled paper texture, paint marbling, "
-                  "thin ink threads, wispy tendrils, translucent veils, bubble membranes, water droplet splash, "
-                  "dust, specks, dirt particles, grainy noise, stains, smudges, cluttered textured background, "
-                  "specular highlights, glossy reflections, shiny water surface, light glare, wet glossy sheen"),
+     # v6 acceptance: the bare "solid blob on a clean even background" wording
+     # produced unstable backgrounds (empty gray fields, trays, fingerprint
+     # rings). Rolled back toward the original curved-texture look, now
+     # assembled from the v6 caption phrases themselves: the gray layers ARE
+     # ink washes spreading outward (user: 灰色部分是墨散开的层,不是水波).
+     "morph": ("a solid opaque black ink blob with a bumpy lobed edge, "
+               "surrounded by curved flowing soft gray ink washes spreading outward layer by layer, "
+               "on a clean plain pale water surface, clear even background around the ink"),
+     "neg_full": ("curved basin rim, circular rim, ring, bowl, cup, glass, flower shape, petals, radial pattern, "
+                  "tank walls, bubbles, table edge, paper texture, ink on paper, photo border, dark frame edges, "
+                  "marbled paper texture, paint marbling, fingerprint pattern, concentric circles, tray, "
+                  "textured background, rough surface, sand texture, fabric texture, "
+                  "thin ink threads, wispy tendrils, "
+                  "bubble membranes, water droplet splash, dust, specks, stains, smudges, "
+                  "specular highlights, glossy reflections, light glare"),
      "photo": False,
      "water": False},
     # Settling sits at c 0.2 (swapped with disturbance on 9 July 2026): the 02

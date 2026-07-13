@@ -61,6 +61,8 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--trim", action="store_true",
                     help="drop phase phrases and style tags from captions (v4 experiment)")
+    ap.add_argument("--trim-style", action="store_true",
+                    help="v6: drop only the constant style tags, KEEP the phase phrases (temporal axis)")
     ap.add_argument("--v5", action="store_true",
                     help="v5: drop the shared basin phrase from 01 captions and duplicate the 01 category ×2")
     args = ap.parse_args()
@@ -78,6 +80,8 @@ def main() -> None:
                 raise SystemExit(f"Caption does not start with trigger word: {txt}")
             if args.trim:
                 caption = trim_caption(caption)
+            elif args.trim_style:
+                caption = ", ".join(p for p in caption.split(", ") if p not in STYLE_PARTS)
             if args.v5 and cat == "01_pure_diffusion":
                 caption = ", ".join(p for p in caption.split(", ") if p != V5_DROP_01)
 
