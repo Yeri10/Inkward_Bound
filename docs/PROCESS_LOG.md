@@ -813,6 +813,94 @@ Generate the granular-fog c 0.6 and the new c 0.5, review the four-step fog arc 
 
 ---
 
+### 10 July 2026 — Starting the v6 training: an img2img control experiment and a caption audit locate the ceiling in the data, not the prompts
+
+**Intention / question**
+
+The c 0.0 top-down diffusion bin kept failing the "natural" test through every prompt strategy on v5 — trained caption phrases included, which had worked for every other bin. Before committing to another training run, isolate where the failure actually lives.
+
+**Work completed**
+
+- **Control experiment**: an img2img variant generator was built (real 01 photographs as init images, v5 LoRA re-rendering at strength 0.5–0.65). Its outputs looked immediately natural — solid irregular ink pools on plain water — while text-to-image kept producing rings, bowls, cups and petal shapes from the same weights and equivalent vocabulary. Conclusion: the model's *texture* knowledge is sufficient; its *composition* knowledge for this viewpoint is not recallable through text. The experiment was then removed from the pipeline (the project wants the pre-baked atlas generated from text navigation, not photo-anchored variants).
+- **Caption audit of 01 and 03** (both categories exported with Chinese translations for review): the failure has legible causes in the data. In 01, `marbled` appears six times — feeding exactly the paper-marbling drift fought at generation time — and the pooled-blob frames never say *solid, opaque, black*, so the concept "one solid pooled mass" was never named for the model. In 03, the fog vocabulary is rich but the granular quality (ink strands broken into particles) that c 0.6 needs is absent from all 24 captions — the model cannot recall a texture it was never taught to name.
+- **Temporal keywords**: the phase phrases (`early/developing/advanced/final phase of …`) were confirmed intact in the source captions — v4/v5 only dropped them at dataset-build time (`--trim`). v6 will keep them, restoring the temporal axis to the trained vocabulary.
+
+**Decision and reason**
+
+Train v6 with data-level fixes, per the standing decision rule (retrain only when trained vocabulary cannot recall the desired look): rewrite the 01 morphology lines (`marbled` → physical wash/gradation language; name the solid opaque blob where present), add granular-particle wording to the 03 frames that show it, rebuild the dataset keeping phase phrases while still trimming the constant style tags, and keep the v5 gains (basin phrase removed, 01 weighted ×2).
+
+**Evidence**
+
+- [c 0.0 text-to-image on v5: rings, bowls and petals](images/2026-07-10-atlas-c00-rings-petals.jpg)
+- [img2img control from real 01 photographs: immediately natural](images/2026-07-10-atlas-c00-img2img-comparison.jpg)
+- Caption audit source: `ink_dataset/01_pure_diffusion/*.txt`, `ink_dataset/03_disturbed_ink/*.txt`.
+
+**Reflection / next step**
+
+Revise the 01/03 captions (granular frames to be identified image by image), extend `prepare_dataset.py` with a style-only trim, train `inkwb_lora_v6` through the notebook, and re-run the c 0.0 / 0.6 acceptance tests first.
+
+---
+
+### 10 July 2026 — v6 trained: states hold, the temporal axis returns as a gentle nudge, real acceptance moves to the atlas prompts
+
+**Intention / question**
+
+`inkwb_lora_v6` finished training on the revised dataset (125 records: `marbled` purged from 01, the solid opaque blob named where present, granular-particle wording added to seven 03 frames, phase phrases kept, style tags trimmed, 01 still weighted ×2). First read of the standard eval matrices: did the caption surgery change what the model can say, and did restoring the temporal keywords buy back a usable axis?
+
+**Work completed**
+
+- Ran the notebook's full eval suite: baseline pairs, state control, phase control, viewpoint control, and the state × phase matrices at seeds 42 / 123 / 777.
+- **State control still separates cleanly** — diffusion's membrane-like spread, settling's hanging layers, disturbance's burst, gathering's contraction each read as distinct materials at the same seed. The caption rewrite did not destabilise the four trained states.
+- **Phase control is back, but as a gentle nudge rather than a strong dial**: at seed 42 the gathering row condenses slightly from early to final, and diffusion's advanced column pulls into a closed boundary; at seeds 123 and 777 the four phase columns are nearly identical. Expected — the phase phrase is one short clause in every caption, so it biases rather than steers.
+- Noted the limit of this eval: the test prompts are short and carry none of the atlas machinery (density phrases, morphology lines, per-bin negatives). Whether c 0.0 now produces a natural pooled mass, and whether c 0.6 can recall `fine grainy ink particles` as a trained phrase, cannot be judged from these sheets.
+- Switched `training/generate_atlas.py` `DEFAULT_LORA` to `inkwb_lora_v6`.
+
+**Decision and reason**
+
+Do not accept or reject v6 on the eval matrices. The two questions v6 exists to answer are compositional recall questions, and only the full atlas prompts test them — so acceptance moves directly to a targeted run of the two problem bins (`--bins 0.0 0.6`) on fresh seeds before any full re-sweep.
+
+**Evidence**
+
+- [v6 baseline pair](images/2026-07-10-v6-eval-baseline.jpg)
+- [v6 state control: four states at one seed](images/2026-07-10-v6-eval-state-control.jpg)
+- [v6 phase control: early → final on gathering](images/2026-07-10-v6-eval-phase-control.jpg)
+- [v6 state × phase matrix, seed 42](images/2026-07-10-v6-eval-matrix-seed42.jpg)
+
+**Reflection / next step**
+
+The eval sheets confirm nothing broke; they cannot confirm what was fixed. Run the c 0.0 / c 0.6 acceptance batch on v6, judge against the two failure modes that forced the retrain (rings-bowls-petals at 0.0, unreachable granularity at 0.6), then decide between full re-sweep and prompt-side adjustment.
+
+---
+
+### 12–13 July 2026 — v6 atlas acceptance: the full sweep runs into a fresh folder, c 0.0 fails once more, and the curved-texture rollback finally lands
+
+**Intention / question**
+
+With v6 trained, run the real acceptance: the full eight-bin sweep on the atlas prompts (the eval matrices had already shown that short test prompts prove nothing about compositional recall). The two questions on trial: does c 0.0 now produce a natural top-down ink pool, and does c 0.6 recall the newly trained granular vocabulary?
+
+**Work completed**
+
+- Redirected atlas output to a fresh `training/atlas_candidates_v6/` folder (gitignored) so v6 generations never mix with the v5 pool, and ran the full sweep: 8 bins × 24 seeds from seed 7000, per-bin offsets.
+- **c 0.0, first v6 round (seeds 7000+): failed.** The "solid opaque blob on a clean even background" wording — written to chase the img2img reference — produced solid blobs but wildly unstable surroundings: empty gray fields, glossy trays, fingerprint-like concentric rings, rectangular frames. The composition knowledge v6 was meant to unlock recalled the mass but not a believable water surface around it.
+- **Direction change (user):** rather than pushing the isolated-blob ideal further, return to the earliest accepted look — the ink mass surrounded by curved flowing textures — with one clarification: the curved gray washes belong to the ink, and the water surface behind them stays clean.
+- Rewrote the c 0.0 morphology from v6-trained caption phrases verbatim (`solid opaque black ink blob with a bumpy lobed edge` + `soft gray washes` + `gray gradations` + clean pale water); negatives updated for the new failure inventory (fingerprint pattern, concentric circles, tray, textured background) while dropping the veil ban that had been suppressing the wanted washes.
+- Deleted the failed 24 and their manifest rows, regenerated on seeds 8000+. **Second round: accepted direction.** Most of the sheet reads as natural ink in water with curved wash textures; failures shrank to a handful (two near-empty frames, two dish-rim swirls, one symmetric artifact).
+
+**Decision and reason**
+
+c 0.0 keeps the curved-texture composition as its identity. Two rounds of evidence show the "isolated blob on clean background" ideal fights the dataset — the training photographs themselves carry flowing gray washes around every mass, so prompts that ban the washes leave the background undefined and the model improvises trays and rings. Building the prompt from what the captions actually say, rather than from an imagined cleaner image, is the same verbatim-recall rule that fixed every other bin.
+
+**Evidence**
+
+- [c 0.0 v6 first round: solid blobs, unstable backgrounds](images/2026-07-13-v6-c00-blob-unstable.jpg)
+- [c 0.0 v6 second round: curved-texture rollback, seeds 8000+](images/2026-07-13-v6-c00-curved-texture-round2.jpg)
+
+**Reflection / next step**
+
+v6 did move the bin — solid opaque masses now appear on command, which v5 never managed — but the lesson repeats at a higher level: recall works phrase by phrase, and a composition assembled from trained phrases still needs *all* of its parts named, background included. Next: per-bin seed picks across all eight bins, the TouchDesigner `latent_atlas` folder structure, and the atlas-to-TD integration (crossfade navigation between adjacent bins).
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:
