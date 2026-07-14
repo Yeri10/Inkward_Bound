@@ -5,3 +5,5 @@ training/dataset/
 training/runs/
 training/atlas_candidates/
 training/atlas_candidates_v6/
+training/atlas_candidates_v7/
+training/__pycache__/

@@ -31,8 +31,8 @@ def coverage(image) -> float:
     return round(sum(hist[:DARK_THRESHOLD]) / sum(hist), 3)
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_LORA = ROOT / "training" / "runs" / "inkwb_lora_v6"
-DEFAULT_OUT = ROOT / "training" / "atlas_candidates_v6"
+DEFAULT_LORA = ROOT / "training" / "runs" / "inkwb_lora_v7"
+DEFAULT_OUT = ROOT / "training" / "atlas_candidates_v7"
 MODEL_ID = "runwayml/stable-diffusion-v1-5"
 
 TRIGGER = "inkwb"
@@ -57,6 +57,8 @@ BINS = [
      # rings). Rolled back toward the original curved-texture look, now
      # assembled from the v6 caption phrases themselves: the gray layers ARE
      # ink washes spreading outward (user: 灰色部分是墨散开的层,不是水波).
+     # "single soft wash" variant was tried (less layering) and rolled back:
+     # the layered washes read better. This wording is final per user review.
      "morph": ("a solid opaque black ink blob with a bumpy lobed edge, "
                "surrounded by curved flowing soft gray ink washes spreading outward layer by layer, "
                "on a clean plain pale water surface, clear even background around the ink"),
@@ -111,7 +113,9 @@ BINS = [
      # frames: disturbance state + "ink almost filling the entire frame" + their
      # exact murk/billow phrases. The gathering axis re-emerges at c 0.7/0.8.
      "state": "turbulent agitated black ink in water", "process": "disturbance",
-     "phase": "developing", "density": "ink almost filling the entire frame",
+     # v7 user review: more fine grain, heavier fog — pushed to the late
+     # disturbance stages (advanced/final wording from the 03 captions).
+     "phase": "advanced", "density": "ink almost filling the entire frame",
      "viewpoint": "side view",
      # Trained 03 fog phrases combined with the earlier fog wording that the
      # user liked: murk/billow recall + dense veil / dissolving-mist language.
@@ -123,9 +127,12 @@ BINS = [
      # Granular AND misty, grains crisp: distinct sharply visible particles
      # suspended in a soft fog atmosphere ("blurred atmosphere" was softening
      # the grains too, so sharpness applies to particles, fog to background).
-     "morph": ("ink strands broken apart into countless distinct fine black particles, "
-               "each tiny ink grain sharply visible, a granular cloud suspended in soft gray mist, "
-               "crisp specks drifting against a hazy fog background filling the frame, no strands, no solid shapes"),
+     # v7: rebuilt verbatim from the newly trained 03 process phrases (x-2 + x-3),
+     # which name exactly the wanted look — tiny particles, fine grain mist.
+     "morph": ("broken strands dissolving into countless tiny ink particles, "
+               "fine ink particles dispersed evenly into a hazy grain fog filling the frame, "
+               "deepening toward near-uniform dark murk, faint fine grain texture everywhere, "
+               "no strands, no solid shapes"),
      "neg_full": ("tank walls, basin rim, bubbles, table edge, paper texture, ink on paper, photo border, "
                   "dark frame edges, sharp crisp edges, glossy hard-edged swirls, thin defined filaments, "
                   "high gloss, solid black shapes, high contrast silhouettes, clear outlines, "
@@ -216,6 +223,30 @@ def main() -> None:
     bins = [b for b in BINS if not args.bins or b["c"] in args.bins]
     total = len(bins) * args.seeds
     done = 0
+
+    # Seed collision guard (added after c_0.0 rerun at --seed-start 8000
+    # silently collided with c_0.2's offset segment from the full sweep):
+    # a seed may only ever belong to one bin, otherwise the shared initial
+    # noise anchors the composition across bins. Stale manifest rows whose
+    # image no longer exists on disk are dropped while checking.
+    existing = []
+    if manifest.exists():
+        for line in manifest.read_text(encoding="utf-8").splitlines():
+            row = json.loads(line)
+            if (args.out / row["file"]).exists():
+                existing.append(row)
+        manifest.write_text(
+            "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in existing),
+            encoding="utf-8")
+    seed_owner = {r["seed"]: r["c"] for r in existing}
+    for b in bins:
+        offset = args.seed_start + BINS.index(b) * 1000
+        for seed in range(offset, offset + args.seeds):
+            owner = seed_owner.get(seed)
+            if owner is not None and owner != b["c"]:
+                raise SystemExit(
+                    f"Seed collision: seed {seed} (bin c_{b['c']}) already belongs "
+                    f"to bin c_{owner} in {manifest}. Pick a different --seed-start.")
 
     with manifest.open("a", encoding="utf-8") as mf:
         for b in bins:
