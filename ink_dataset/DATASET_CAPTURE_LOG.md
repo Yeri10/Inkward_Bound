@@ -107,10 +107,23 @@ The gathering material comes from two production methods:
 
 | Series | Source | Method |
 | --- | --- | --- |
-| 1–3 | Pipette-drawn | Ink physically drawn together by suction with a pipette during capture |
-| 4–8 | Reversed video | Frames extracted from diffusion videos played in reverse |
+| 1–4 | Pipette-drawn | Ink physically drawn back together by suction with a pipette; frames follow the re-gathering timeline (series 3 and 4 have only two frames because those runs re-gathered quickly) |
+| 5–8 | Reversed video | Frames extracted from diffusion videos played in reverse; frame numbering follows the reversed playback |
 
-The reversal is a deliberate production decision, not a capture artefact: playing diffusion backwards produces the condensing motion that visualises *temporary return*, echoing the work's premise that the return of consciousness is a temporary, constructed state. For still-image LoRA training the two sources are visually equivalent and are not distinguished in the captions; for the later video atlas the reversed clips are the source of condensing motion and must remain traceable.
+*(Series split corrected from 1–3 / 4–8 to 1–4 / 5–8 on 13 July 2026 during the v7 caption revision.)*
+
+The reversal is a deliberate production decision, not a capture artefact: playing diffusion backwards produces the condensing motion that visualises *temporary return*, echoing the work's premise that the return of consciousness is a temporary, constructed state. Since the v7 caption revision (13 July 2026) the two sources are distinguished in the captions as two visual narratives: the pipette series describe dispersed ink sinking back into a settled mound, the reversed series describe spread ink retracting inward and upward into a compact suspended mass; for the later video atlas the reversed clips are the source of condensing motion and must remain traceable.
+
+### Production method per category (recorded 13 July 2026, v7 caption revision)
+
+The v7 captions encode each category as a time process. The underlying physical production, as carried out during the capture sessions:
+
+| Category | Viewpoint | Physical process | Temporal arc written into the captions |
+| --- | --- | --- | --- |
+| 01_pure_diffusion | Top-down | Ink poured into still water in a shallow pale basin | Poured blob pooling → curved gray washes spreading layer by layer → washes overlapping → merged dark sheet |
+| 02_layered_ink | Side | Ink injected into the tank, left to sink naturally (series 1 used a larger injection, filling the frame by its final phase) | Plume drifting down (no strands yet) → veils sinking, fine strands appearing → veils and strands layering → settled layers over a dark depth, with rounded droplets alongside in series 2–6 |
+| 03_disturbed_ink | Side | Settled ink broken apart by stirring with chopsticks; frames follow the aftermath | Strands torn apart into fragments → fragments dissolving into tiny particles, a fine grain mist → particles dispersing into a hazy grain fog → near-uniform dark murk |
+| 04_gathering_ink | Side | Two methods, see source note above (pipette suction / reversed video) | Sink-back into a settled mound (series 1–4) / retraction into a compact suspended mass (series 5–8) |
 
 ### 1 July 2026 — Contact-sheet assembly
 
