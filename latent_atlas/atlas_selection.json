@@ -1,0 +1,485 @@
+{
+ "created": "2026-07-13",
+ "weights": "inkwb_lora_v7",
+ "note": "c_0.8 mapping 48xxx->46xxx confirmed by author; 46019 removed on review",
+ "bins": {
+  "0.0": [
+   {
+    "file": "c_0.0/01_seed40000.png",
+    "seed": 40000,
+    "source": "c_0.0/autonomous_diffusion_seed40000.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink diffusing freely across still water, top-down view, ink spreading across part of the frame, a solid opaque black ink blob with a bumpy lobed edge, surrounded by curved flowing soft gray ink washes spreading outward layer by layer, on a clean plain pale water surface, clear even background around the ink"
+   },
+   {
+    "file": "c_0.0/02_seed40001.png",
+    "seed": 40001,
+    "source": "c_0.0/autonomous_diffusion_seed40001.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink diffusing freely across still water, top-down view, ink spreading across part of the frame, a solid opaque black ink blob with a bumpy lobed edge, surrounded by curved flowing soft gray ink washes spreading outward layer by layer, on a clean plain pale water surface, clear even background around the ink"
+   },
+   {
+    "file": "c_0.0/03_seed40004.png",
+    "seed": 40004,
+    "source": "c_0.0/autonomous_diffusion_seed40004.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink diffusing freely across still water, top-down view, ink spreading across part of the frame, a solid opaque black ink blob with a bumpy lobed edge, surrounded by curved flowing soft gray ink washes spreading outward layer by layer, on a clean plain pale water surface, clear even background around the ink"
+   },
+   {
+    "file": "c_0.0/04_seed40006.png",
+    "seed": 40006,
+    "source": "c_0.0/autonomous_diffusion_seed40006.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink diffusing freely across still water, top-down view, ink spreading across part of the frame, a solid opaque black ink blob with a bumpy lobed edge, surrounded by curved flowing soft gray ink washes spreading outward layer by layer, on a clean plain pale water surface, clear even background around the ink"
+   },
+   {
+    "file": "c_0.0/05_seed40007.png",
+    "seed": 40007,
+    "source": "c_0.0/autonomous_diffusion_seed40007.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink diffusing freely across still water, top-down view, ink spreading across part of the frame, a solid opaque black ink blob with a bumpy lobed edge, surrounded by curved flowing soft gray ink washes spreading outward layer by layer, on a clean plain pale water surface, clear even background around the ink"
+   },
+   {
+    "file": "c_0.0/06_seed40018.png",
+    "seed": 40018,
+    "source": "c_0.0/autonomous_diffusion_seed40018.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink diffusing freely across still water, top-down view, ink spreading across part of the frame, a solid opaque black ink blob with a bumpy lobed edge, surrounded by curved flowing soft gray ink washes spreading outward layer by layer, on a clean plain pale water surface, clear even background around the ink"
+   },
+   {
+    "file": "c_0.0/07_seed40020.png",
+    "seed": 40020,
+    "source": "c_0.0/autonomous_diffusion_seed40020.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink diffusing freely across still water, top-down view, ink spreading across part of the frame, a solid opaque black ink blob with a bumpy lobed edge, surrounded by curved flowing soft gray ink washes spreading outward layer by layer, on a clean plain pale water surface, clear even background around the ink"
+   },
+   {
+    "file": "c_0.0/08_seed40021.png",
+    "seed": 40021,
+    "source": "c_0.0/autonomous_diffusion_seed40021.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink diffusing freely across still water, top-down view, ink spreading across part of the frame, a solid opaque black ink blob with a bumpy lobed edge, surrounded by curved flowing soft gray ink washes spreading outward layer by layer, on a clean plain pale water surface, clear even background around the ink"
+   }
+  ],
+  "0.2": [
+   {
+    "file": "c_0.2/01_seed41000.png",
+    "seed": 41000,
+    "source": "c_0.2/early_search_seed41000.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, layered black ink suspended in water, side view, suspended in clear water, dense ink covering much of the frame, a dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers through clear water toward a settled dark base, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.2/02_seed41001.png",
+    "seed": 41001,
+    "source": "c_0.2/early_search_seed41001.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, layered black ink suspended in water, side view, suspended in clear water, dense ink covering much of the frame, a dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers through clear water toward a settled dark base, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.2/03_seed41003.png",
+    "seed": 41003,
+    "source": "c_0.2/early_search_seed41003.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, layered black ink suspended in water, side view, suspended in clear water, dense ink covering much of the frame, a dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers through clear water toward a settled dark base, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.2/04_seed41009.png",
+    "seed": 41009,
+    "source": "c_0.2/early_search_seed41009.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, layered black ink suspended in water, side view, suspended in clear water, dense ink covering much of the frame, a dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers through clear water toward a settled dark base, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.2/05_seed41011.png",
+    "seed": 41011,
+    "source": "c_0.2/early_search_seed41011.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, layered black ink suspended in water, side view, suspended in clear water, dense ink covering much of the frame, a dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers through clear water toward a settled dark base, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.2/06_seed41012.png",
+    "seed": 41012,
+    "source": "c_0.2/early_search_seed41012.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, layered black ink suspended in water, side view, suspended in clear water, dense ink covering much of the frame, a dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers through clear water toward a settled dark base, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.2/07_seed41014.png",
+    "seed": 41014,
+    "source": "c_0.2/early_search_seed41014.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, layered black ink suspended in water, side view, suspended in clear water, dense ink covering much of the frame, a dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers through clear water toward a settled dark base, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.2/08_seed41023.png",
+    "seed": 41023,
+    "source": "c_0.2/early_search_seed41023.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, layered black ink suspended in water, side view, suspended in clear water, dense ink covering much of the frame, a dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers through clear water toward a settled dark base, macro photograph, wet glossy ink, soft light"
+   }
+  ],
+  "0.4": [
+   {
+    "file": "c_0.4/01_seed42003.png",
+    "seed": 42003,
+    "source": "c_0.4/human_disturbance_seed42003.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink spreading across part of the frame, dense gray fog of ink churned up by stirring filling the frame, thick smoke-like haze, forms dissolving into soft mist, only faint churned shadows moving in the fog"
+   },
+   {
+    "file": "c_0.4/02_seed42005.png",
+    "seed": 42005,
+    "source": "c_0.4/human_disturbance_seed42005.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink spreading across part of the frame, dense gray fog of ink churned up by stirring filling the frame, thick smoke-like haze, forms dissolving into soft mist, only faint churned shadows moving in the fog"
+   },
+   {
+    "file": "c_0.4/03_seed42006.png",
+    "seed": 42006,
+    "source": "c_0.4/human_disturbance_seed42006.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink spreading across part of the frame, dense gray fog of ink churned up by stirring filling the frame, thick smoke-like haze, forms dissolving into soft mist, only faint churned shadows moving in the fog"
+   },
+   {
+    "file": "c_0.4/04_seed42008.png",
+    "seed": 42008,
+    "source": "c_0.4/human_disturbance_seed42008.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink spreading across part of the frame, dense gray fog of ink churned up by stirring filling the frame, thick smoke-like haze, forms dissolving into soft mist, only faint churned shadows moving in the fog"
+   },
+   {
+    "file": "c_0.4/05_seed42009.png",
+    "seed": 42009,
+    "source": "c_0.4/human_disturbance_seed42009.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink spreading across part of the frame, dense gray fog of ink churned up by stirring filling the frame, thick smoke-like haze, forms dissolving into soft mist, only faint churned shadows moving in the fog"
+   },
+   {
+    "file": "c_0.4/06_seed42016.png",
+    "seed": 42016,
+    "source": "c_0.4/human_disturbance_seed42016.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink spreading across part of the frame, dense gray fog of ink churned up by stirring filling the frame, thick smoke-like haze, forms dissolving into soft mist, only faint churned shadows moving in the fog"
+   },
+   {
+    "file": "c_0.4/07_seed42020.png",
+    "seed": 42020,
+    "source": "c_0.4/human_disturbance_seed42020.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink spreading across part of the frame, dense gray fog of ink churned up by stirring filling the frame, thick smoke-like haze, forms dissolving into soft mist, only faint churned shadows moving in the fog"
+   },
+   {
+    "file": "c_0.4/08_seed42023.png",
+    "seed": 42023,
+    "source": "c_0.4/human_disturbance_seed42023.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink spreading across part of the frame, dense gray fog of ink churned up by stirring filling the frame, thick smoke-like haze, forms dissolving into soft mist, only faint churned shadows moving in the fog"
+   }
+  ],
+  "0.5": [
+   {
+    "file": "c_0.5/01_seed43001.png",
+    "seed": 43001,
+    "source": "c_0.5/fog_deepening_seed43001.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, heavy ink covering most of the frame, thick gray ink fog churned through the water covering most of the frame, smoke-like haze deepening, hazy billows glowing softly, forms dissolving into mist, only small pale openings remaining"
+   },
+   {
+    "file": "c_0.5/02_seed43002.png",
+    "seed": 43002,
+    "source": "c_0.5/fog_deepening_seed43002.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, heavy ink covering most of the frame, thick gray ink fog churned through the water covering most of the frame, smoke-like haze deepening, hazy billows glowing softly, forms dissolving into mist, only small pale openings remaining"
+   },
+   {
+    "file": "c_0.5/03_seed43007.png",
+    "seed": 43007,
+    "source": "c_0.5/fog_deepening_seed43007.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, heavy ink covering most of the frame, thick gray ink fog churned through the water covering most of the frame, smoke-like haze deepening, hazy billows glowing softly, forms dissolving into mist, only small pale openings remaining"
+   },
+   {
+    "file": "c_0.5/04_seed43009.png",
+    "seed": 43009,
+    "source": "c_0.5/fog_deepening_seed43009.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, heavy ink covering most of the frame, thick gray ink fog churned through the water covering most of the frame, smoke-like haze deepening, hazy billows glowing softly, forms dissolving into mist, only small pale openings remaining"
+   },
+   {
+    "file": "c_0.5/05_seed43010.png",
+    "seed": 43010,
+    "source": "c_0.5/fog_deepening_seed43010.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, heavy ink covering most of the frame, thick gray ink fog churned through the water covering most of the frame, smoke-like haze deepening, hazy billows glowing softly, forms dissolving into mist, only small pale openings remaining"
+   },
+   {
+    "file": "c_0.5/06_seed43015.png",
+    "seed": 43015,
+    "source": "c_0.5/fog_deepening_seed43015.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, heavy ink covering most of the frame, thick gray ink fog churned through the water covering most of the frame, smoke-like haze deepening, hazy billows glowing softly, forms dissolving into mist, only small pale openings remaining"
+   },
+   {
+    "file": "c_0.5/07_seed43017.png",
+    "seed": 43017,
+    "source": "c_0.5/fog_deepening_seed43017.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, heavy ink covering most of the frame, thick gray ink fog churned through the water covering most of the frame, smoke-like haze deepening, hazy billows glowing softly, forms dissolving into mist, only small pale openings remaining"
+   },
+   {
+    "file": "c_0.5/08_seed43020.png",
+    "seed": 43020,
+    "source": "c_0.5/fog_deepening_seed43020.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, heavy ink covering most of the frame, thick gray ink fog churned through the water covering most of the frame, smoke-like haze deepening, hazy billows glowing softly, forms dissolving into mist, only small pale openings remaining"
+   },
+   {
+    "file": "c_0.5/09_seed43022.png",
+    "seed": 43022,
+    "source": "c_0.5/fog_deepening_seed43022.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, heavy ink covering most of the frame, thick gray ink fog churned through the water covering most of the frame, smoke-like haze deepening, hazy billows glowing softly, forms dissolving into mist, only small pale openings remaining"
+   }
+  ],
+  "0.6": [
+   {
+    "file": "c_0.6/01_seed44000.png",
+    "seed": 44000,
+    "source": "c_0.6/latent_search_seed44000.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink almost filling the entire frame, broken strands dissolving into countless tiny ink particles, a fine grain mist spreading, fine ink particles dispersed evenly into a hazy grain fog filling the frame, no strands, no solid shapes"
+   },
+   {
+    "file": "c_0.6/02_seed44001.png",
+    "seed": 44001,
+    "source": "c_0.6/latent_search_seed44001.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink almost filling the entire frame, broken strands dissolving into countless tiny ink particles, a fine grain mist spreading, fine ink particles dispersed evenly into a hazy grain fog filling the frame, no strands, no solid shapes"
+   },
+   {
+    "file": "c_0.6/03_seed44008.png",
+    "seed": 44008,
+    "source": "c_0.6/latent_search_seed44008.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink almost filling the entire frame, broken strands dissolving into countless tiny ink particles, a fine grain mist spreading, fine ink particles dispersed evenly into a hazy grain fog filling the frame, no strands, no solid shapes"
+   },
+   {
+    "file": "c_0.6/04_seed44013.png",
+    "seed": 44013,
+    "source": "c_0.6/latent_search_seed44013.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink almost filling the entire frame, broken strands dissolving into countless tiny ink particles, a fine grain mist spreading, fine ink particles dispersed evenly into a hazy grain fog filling the frame, no strands, no solid shapes"
+   },
+   {
+    "file": "c_0.6/05_seed44014.png",
+    "seed": 44014,
+    "source": "c_0.6/latent_search_seed44014.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink almost filling the entire frame, broken strands dissolving into countless tiny ink particles, a fine grain mist spreading, fine ink particles dispersed evenly into a hazy grain fog filling the frame, no strands, no solid shapes"
+   },
+   {
+    "file": "c_0.6/06_seed44021.png",
+    "seed": 44021,
+    "source": "c_0.6/latent_search_seed44021.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink almost filling the entire frame, broken strands dissolving into countless tiny ink particles, a fine grain mist spreading, fine ink particles dispersed evenly into a hazy grain fog filling the frame, no strands, no solid shapes"
+   },
+   {
+    "file": "c_0.6/07_seed44022.png",
+    "seed": 44022,
+    "source": "c_0.6/latent_search_seed44022.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink almost filling the entire frame, broken strands dissolving into countless tiny ink particles, a fine grain mist spreading, fine ink particles dispersed evenly into a hazy grain fog filling the frame, no strands, no solid shapes"
+   },
+   {
+    "file": "c_0.6/08_seed44023.png",
+    "seed": 44023,
+    "source": "c_0.6/latent_search_seed44023.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink almost filling the entire frame, broken strands dissolving into countless tiny ink particles, a fine grain mist spreading, fine ink particles dispersed evenly into a hazy grain fog filling the frame, no strands, no solid shapes"
+   },
+   {
+    "file": "c_0.6/09_seed54010.png",
+    "seed": 54010,
+    "source": "c_0.6/latent_search_seed54010.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, turbulent agitated black ink in water, side view, suspended in clear water, ink almost filling the entire frame, broken strands dissolving into countless tiny ink particles, fine ink particles dispersed evenly into a hazy grain fog filling the frame, deepening toward near-uniform dark murk, faint fine grain texture everywhere, no strands, no solid shapes"
+   }
+  ],
+  "0.7": [
+   {
+    "file": "c_0.7/01_seed45002.png",
+    "seed": 45002,
+    "source": "c_0.7/fog_receding_seed45002.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, dense ink covering much of the frame, thinning gray ink fog receding and clearing, dark ink strands emerging out of the dissolving haze, slowly beginning to gather toward the center"
+   },
+   {
+    "file": "c_0.7/02_seed45009.png",
+    "seed": 45009,
+    "source": "c_0.7/fog_receding_seed45009.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, dense ink covering much of the frame, thinning gray ink fog receding and clearing, dark ink strands emerging out of the dissolving haze, slowly beginning to gather toward the center"
+   },
+   {
+    "file": "c_0.7/03_seed45011.png",
+    "seed": 45011,
+    "source": "c_0.7/fog_receding_seed45011.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, dense ink covering much of the frame, thinning gray ink fog receding and clearing, dark ink strands emerging out of the dissolving haze, slowly beginning to gather toward the center"
+   },
+   {
+    "file": "c_0.7/04_seed45012.png",
+    "seed": 45012,
+    "source": "c_0.7/fog_receding_seed45012.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, dense ink covering much of the frame, thinning gray ink fog receding and clearing, dark ink strands emerging out of the dissolving haze, slowly beginning to gather toward the center"
+   },
+   {
+    "file": "c_0.7/05_seed45013.png",
+    "seed": 45013,
+    "source": "c_0.7/fog_receding_seed45013.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, dense ink covering much of the frame, thinning gray ink fog receding and clearing, dark ink strands emerging out of the dissolving haze, slowly beginning to gather toward the center"
+   },
+   {
+    "file": "c_0.7/06_seed45014.png",
+    "seed": 45014,
+    "source": "c_0.7/fog_receding_seed45014.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, dense ink covering much of the frame, thinning gray ink fog receding and clearing, dark ink strands emerging out of the dissolving haze, slowly beginning to gather toward the center"
+   },
+   {
+    "file": "c_0.7/07_seed45019.png",
+    "seed": 45019,
+    "source": "c_0.7/fog_receding_seed45019.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, dense ink covering much of the frame, thinning gray ink fog receding and clearing, dark ink strands emerging out of the dissolving haze, slowly beginning to gather toward the center"
+   },
+   {
+    "file": "c_0.7/08_seed45020.png",
+    "seed": 45020,
+    "source": "c_0.7/fog_receding_seed45020.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, dense ink covering much of the frame, thinning gray ink fog receding and clearing, dark ink strands emerging out of the dissolving haze, slowly beginning to gather toward the center"
+   }
+  ],
+  "0.8": [
+   {
+    "file": "c_0.8/01_seed46001.png",
+    "seed": 46001,
+    "source": "c_0.8/convergence_seed46001.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, delicate looping ink threads spiraling inward, being drawn into a solid dark mass, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.8/02_seed46002.png",
+    "seed": 46002,
+    "source": "c_0.8/convergence_seed46002.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, delicate looping ink threads spiraling inward, being drawn into a solid dark mass, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.8/03_seed46003.png",
+    "seed": 46003,
+    "source": "c_0.8/convergence_seed46003.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, delicate looping ink threads spiraling inward, being drawn into a solid dark mass, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.8/04_seed46004.png",
+    "seed": 46004,
+    "source": "c_0.8/convergence_seed46004.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, delicate looping ink threads spiraling inward, being drawn into a solid dark mass, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.8/05_seed46006.png",
+    "seed": 46006,
+    "source": "c_0.8/convergence_seed46006.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, delicate looping ink threads spiraling inward, being drawn into a solid dark mass, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.8/06_seed46007.png",
+    "seed": 46007,
+    "source": "c_0.8/convergence_seed46007.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, delicate looping ink threads spiraling inward, being drawn into a solid dark mass, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.8/07_seed46014.png",
+    "seed": 46014,
+    "source": "c_0.8/convergence_seed46014.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, delicate looping ink threads spiraling inward, being drawn into a solid dark mass, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_0.8/08_seed46021.png",
+    "seed": 46021,
+    "source": "c_0.8/convergence_seed46021.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, delicate looping ink threads spiraling inward, being drawn into a solid dark mass, macro photograph, wet glossy ink, soft light"
+   }
+  ],
+  "1.0": [
+   {
+    "file": "c_1.0/01_seed47001.png",
+    "seed": 47001,
+    "source": "c_1.0/temporary_return_seed47001.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, a dense settled black mound at the bottom, a single twisting tendril column above it, clear water around, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_1.0/02_seed47003.png",
+    "seed": 47003,
+    "source": "c_1.0/temporary_return_seed47003.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, a dense settled black mound at the bottom, a single twisting tendril column above it, clear water around, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_1.0/03_seed47006.png",
+    "seed": 47006,
+    "source": "c_1.0/temporary_return_seed47006.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, a dense settled black mound at the bottom, a single twisting tendril column above it, clear water around, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_1.0/04_seed47011.png",
+    "seed": 47011,
+    "source": "c_1.0/temporary_return_seed47011.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, a dense settled black mound at the bottom, a single twisting tendril column above it, clear water around, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_1.0/05_seed47013.png",
+    "seed": 47013,
+    "source": "c_1.0/temporary_return_seed47013.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, a dense settled black mound at the bottom, a single twisting tendril column above it, clear water around, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_1.0/06_seed47018.png",
+    "seed": 47018,
+    "source": "c_1.0/temporary_return_seed47018.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, a dense settled black mound at the bottom, a single twisting tendril column above it, clear water around, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_1.0/07_seed47021.png",
+    "seed": 47021,
+    "source": "c_1.0/temporary_return_seed47021.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, a dense settled black mound at the bottom, a single twisting tendril column above it, clear water around, macro photograph, wet glossy ink, soft light"
+   },
+   {
+    "file": "c_1.0/08_seed47022.png",
+    "seed": 47022,
+    "source": "c_1.0/temporary_return_seed47022.png",
+    "lora": "inkwb_lora_v7",
+    "prompt": "inkwb, black ink gathering and condensing in water, side view, suspended in clear water, heavy ink covering most of the frame, a dense settled black mound at the bottom, a single twisting tendril column above it, clear water around, macro photograph, wet glossy ink, soft light"
+   }
+  ]
+ }
+}
