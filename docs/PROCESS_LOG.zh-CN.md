@@ -901,6 +901,192 @@ v6 确实推动了这一档——实心不透明墨团如今随叫随到,这是 
 
 ---
 
+### 2026 年 7 月 13 日 — 台账审计：陈旧记录、一次无声的 seed 撞车,以及一道让它不再发生的防护
+
+**意图 / 问题**
+
+一份外部审查指出 `atlas_candidates_v6` 有三处账目问题：manifest 210 条对磁盘 192 张图、c 0.0 一档就有 30 条记录、以及一次完整的跨档 seed 撞车——c 0.0 用 `--seed-start 8000` 单档重跑时,正好落在全量扫描中 c 0.2 的偏移段(7000 + 1000)上。在最终定稿前核实并修复生成管线。
+
+**已完成工作**
+
+- 逐项核实,三条全部属实。陈旧记录来自已删除的 c 0.0 第一轮(此前基于正则的清理漏删了部分行),外加 c 0.6 多次运行向同一 manifest 追加产生的重复行。
+- 重建 manifest：删除图片已不存在的行,按(档位, seed)去重保留最新——210 → 192 条,每档恰好 24。
+- 给 `generate_atlas.py` 加装 seed 撞车防护：每次运行前自动清理陈旧行,并检查将要使用的 seed 是否已属于**其他**档位,撞车则直接报错并点名冲突。单档重跑从此不可能悄悄与邻档共享初始噪声。
+- 评估唯一真实撞车(c 0.0 与 c 0.2 的 8000–8023)：实际影响判断为小——两档视角与完整 prompt 词汇差异大,足以覆盖骨架锚定——但由于 seed 尚未定稿,默认路径定为在全新 seed 段(20000+)重跑 c 0.0。
+- 拒绝审查中"分化相邻档 prompt"的建议(c 0.4/0.5、c 0.8/1.0)：中段共享的雾感词汇正是刻意搭建的渐变;可导航的 c 轴需要相邻档互为材质近邻,交叉溶解才能读作同一种物质的连续变化。
+
+**决策及原因**
+
+Manifest 是溯源链——每张展出的图必须能追溯到它的权重、prompt 和 seed。因此账目问题在**管线层面**修复(自动清理、撞车即失败),而非做一次性打扫:让未来的错误自己发声,而不是无声累积。
+
+**证据**
+
+- `training/atlas_candidates_v6/manifest.jsonl`：重建后 192 条,每档 24,零陈旧记录。
+- `training/generate_atlas.py` 中的防护实现(生成前的 seed 归属检查)。
+
+**反思 / 下一步**
+
+在 seed 20000+ 重跑 c 0.0,与已认可的 8000 批对比,随后逐档选图、搭建 `latent_atlas` 文件夹。
+
+---
+
+### 2026 年 7 月 13 日 — 一次 v1 对比修正了 v5 的"吸收假设"：裸句 "top-down view" 失去了构图召回力
+
+**意图 / 问题**
+
+翻看旧 eval 图时,用户发现 v1 的视角控制是**准的**：光一句 `top-down view` 就能出真正的俯拍墨滩铺在浅色水面上,`side view` 则是干净的悬垂墨羽——而 v6 的一对几乎分不开。两版 eval prompt 完全相同、都不含 basin 短语,那么变的是什么?
+
+**已完成工作**
+
+- 并排重建 v1 与 v6 的视角对比,确认 eval prompt 一致且无容器词：v1 中单独一句 `top-down view` 召回了完整的 01 构图,v6 中已不能。
+- 追溯机制：v5 从 01 组每条 caption 中删除 `inside a shallow pale basin`,赌俯拍美学会转移到 `top-down view` 上。对比表明转移最多只是部分——共同锚词被删后,01 美学的一部分转而绑定到触发词上(又是 v1 规律：共享而未命名的特征归剩下的共享词),稀释进了所有档位。v1 裸句之所以准,是因为整捆冗余词(`top-down view` + basin + rim)在互相加固同一个构图——也正是这种缠结让 v1 在 atlas 里不可用:带 basin 短语出图会召回真实的盆。
+- 确认对当前产出无影响：atlas 的 c 0.0 prompt 从不依赖裸视角句——它带着完整的 01 词捆(实心不透明墨团、灰晕、浅色水面),已验收的第二轮批次证明全量召回工作正常。
+
+**决策及原因**
+
+v6 不采取行动。记为假想中 v7 的设计规则：**删掉一个共现短语,美学不会自动转移到幸存短语上**——若某类别需要强锚词,应**在 caption 里主动写一个新的一致短语**(如 `on a pale water surface`),而不是指望吸收。废除一个坏名字,必须同时铸一个好名字。
+
+**证据**
+
+- [视角控制,v1 对 v6:裸 top-down prompt](images/2026-07-13-viewpoint-v1-vs-v6.jpg)
+
+**反思 / 下一步**
+
+这一发现为 v5 打开的问题画上了闭环,并给出比当时更干净的规则。它同时重估了 eval 图的价值：它们测的是单短语召回,而 atlas 恰恰从不单独使用任何短语。
+
+---
+
+### 2026 年 7 月 13 日 — 启动 v7：caption 过于笼统单一——四组全部按拍摄时的物理过程重写
+
+**意图 / 问题**
+
+经历一系列出图达不到理想状态——c 0.6 的颗粒渲染得太大、没有原始照片那种细颗粒的雾感——又发现 eval 表上训练的好几组几乎拉不开距离,于是回头检查 caption 本身。诊断结论：**关键词过于笼统和单一**。03 组每一帧都在说 "turbulent, murky, churned"——24 帧共用的动作词——而真正把帧与帧区分开的东西(墨丝被撕开、碎片溶成细颗粒、颗粒化进颗粒雾)从未被命名。词汇不区分的状态,模型也无法区分。
+
+**已完成工作**
+
+- **以拍摄过程为组织原则重写。**每个类别记录的都是一次物理实验在时间中的展开,caption 现在按列如实叙述：01——墨注入静水(聚成墨团 → 弯曲灰晕层层散开 → 晕层叠合 → 融成暗墨面);02——墨注入后自然垂落(墨羽未成丝 → 墨纱下沉细丝初现 → 层层墨帘 → 沉层与悬垂墨滴,注入量大的系列 1 至末帧满幅);03——沉墨被筷子打散(墨丝撕裂成碎片 → 碎片溶成无数细颗粒、细颗粒雾 → 均匀颗粒雾 → 近均匀暗雾);04——两种聚拢方法,滴管倒吸(回沉成沉底墨丘)与视频倒放(向内收束成悬浮紧实墨体),写成两条不同的视觉叙事。
+- **逐阶段插入的确切措辞**(每个时间位置一句,插在风格词之前;各条 caption 原有内容全部保留):
+
+  *01 扩散组——墨注入静水,俯视:*
+
+  | 帧 | 插入句 | 中文含义 |
+  |---|---|---|
+  | x-1 | black ink freshly poured into the still water, pooling into a solid opaque blob | 墨刚注入静水,聚成实心不透明墨团 |
+  | x-2 | curved flowing soft gray ink washes spreading outward layer by layer around the dark mass | 弯曲灰墨晕绕墨团层层散开 |
+  | x-3 | gray washes overlapping layer upon layer, ink taking over most of the pale water | 灰晕层层叠合,占据大部分水面 |
+  | x-4 | washes merged into a nearly solid dark sheet covering the water | 晕层融成近实心暗墨面 |
+
+  *02 层积组——墨注入后自然垂落,侧视:*
+
+  | 帧 | 插入句 | 中文含义 |
+  |---|---|---|
+  | x-1 | ink freshly injected into the water, a plume drifting down naturally | 墨羽自然垂落(作者修正:此时尚未成丝) |
+  | x-2 | translucent ink veils sinking gently, fine ink strands hanging between them, unfolding into layers | 墨纱下沉,细丝初现悬垂其间 |
+  | x-3 | veils and strands settling one over another, layered curtains of ink deepening | 纱与丝层层相叠,墨帘渐深 |
+  | 1-4 | settled ink layers merged into a dense dark depth | 沉降墨层融成暗色纵深(系列 1 注入量大,满幅) |
+  | 2-4 – 6-4 | layers of ink strands settled over a dense dark depth, rounded ink droplets hanging alongside | 丝层沉于暗色纵深,墨滴悬垂其旁 |
+
+  *03 扰动组——沉墨被筷子打散,侧视(七帧上的旧句 "fine grainy ink particles suspended in the haze" 由更细的四阶段措辞替换):*
+
+  | 帧 | 插入句 | 中文含义 |
+  |---|---|---|
+  | x-1 | ink strands torn apart by stirring, breaking into drifting fragments | 墨丝被搅撕裂成漂散碎片 |
+  | x-2 | broken strands dissolving into countless tiny ink particles, a fine grain mist spreading | 断丝溶成无数细颗粒,细颗粒雾散开 |
+  | x-3 | fine ink particles dispersed evenly into a hazy grain fog | 细颗粒均匀散进朦胧颗粒雾 |
+  | x-4 | particles dissolved into near-uniform dark murk, faint fine grain texture remaining | 颗粒溶入近均匀暗雾,残留细颗粒质感 |
+
+  *04 聚拢组——两种制作方法、两条视觉叙事,侧视:*
+
+  | 系列 / 位置 | 插入句 | 中文含义 |
+  |---|---|---|
+  | 1–4 首帧 | dispersed ink beginning to sink back, wisps drawn toward the dark mass below | 散墨开始回沉,烟缕被引向下方暗团 |
+  | 1–4 中段 | ink clouds condensing downward, gathering into the dark mass | 墨云向下凝聚,汇入暗团 |
+  | 1-4(五帧之第四) | ink nearly regathered, the mass thickening at the bottom | 接近聚合,底部墨体增厚 |
+  | 1–4 末帧 | ink regathered into a dense settled black mound, faint wisps curling above | 重聚成沉底墨丘,余缕上方卷曲 |
+  | 5–8 首帧 | spread ink beginning to retract, strands drawing inward | 铺开的墨开始回缩,墨丝向内收 |
+  | 5–8 中段 | ink pulling inward and upward, strands coiling into the condensing mass | 墨向内向上收拢,丝缕盘卷进凝聚墨体 |
+  | 5–8 末帧 | ink condensed into a single compact dark mass suspended in the clear water | 收束成一团悬浮的紧实墨体 |
+
+- **四组词汇互相咬合成一条物质叙事**:02 教"完整的丝是什么",03 教"丝被撕碎成颗粒",04 教"散开的物质重新聚回"——每个状态部分地以邻居来定义,这正是一条可导航的轴所需要的。
+- **有意铸造两个锚词**,落实 v1 视角发现得出的规则：已验收的 c 0.0 样貌("curved flowing soft gray ink washes spreading outward layer by layer")与 c 1.0 样貌("a dense settled black mound, wisps curling above")从"prompt 拼装"升级为训练词汇。
+- 101 条 caption 全部更新(仅插入——原有形态句保留;03 组旧颗粒句由更细的四阶段措辞替换)。登记表 `ink_dataset_captions.xlsx` 从源文件重新同步;拍摄记录新增"各类别制作方法"总表,并按作者口述修正了 04 的系列划分(1–4 滴管 / 5–8 倒放)。
+- 训练前干净环境验证：数据集从零重建(`--trim-style --v5`),12 项检查全部通过——125 条记录、四组过程句计数正确、阶段词保留、风格词裁除、无 basin、无 marbled、v7 输出目录为空。
+
+**决策及原因**
+
+先前的规则说:照片里有而词汇里没有名字时才重训。这一轮把它推广:c 轴需要**能拉开**的状态,而拉开的距离要么在 caption 里建立,要么无处建立。笼统的动作词平等地描述每一帧,因此什么也区分不了;过程词——这个实验的这一刻材料正在做什么——才给每一帧、以及未来的每一条 prompt,一个可检索的身份。
+
+**证据**
+
+- 修订后的 caption：`ink_dataset/*/**.txt`(101 个文件);登记表 `ink_dataset/ink_dataset_captions.xlsx`。
+- 制作方法总表：`ink_dataset/DATASET_CAPTURE_LOG.md`。
+- [触发案例：v6 的 c 0.6 候选图——颗粒渲染过粗](images/2026-07-13-v6-c06-grain-too-coarse.jpg)
+- [细颗粒参照：03 组原始照片,筷子打散后的状态](images/2026-07-13-dataset-03-fine-grain-source.jpg)
+
+**反思 / 下一步**
+
+训练 `inkwb_lora_v7`,atlas 切换至新权重,验收优先 c 0.6(细颗粒雾)与两个锚定档(c 0.0、c 1.0);并检查状态 × 阶段 eval 是否因时间轴有了逐阶段的具体形态支撑(而非裸阶段标签)而拉得更开。
+
+---
+
+### 2026 年 7 月 13 日 — v7 验收：细颗粒雾到位,召回测试逐词打分,一次"同聚落"教训收束 c 0.6 调优
+
+**意图 / 问题**
+
+`inkwb_lora_v7` 在过程化重写的 caption 上训练完成。要收三份判决：新铸词组召不召得回(由训练前新增的 `v7_recall` 测试组测量,validation prompt 也已换成 c 1.0 训练锚词);冻结的标准 eval 有无变化;以及最关键的——完整 atlas 扫描出什么。
+
+**已完成工作**
+
+- **召回测试逐词打分**：02 的"墨纱+细丝"干净召回(悬垂纱层、摄影质感、风格对味)。03 的"细颗粒/颗粒雾"部分召回——颗粒网出现,但裸测试中丝爆仍占主导。04 的"沉底墨丘"出了聚拢墨体,但悬在中部、未沉底。01 的灰晕锚词召回了**结构**(弯曲、流动、层叠)却渲染成版画式图形——裸测试句不带实心墨团语境、不带浅色水面语境、不带摄影框架,且 v6 起风格词不再参与训练,底模对"弯曲流动层叠"的理解便接管了画面。裸词测试给单词打分;atlas prompt 带的是完整词捆。
+- **视角控制依旧拉不开**——与冻结考卷时的预判一致：v5 有意花掉了裸 "top-down view" 的构图召回力,v7 的目标从来不是恢复裸词,只是词捆召回。
+- **v7 八档全量扫描**(全新 `atlas_candidates_v7/` 文件夹,seed 40000+,192 张,台账核验干净)：头条是细颗粒雾——作者评价 c 0.6"比之前好很多"。扫描前 atlas 已切至 v7 权重,c 0.6 形态句已按新训练的 x-2/x-3 过程原句逐词重建。
+- **c 0.6 精调轮及其教训**：作者要求颗粒更细、雾更重,"像 disturbance 的 developing 到 final 阶段"。将该档推向后期措辞(阶段词 → advanced,x-3/x-4 原句)。A/B 对照几乎一致——诊断:在同一个训练词汇聚落内做增量措辞修改,只是把 prompt 挪到**同一片**潜空间的邻点,而最强的旋钮(密度词)始终未动。两批都体现已认可的样貌;进一步推"final 阶段"被否——近均匀暗雾会与 c 0.5 拥挤,模糊该档的颗粒身份。
+
+**决策及原因**
+
+v7 定为 atlas 的生产权重。c 0.6 从 A+B 合并池(48 张)中选图,不再强造第三个变体——当两批采样自同一个已认可的分布,正确动作是跨批策展,而不是为轴并不需要的差异反复改 prompt。
+
+**证据**
+
+- [v7 召回测试:每个新词组一张](images/2026-07-13-v7-recall-tests.jpg)
+- [v7 c 0.6 首批验收:细颗粒雾](images/2026-07-13-v7-c06-fine-grain-accepted.jpg)
+- [c 0.6 A/B 对照:developing 与 advanced 措辞,几乎一致](images/2026-07-13-v7-c06-A-vs-B.jpg)
+- `training/atlas_candidates_v7/manifest.jsonl`：192 + 24 条(c 0.6 B 批),分档 seed 段,零撞车。
+
+**反思 / 下一步**
+
+词汇重写在瞄准的地方兑现了:细颗粒雾随叫随到。两个未满分项(01 裸测的图形化漂移、04 裸测的未沉底)是 atlas 扫描的观察项而非确认的失败——两档在 atlas 里都带完整词捆。下一步:从 v7 池逐档选图(每档约 6 张)、搭建 `latent_atlas`、进入 TouchDesigner 集成。
+
+---
+
+### 2026 年 7 月 13 日 — 策展定稿：192 张候选凝成 66 张 latent atlas
+
+**意图 / 问题**
+
+v7 验收后,作者身份从生成转向选择：把八档各 24 张的候选池收束为最终可导航的 atlas。策展是艺术家判断落成作品的环节——模型提议,作者裁决。
+
+**已完成工作**
+
+- 整理了一份选图文档(八档 seed 标注的整版图,沿 c 轴排序,c 0.6 附 A/B 两批对照),配五道按序执行的筛子：淘汰异物废图;档位身份(遮住编号仍认得出属于哪档);档内多样性(典型 + 变奏 + 一张边缘态);相邻档过渡连续性(明度与墨量);最后是"像不像**我拍的**墨"。
+- 作者每档选出 8–9 张——刻意不均:观众驻留的档多留,过渡档少留。c 0.6 从 A/B 两批混选(含一张 B 批 seed 54010),印证了合并池的决定。
+- 收单时的选号卫生:提交清单中的重复号去重(41014 ×3、42008 ×2、47006 ×2);捕获一处系统性笔误——c 0.8 的选号报为 48xxx,该 seed 段并不存在,按档位实际的 46xxx 段映射后,把映射结果渲染成图请作者目视确认,作者复看后剔除一张(46019)——映射靠看图核实,不靠信任。
+- 建成生产结构 `latent_atlas/c_X.X/`(仓库根目录,纳入 git 追踪——它是作品核心资产,不同于 gitignore 的工作图池):66 张,规范顺序命名,附 `atlas_selection.json` 记录每张图的 seed、来源文件、权重版本与完整生成 prompt——从展墙回溯到训练运行的完整证据链。
+
+**决策及原因**
+
+66 张而非更多:每档需要足够变化供 TouchDesigner 档内漂移循环,但不能放进大屏幕会暴露的次优帧。数量不均循观众驻留预期,不循对称。atlas 就此冻结为 ML 管线与装置之间的接口——此后的改动发生在播放层(TouchDesigner、补帧),不再发生在生成层。
+
+**证据**
+
+- [最终 atlas:八档 66 张](images/2026-07-13-latent-atlas-final-66.jpg)
+- `latent_atlas/atlas_selection.json` — 全部逐图溯源。
+
+**反思 / 下一步**
+
+选图阶段浮出它自己的质量教训:人工报号的清单必带错误(重复、段位笔误),而管线能接住它们,因为每张图都有可核验的编号可寻址——manifest 纪律在人这一端兑了现。下一步:TouchDesigner 原型指向 `latent_atlas`、从 2 档测试扩至 8 档、接入 WebSocket 的 c 值、测试 RIFE 补帧作档间过渡。
+
+---
+
 ## 当前验证清单
 
 仓库能够证明代码和版本历史。下一次完整系统测试应补充以下运行证据：

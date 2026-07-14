@@ -901,6 +901,192 @@ v6 did move the bin — solid opaque masses now appear on command, which v5 neve
 
 ---
 
+### 13 July 2026 — Ledger audit: stale manifest rows, a silent seed collision, and a guard so it cannot happen again
+
+**Intention / question**
+
+An external review of the repository flagged three bookkeeping faults in `atlas_candidates_v6`: 210 manifest rows against 192 images on disk, 30 rows for c 0.0 alone, and a full cross-bin seed collision — c 0.0's rerun at `--seed-start 8000` had landed exactly on c 0.2's offset segment (7000 + 1000) from the full sweep. Verify the claims and repair the generation pipeline before final curation.
+
+**Work completed**
+
+- Confirmed all three findings by direct count. The stale rows were leftovers of the deleted first-round c 0.0 batch (an earlier regex-based cleanup had missed some) plus duplicate c 0.6 rows from repeated runs appending to the same manifest.
+- Rebuilt the manifest: rows whose image no longer exists dropped, duplicate (bin, seed) rows deduplicated keeping the latest — 210 → 192 rows, exactly 24 per bin.
+- Added a seed-collision guard to `generate_atlas.py`: before generating, the script now prunes stale rows automatically and refuses to run if any requested seed already belongs to a *different* bin, with an error naming the collision. Single-bin reruns can no longer silently share initial noise with a neighbour.
+- Assessed the one real collision (c 0.0 vs c 0.2, seeds 8000–8023): practical impact judged small — the two bins differ in viewpoint and full prompt vocabulary, which overrides skeleton anchoring — but a clean rerun of c 0.0 on a fresh segment (seeds 20000+) was prepared as the default path since no picks were locked yet.
+- Declined the review's suggestion to differentiate adjacent-bin prompts (c 0.4/0.5, c 0.8/1.0): the shared fog vocabulary across the middle bins is the deliberately built gradient, and a navigable c axis needs adjacent bins to be material neighbours for the crossfade to read as one continuous substance.
+
+**Decision and reason**
+
+The manifest is the provenance chain — every exhibited image must remain traceable to its weights, prompt and seed. Ledger faults are therefore repaired at the pipeline level (automatic pruning, hard failure on collision) rather than by one-off cleanup, so future errors announce themselves instead of accumulating silently.
+
+**Evidence**
+
+- `training/atlas_candidates_v6/manifest.jsonl`: 192 rows, 24 per bin, zero stale entries after rebuild.
+- Guard implementation in `training/generate_atlas.py` (seed-ownership check before generation).
+
+**Reflection / next step**
+
+Rerun c 0.0 at seeds 20000+, compare against the accepted 8000 batch, then per-bin seed picks and the `latent_atlas` folder build.
+
+---
+
+### 13 July 2026 — A v1 comparison revises the v5 absorption hypothesis: bare "top-down view" lost its compositional pull
+
+**Intention / question**
+
+Reviewing old eval sheets, the user noticed that v1's viewpoint control was *accurate*: bare `top-down view` produced a true pooled-blob-over-pale-field composition, and `side view` a clean hanging plume — while v6's pair barely separates. The eval prompt carries no basin phrase in either version, so what changed?
+
+**Work completed**
+
+- Rebuilt the v1-vs-v6 viewpoint comparison side by side and confirmed the eval prompts are identical and container-free: in v1 the single phrase `top-down view` recalled the whole 01 composition; in v6 it no longer does.
+- Traced the mechanism: v5 dropped `inside a shallow pale basin` from every 01 caption, betting the pale-basin aesthetic would transfer onto `top-down view`. The comparison shows the transfer was partial at best — with its co-anchor deleted, part of the 01 look migrated to the trigger word instead (the v1 rule again: shared un-named features bind to the remaining shared token) and diluted across all bins. v1's bare-phrase accuracy came from the full redundant bundle (`top-down view` + basin + rim) reinforcing one composition — the same entanglement that made v1 unusable in the atlas, where the basin phrase summoned literal basins.
+- Confirmed no impact on current output: the atlas c 0.0 prompt never relies on the bare viewpoint phrase — it ships the full 01 bundle (solid opaque blob, gray washes, pale water), and the accepted second-round batch demonstrates the recall works at full strength.
+
+**Decision and reason**
+
+No action for v6. Logged as the design rule for a hypothetical v7: aesthetics do not transfer to a surviving phrase just because a co-occurring phrase is deleted — if a category needs a strong recallable anchor, *write a new consistent phrase into the captions* (e.g. `on a pale water surface`) rather than expecting absorption. Deleting a bad name requires coining a good one.
+
+**Evidence**
+
+- [Viewpoint control, v1 vs v6: bare top-down prompt](images/2026-07-13-viewpoint-v1-vs-v6.jpg)
+
+**Reflection / next step**
+
+The finding closes a loop opened at v5 with a cleaner rule than the one acted on then. It also reframes the eval sheets' value: they measure single-phrase recall, and single phrases are exactly what the atlas never uses alone.
+
+---
+
+### 13 July 2026 — Starting v7: the captions were too generic — every category rewritten as the physical process it photographed
+
+**Intention / question**
+
+After a run of generations that kept falling short of the intended state — c 0.6's particles rendering too coarse, without the fine-grained mist quality of the source photographs — and after noticing across the eval sheets that several trained groups barely separate, the captions themselves were re-examined. The diagnosis: the keywords were too generic and too uniform. Every 03 frame said "turbulent, murky, churned" — action words shared by all 24 — while what distinguishes the frames from one another (strands being torn apart, fragments dissolving into fine particles, particles fading into grain fog) was never named. The model cannot separate states its vocabulary does not separate.
+
+**Work completed**
+
+- **The shooting processes were recovered as the organizing principle.** Each category documents one physical experiment unfolding in time, and the captions now say so, column by column: 01 — ink poured into still water (pooling blob → curved gray washes spreading layer by layer → washes overlapping → merged dark sheet); 02 — ink injected and left to sink naturally (plume, no strands yet → veils with fine strands appearing → layered curtains → settled layers with rounded droplets in series 2–6, full-frame in the heavily-injected series 1); 03 — settled ink broken apart with chopsticks (strands torn into fragments → fragments dissolving into countless tiny particles, a fine grain mist → even hazy grain fog → near-uniform murk); 04 — two gathering methods, pipette suction (sink-back into a settled mound) and reversed video (retraction into a compact suspended mass), written as two distinct visual narratives.
+- **The exact per-stage wording, as inserted into the captions** (one phrase per timeline position, placed before the style tags; everything already in each caption was kept):
+
+  *01_pure_diffusion — ink poured into still water, top-down:*
+
+  | Frame | Inserted phrase |
+  |---|---|
+  | x-1 | black ink freshly poured into the still water, pooling into a solid opaque blob |
+  | x-2 | curved flowing soft gray ink washes spreading outward layer by layer around the dark mass |
+  | x-3 | gray washes overlapping layer upon layer, ink taking over most of the pale water |
+  | x-4 | washes merged into a nearly solid dark sheet covering the water |
+
+  *02_layered_ink — ink injected, sinking naturally, side view:*
+
+  | Frame | Inserted phrase |
+  |---|---|
+  | x-1 | ink freshly injected into the water, a plume drifting down naturally *(no strands yet — corrected by the author)* |
+  | x-2 | translucent ink veils sinking gently, fine ink strands hanging between them, unfolding into layers |
+  | x-3 | veils and strands settling one over another, layered curtains of ink deepening |
+  | 1-4 | settled ink layers merged into a dense dark depth *(series 1: heavier injection, frame filled)* |
+  | 2-4 – 6-4 | layers of ink strands settled over a dense dark depth, rounded ink droplets hanging alongside |
+
+  *03_disturbed_ink — settled ink broken apart with chopsticks, side view (the older "fine grainy ink particles suspended in the haze" on seven frames was replaced by this finer four-stage wording):*
+
+  | Frame | Inserted phrase |
+  |---|---|
+  | x-1 | ink strands torn apart by stirring, breaking into drifting fragments |
+  | x-2 | broken strands dissolving into countless tiny ink particles, a fine grain mist spreading |
+  | x-3 | fine ink particles dispersed evenly into a hazy grain fog |
+  | x-4 | particles dissolved into near-uniform dark murk, faint fine grain texture remaining |
+
+  *04_gathering_ink — two production methods, two visual narratives, side view:*
+
+  | Series / position | Inserted phrase |
+  |---|---|
+  | 1–4 first | dispersed ink beginning to sink back, wisps drawn toward the dark mass below |
+  | 1–4 middle | ink clouds condensing downward, gathering into the dark mass |
+  | 1-4 (fourth of five) | ink nearly regathered, the mass thickening at the bottom |
+  | 1–4 last | ink regathered into a dense settled black mound, faint wisps curling above |
+  | 5–8 first | spread ink beginning to retract, strands drawing inward |
+  | 5–8 middle | ink pulling inward and upward, strands coiling into the condensing mass |
+  | 5–8 last | ink condensed into a single compact dark mass suspended in the clear water |
+
+- **The four vocabularies interlock as one material narrative**: 02 teaches what an intact strand is, 03 teaches strands being torn into particles, 04 teaches the scattered material drawing back together — so each state is defined partly in terms of its neighbours, which is what a navigable axis requires.
+- **Two anchor phrases were coined deliberately**, applying the rule from the v1-viewpoint finding: the accepted c 0.0 look ("curved flowing soft gray ink washes spreading outward layer by layer") and the accepted c 1.0 look ("a dense settled black mound, wisps curling above") are now trained vocabulary rather than prompt-side assemblies.
+- All 101 captions updated (insertion only — existing morphology lines kept; 03's older grainy-particle phrase replaced by the finer four-stage wording). The caption registry `ink_dataset_captions.xlsx` re-synced from the source files, and the capture log extended with a per-category production-method table; the 04 series split was corrected there (1–4 pipette / 5–8 reversed) per the author's account.
+- Clean-environment verification before training: dataset rebuilt from scratch (`--trim-style --v5`), 12/12 checks passed — 125 records, all four categories' process phrases counted correct, phase phrases kept, style tags dropped, no basin, no marbled, empty v7 output directory.
+
+**Decision and reason**
+
+The earlier rule said: retrain only when a wanted look exists in the photographs but has no trained name. This round generalizes it: the c axis needs states that *separate*, and separation is built in the captions or nowhere. Generic action words describe every frame equally and therefore distinguish nothing; process words — what the material is doing at this moment of this experiment — are what give each frame, and each future prompt, a retrievable identity.
+
+**Evidence**
+
+- Revised captions: `ink_dataset/*/**.txt` (101 files); registry `ink_dataset/ink_dataset_captions.xlsx`.
+- Production-method table: `ink_dataset/DATASET_CAPTURE_LOG.md`.
+- [Trigger case: v6 c 0.6 candidates — particles rendering too coarse](images/2026-07-13-v6-c06-grain-too-coarse.jpg)
+- [The fine-grain reference: 03 source photographs, chopstick-dispersal aftermath](images/2026-07-13-dataset-03-fine-grain-source.jpg)
+
+**Reflection / next step**
+
+Train `inkwb_lora_v7`, switch the atlas to it, and re-run acceptance with priority on c 0.6 (fine grain mist) and the two anchored bins (c 0.0, c 1.0); then check whether the state × phase eval separates better now that the temporal axis is backed by concrete per-stage morphology instead of bare phase labels.
+
+---
+
+### 13 July 2026 — v7 accepted: the fine-grain fog arrives, the recall tests grade each new phrase, and a same-cluster lesson closes the c 0.6 tuning
+
+**Intention / question**
+
+`inkwb_lora_v7` finished training on the process-rewritten captions. Three verdicts to collect: do the newly coined phrases recall (tested by the new `v7_recall` eval group added before training, alongside a validation prompt updated to the trained c 1.0 anchor); does the frozen standard eval move; and — the decisive one — what does the full atlas sweep produce.
+
+**Work completed**
+
+- **Recall tests, graded phrase by phrase**: 02's "veils + fine strands" recalls cleanly (hanging veil, photographic, on-style). 03's "tiny particles / grain mist" recalls partially — granular webbing present, strand-burst still dominant in the bare test. 04's "settled mound" produces the gathered mass but suspended, not settled. 01's wash anchor recalls the *structure* (curved, flowing, layered) but renders it as a graphic engraving — the bare test sentence carries no solid-blob context, no pale-water context, no photographic framing, and since v6 the style tags are untrained, so the base model's reading of "curved flowing layers" takes over. Bare-word tests grade words; the atlas prompts carry the full bundles.
+- **Viewpoint control still does not separate** — as predicted when the test was frozen: v5 spent bare "top-down view"'s compositional pull deliberately, and v7 never aimed to restore the bare word, only the bundled recall.
+- **Full eight-bin sweep on v7** (fresh `atlas_candidates_v7/` folder, seeds 40000+, 192 images, ledger verified clean): the fine-grain fog is the headline — c 0.6 judged "much better than before" by the author. The atlas prompts were switched to v7 weights beforehand, and the c 0.6 morphology rebuilt verbatim from the newly trained x-2/x-3 process phrases.
+- **c 0.6 refinement round and its lesson**: the author asked for finer grain and heavier fog, "like disturbance developing→final". The bin was pushed to the late-stage wording (phase → advanced, x-3/x-4 phrases). The A/B comparison came back nearly identical — diagnosis: an incremental wording change within one trained vocabulary cluster relocates the prompt to a neighbouring point of the *same* latent region, and the strongest dial (the density phrase) was never moved. Both batches embody the accepted look; a further "final-stage" push was declined because near-uniform murk would crowd c 0.5 and blur the bin's granular identity.
+
+**Decision and reason**
+
+v7 is the atlas's production weights. c 0.6 curation draws from the merged A+B pool (48 candidates) rather than forcing a third variant — when two batches sample the same accepted distribution, the correct move is to curate across them, not to keep re-prompting for a difference the axis does not need.
+
+**Evidence**
+
+- [v7 recall tests: one image per coined phrase](images/2026-07-13-v7-recall-tests.jpg)
+- [v7 c 0.6, first accepted batch: fine-grain fog](images/2026-07-13-v7-c06-fine-grain-accepted.jpg)
+- [c 0.6 A/B comparison: developing vs advanced wording, near-identical](images/2026-07-13-v7-c06-A-vs-B.jpg)
+- `training/atlas_candidates_v7/manifest.jsonl`: 192 rows + 24 (c 0.6 B batch), per-bin seed segments, zero collisions.
+
+**Reflection / next step**
+
+The vocabulary rewrite paid off where it was aimed: the fine-grain fog exists on demand. The two open grades (01's graphic drift, 04's unsettled mound in bare tests) are watch-items for the atlas sweeps, not confirmed failures — both bins carry full bundles there. Next: per-bin seed picks (≈6 per bin) from the v7 pool, the `latent_atlas` folder build, then TouchDesigner integration.
+
+---
+
+### 13 July 2026 — Curation: 192 candidates become the 66-image latent atlas
+
+**Intention / question**
+
+With v7 accepted, the authorship moves from generation to selection: reduce the eight 24-image candidate pools to the final navigable atlas. Curation is where the artist's judgment becomes the work — the model proposes, the author disposes.
+
+**Work completed**
+
+- A curation document was assembled (all eight bins as seed-labelled contact sheets, ordered along the c axis, with the c 0.6 A/B batches side by side) around five filters applied in order: discard artefacts; bin identity (recognisable with the seed number covered); in-bin diversity (typical + variations + one edge state); cross-bin transition continuity (tone and ink coverage); and finally "does it look like *my* ink".
+- The author selected 8–9 images per bin — deliberately uneven: the dwell bins hold more, the transit bins fewer. c 0.6 draws from both wording batches (one B-batch pick, seed 54010), confirming the merged-pool decision.
+- Selection hygiene during intake: duplicate seed numbers in the submitted list deduplicated (41014 ×3, 42008 ×2, 47006 ×2); a systematic typo caught — the c 0.8 picks were reported as 48xxx, a segment that does not exist, and mapped to the bin's actual 46xxx segment. The mapped picks were rendered back as a contact sheet for visual confirmation, and the author removed one image (46019) on review — the mapping verified not by trust but by looking.
+- Built the production structure `latent_atlas/c_X.X/` (repo root, git-tracked — the work's core asset, unlike the gitignored working pools): 66 images, clean sequential naming, plus `atlas_selection.json` recording every image's seed, source file, weights version and full generation prompt — the provenance chain from exhibition wall back to training run.
+
+**Decision and reason**
+
+66 over more: each bin needs enough variety for the in-bin drift loop in TouchDesigner without admitting weaker frames that a gallery screen would expose. Uneven counts follow expected audience dwell, not symmetry. The atlas is now frozen as the interface between the ML pipeline and the installation — further changes happen in playback (TouchDesigner, interpolation), not in generation.
+
+**Evidence**
+
+- [The final atlas: 66 images across eight bins](images/2026-07-13-latent-atlas-final-66.jpg)
+- `latent_atlas/atlas_selection.json` — full per-image provenance.
+
+**Reflection / next step**
+
+The selection stage surfaced its own quality lesson: human-reported lists carry errors (duplicates, segment typos), and the pipeline caught them because every image is addressable by a verifiable number — the manifest discipline paying off at the human end. Next: point the TouchDesigner prototype at `latent_atlas`, extend it from 2 test bins to all 8, connect the WebSocket c value, and test RIFE interpolation for the bin-to-bin transitions.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:
