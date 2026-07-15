@@ -1087,6 +1087,120 @@ The selection stage surfaced its own quality lesson: human-reported lists carry 
 
 ---
 
+### 14 July 2026 — TouchDesigner integration goes live, and RIFE interpolation turns the atlas into motion
+
+**Intention / question**
+
+Two fronts on the playback layer: wire the curated atlas into the live interactive system, and answer the fluidity question — crossfades between stills read as dissolves, so can frame interpolation give the transitions real motion without sacrificing the millisecond response?
+
+**Work completed**
+
+- **The full interaction chain is connected.** The eight-bin atlas component (66 images, per-bin blended rotation with phase-offset breathing, non-uniform c mapping via a `c_map` module, 0.6 s lag smoothing) was merged into the main `inkward_bound` system, which already carried the WebSocket touch chain and HUD. The final wire: `ws_touch_input → touch_store → c_value_chop → c_source (live/manual switch) → c_lag → nav_bins` — browser touch now drives the atlas directly, with the author's 3D render pipeline downstream. Live c was flowing at connection time.
+- **Real-time vs pre-baked resolved as two routes with a fixed hierarchy**: pre-baked transitions are the exhibition backbone (finite input space — a finite atlas implies enumerable transitions — so baking buys video-grade fluidity at zero live risk); a real-time ComfyUI route is kept as a time-boxed experiment for the dissertation, conceptually paired as curated memory vs generative present.
+- **RIFE interpolation validated in ComfyUI.** First an in-bin pair (two c 0.6 picks, multiplier 16): the interpolated frames read as ink genuinely moving, no ghosting. Then the author's own extension — one representative image per bin, chained into a single batch and interpolated end-to-end — produced a continuous c = 0→1 traversal sequence: pooled blob → veils → fog → grain → convergence → settled mound as one unbroken motion. This simultaneously previews every cross-bin bridge and yields a standalone full-axis sequence usable as the installation's idle state.
+- **The transition-library design** (author's): every image in each bin gets 2–3 random partners in the next bin, so wherever the visitor's c currently rests, an interpolated bridge exists; random pairing means repeated journeys never replay identically. `training/bake_transitions.py` written to bake the ~170-pair library through ComfyUI's API from a seeded, manifest-recorded plan.
+
+**Decision and reason**
+
+Transitions move from crossfade to pre-baked interpolation sequences, scrubbed by c in TouchDesigner (play position bound to the c value, so approach speed and direction stay in the visitor's hand). Randomized bridges are adopted as designed: they make each return journey singular, which is the work's thesis enacted by the playback system itself.
+
+**Evidence**
+
+- [ComfyUI chain: one pick per bin interpolated end-to-end](images/2026-07-14-comfyui-full-axis-chain.jpg)
+- [The resulting c 0→1 traversal frames](images/2026-07-14-rife-full-axis-sequence.jpg)
+- `training/bake_transitions.py`; `latent_atlas/transitions_manifest.json` (plan, once baked).
+
+**Reflection / next step**
+
+Bake the full library overnight, then rebuild the TD transition player: on bin-boundary crossing, pick the current image's random bridge and bind the sequence index to c. Then the remaining runtime checklist items, and the time-boxed real-time experiment.
+
+---
+
+### 14–15 July 2026 — Full-axis video experiment: an interpolate-and-repaint pipeline turns the atlas into 13 seconds of continuous ink time
+
+**Intention / question**
+
+An experiment, explicitly not yet the final output form: can a complete c = 0→1 traversal be rendered as one continuous video — and what pipeline yields ink that *moves* rather than images that *dissolve*?
+
+**Work completed**
+
+- **First cut diagnosed a principle.** Chaining one pick per bin through RIFE produced a journey whose diffusion phase read as melting, not spreading. Diagnosis: interpolation connects states but cannot invent process — the unfolding of diffusion has visual content (tendrils reaching, washes growing) that no morph supplies. Fix: feed the process, not just the endpoints — keyframe density doubled in the early bins (two picks each for c 0.0–0.4), 11 keyframes total, all drawn from the existing curated atlas with no new generation or selection.
+- **The pipeline grew into its final experimental form**, each stage answering one deficiency: 11 keyframes → **img2img repaint** through SD 1.5 + v7 LoRA (denoise 0.24, seed fixed at 42 — the light repaint unifies texture across keyframes without flicker) → **RealESRGAN ×2** upscale with light sharpen (512 exhibition-blur insurance) → **RIFE ×32** interpolation (fast_mode off, ensemble on) → **film grain** (grayscale, sat 0, power 0.12 — applied *after* interpolation so the grain lives per-frame instead of smearing) → 24 fps H.264. Repaint-before-interpolate was chosen over the reverse for cost (11 sampler runs, not 400) and zero flicker risk; the night-shift variant (repaint every interpolated frame) remains available if morph texture ever bothers.
+- **Result: 321 frames, 13.4 s, 1024².** The traversal reads as material evolution — pooled blob, veils falling, strands, turbulence, grain fog, convergence, settled mass — with the v7 texture holding throughout. Archived to `training/experiments/` (not `latent_atlas/`, which stays production-only).
+- The workflow was exported and versioned (`training/comfyui_workflows/full_axis_v1.json`), its 28 links verified node by node before the run. ComfyUI itself was consolidated during the session: everything moved under Documents, shared model/input/output directories mapped, and the bake script pointed at the true shared input folder.
+
+**Decision and reason**
+
+The experiment validates the interpolate-and-repaint recipe but does not yet commit the work to a final form. Three candidates stand: single full-axis video scrubbed by c; the per-bridge transition library with random pairing; or the bin-breathing crossfade system already live in TD. The choice belongs to hands-on comparison in TouchDesigner — interaction feel, not thumbnails, decides.
+
+**Evidence**
+
+- [Sampled frames of the full-axis video](images/2026-07-15-full-axis-video-frames.jpg)
+- `training/experiments/full_axis_rife_test_v1.mp4`; `training/comfyui_workflows/full_axis_v1.json`.
+
+**Reflection / next step**
+
+The session's transferable lesson mirrors the caption rewrite at a new layer: whether teaching a model or cutting a video, a process must be *supplied* with its intermediate states, never inferred from its endpoints. Next: wire the video's play head to the live c value in TD, A/B the three candidate forms, then decide — and open the time-boxed real-time re-dream experiment after the main line settles.
+
+---
+
+### 15 July 2026 — The video meets the hand: c-scrubbing in TD, the ink-detection layer debugged, and the system HUD moves into the visitor's screen
+
+**Intention / question**
+
+Wire the experimental full-axis video into the live system so the three candidate forms can be compared by touch; make the 3D particle layer read the *ink* rather than the water; and surface the system's internal values on the visitor-facing interface.
+
+**Work completed**
+
+- **Video scrubbing is live.** The 481-frame interpolated video went into a Movie File In on *Specify Index*, its play head bound to the live c value by parameter expression (`op('c_lag')['c'] * 480`) — approach speed and direction belong to the visitor's hand; c falling plays the journey backwards. A `mode_switch` toggles between the bin-breathing atlas (mode 0) and video scrubbing (mode 1) for the pending A/B decision.
+- **The detection layer now reads ink, not water.** Two inversions untangled the black-on-white problem: a Level TOP (invert) ahead of the TOP-to-POP conversion so point clouds grow on the ink mass, and a second invert plus a Reorder TOP (alpha from luminance) ahead of the bloom, turning the particle render into white glowing points keyed over transparency.
+- **A blob-detection Script TOP** (OpenCV connected components, transcribed from a tutorial) was written into the project: per-blob centroids and normalized sizes, tunable by three constants. Its display chain had a real bug — the DAT-to-CHOP node was set to *channel per row*, transposing the point table so every on-screen number read 0 (the header row) while positions came from the wrong cells. Fixed to *channel per column* with the index column preserved; 40 blobs now each carry their own number at their own position. The lesson: when mapped values look wrong, check the table's *orientation* before its contents.
+- **The system HUD crossed to the visitor's side.** The observation that unlocked it: C-VALUE, STABILITY, AGITATION, DURATION and STATE are all computed *in the browser* (they are what the browser sends to TD), so no return channel is needed. The interface gained a TD-styled terminal-green panel that fades in on touch, updates from local variables at zero latency, and lingers through the decay alongside the REDIFFUSION state before fading out.
+- The transition-bake script was upgraded to the validated full recipe (repaint → upscale → sharpen → RIFE → grain), pointed at the desktop app's real port and shared input folder, and given a `--limit` smoke-test flag.
+
+**Decision and reason**
+
+The interface displays its own locally computed values rather than round-tripping them through the relay: the browser is the origin of these numbers, and showing the origin is both zero-latency and architecturally honest. In TD, both visual forms stay wired side by side until touch comparison decides.
+
+**Evidence**
+
+- TouchDesigner project versions `.19`–`.31` (`InWard Bound System/`), nodes `full_axis_video`, `mode_switch`, `invert_ink`, `white_particles`, `key_black`, `script1` + `script1_callbacks`, corrected `datto1` chain.
+- Interface: `InkWard_Bound_Interface/public/index.html`, `style.css`, `sketch.js` (`#sys-hud`).
+- `training/bake_transitions.py` (full-recipe workflow).
+
+**Reflection / next step**
+
+Local test of the interface HUD, push to Render, then the full-system touch test — which doubles as the A/B session between video scrubbing and bin breathing, and covers the outstanding runtime verification checklist.
+
+---
+
+### 15 July 2026 — A particle-diffusion layer over the interpolated video: the ink grows a second, artistic skin
+
+**Intention / question**
+
+The ComfyUI video renders the ink's *body*; on its own it stays documentary. Layer a particle system over it in TouchDesigner so the material grows an expressive dimension — ink that sheds and regathers particles, closer to the work's language of consciousness fragments than to fluid footage alone.
+
+**Work completed**
+
+- Built on top of yesterday's scrub-wired video: the inverted ink drives a TOP→POP conversion whose points are filtered, animated with curl-noise particle flow (particleFlow → curl → scale/randomize → lookup-texture → delete chain), and instanced as small circles (uniform scale 0.005) through a dedicated geo/render pass.
+- The particle render is inverted and luminance-keyed (the earlier white_particles → key_black chain), then composited back over the video with bloom and levels — dark grain clusters growing along the ink's edges, loose specks drifting off into the water.
+- The result reads as intended: the video supplies the ink's mass and motion, the particle layer supplies its *dissolution* — every ink body permanently shedding and re-attracting fragments, the c-axis narrative embodied at the texture level. Because the particles are re-derived from the ink every frame, they follow wherever the c value scrubs the video.
+
+**Decision and reason**
+
+The artistic layer lives in TouchDesigner, not in the baked video: keeping the video documentary and the expression real-time means the particle behaviour can later be modulated by the live c value (calmer when gathering, wilder when disturbed) without re-baking anything — the same division of labour as everywhere else in the system: baked matter, live behaviour.
+
+**Evidence**
+
+- [Composited frame: interpolated ink video with the particle-diffusion layer](images/2026-07-15-td-particle-diffusion-layer.jpg)
+- TouchDesigner project `.35` (`inkward_bound` particle chain: topto1 → delete → particleFlow → curl → lookuptex → circle-instanced render → white_particles → key_black → bloom → comp).
+
+**Reflection / next step**
+
+The layered architecture earned its keep within a day of existing. Next: modulate particle energy by c (and agitation), then the full-system touch test and the A/B between the two visual forms — now three, counting this hybrid.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:
