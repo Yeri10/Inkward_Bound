@@ -7,3 +7,7 @@ training/atlas_candidates/
 training/atlas_candidates_v6/
 training/atlas_candidates_v7/
 training/__pycache__/
+InWard Bound System/Movie/*
+!InWard Bound System/Movie/inkwb_full_axis_00004.mp4
+.DS_Store
+/package-lock.json
