@@ -55,3 +55,31 @@ canvas {
   color: #2a2a2a;
   transition: color 1.2s ease;
 }
+
+/* ── System HUD (TD-style, appears on touch) ── */
+#sys-hud {
+  position: fixed;
+  top: 18px; left: 18px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: #35e07a;
+  text-shadow: 0 0 6px rgba(53, 224, 122, 0.45);
+  pointer-events: none;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+#sys-hud.visible { opacity: 1; }
+
+#sys-hud .sys-title {
+  border-bottom: 1px solid #35e07a;
+  padding-bottom: 5px;
+  margin-bottom: 8px;
+}
+#sys-hud .sys-row { line-height: 1.55; }
+#sys-hud .sys-state {
+  border-top: 1px solid #35e07a;
+  margin-top: 8px;
+  padding-top: 6px;
+}

@@ -313,12 +313,21 @@ function updateState() {
     const el = document.getElementById('state-txt');
     el.textContent = STATE_LABELS[sn];
     el.style.color = STATE_COLORS[sn];
+    document.getElementById('sys-state').textContent = STATE_LABELS[sn];
   }
 
   document.getElementById('v-c').textContent = cValue.toFixed(2);
   document.getElementById('v-s').textContent = stability.toFixed(2);
   document.getElementById('v-a').textContent = agitation.toFixed(2);
   document.getElementById('v-d').textContent = duration.toFixed(1) + 's';
+
+  // System HUD: fades in while touching, lingers through the decay
+  const sysHud = document.getElementById('sys-hud');
+  sysHud.classList.toggle('visible', isTouching || cValue > 0.05);
+  document.getElementById('sys-c').textContent = cValue.toFixed(2);
+  document.getElementById('sys-s').textContent = stability.toFixed(2);
+  document.getElementById('sys-a').textContent = agitation.toFixed(2);
+  document.getElementById('sys-d').textContent = duration.toFixed(1) + 's';
 }
 
 // ── SEND TO TD ────────────────────────────────────────────────────
