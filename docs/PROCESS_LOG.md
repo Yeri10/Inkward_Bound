@@ -1215,6 +1215,8 @@ Three interaction problems surfaced during touch testing. First, the c-value dro
 - Built the idle/touch video switch she wired as `switch1`: `is_touching → touch_lag (0.3 s in / 1.2 s out) → switch1.index` with Blend enabled, so the idle loop crossfades into the c-scrubbed axis video on contact and fades back after release.
 - Profiled the network for the lag report. Worst offenders per cook: `base3/script1` 498 ms, `base3/proximity1` 137 ms, `particle1` (50,000 particles) 110 ms, and both axis-video players at ~35–40 ms each. The video cost had a structural cause: H.264 is inter-frame coded, so scrubbing to an arbitrary frame forces a decode walk back to the nearest keyframe.
 - Re-encoded the axis video to HAP Q (`ffmpeg -c:v hap -format hap_q`, 23 MB → 278 MB), a per-frame, GPU-decoded codec built for random access, and repointed both movie players at it.
+- Fixed the idle loop never playing through: `moviefilein1` was set to Locked to Timeline, so the project timeline's 600-frame loop kept yanking the 481-frame video back to its start. Switched to Sequential mode — the idle ink now plays on its own clock and loops independently.
+- Fixed the axis video never reaching its final frame during interaction: the c formula (`duration×0.5 + stability×0.3 − agitation×0.2`) has a theoretical ceiling of 0.8, so frame 480 was unreachable by design. Normalised the reachable range onto the full axis: `index = min(c/0.8, 1) × 480` — a sustained, calm hold now carries the ink all the way to condensation.
 
 **Decision and reason**
 
