@@ -1201,6 +1201,37 @@ The layered architecture earned its keep within a day of existing. Next: modulat
 
 ---
 
+### 2026-07-23 — Smoothing the search gesture: gated c-signal chain, touch-triggered video switch, and the HAP codec fix
+
+**Intention / question**
+
+Three interaction problems surfaced during touch testing. First, the c-value drove the video with visible stutter — the ink jumped between states instead of flowing. Second, releasing the screen should guarantee a return to the dispersed state (c = 0), without depending on the browser to keep sending decaying values. Third, the whole interaction had become laggy, and the cause needed measuring rather than guessing.
+
+**Work completed**
+
+- Rebuilt the c-signal chain inside TouchDesigner as a dedicated conditioning pipeline: `c_pick × is_touching → c_gate → c_lag → c_filter (Gaussian, 0.25 s) → c_out → video index`. The browser still computes c from touch (duration, stability, agitation); TD now shapes it before it reaches the image.
+- Diagnosed two stutter sources: the 30 fps WebSocket stream appearing as a staircase inside TD's 60 fps cook loop (ground out by the Gaussian Filter CHOP), and integer frame snapping in the Movie File In (fixed by enabling frame interpolation, so fractional indices blend adjacent frames).
+- Made release behaviour explicit with a logic gate: `c × is_touching` collapses to 0 the instant contact ends, and an asymmetric Lag CHOP (rise 0.4 s, fall 2.5 s) turns that collapse into a slow re-diffusion back to frame 0 — robust even if the browser freezes or the socket drops mid-touch.
+- Built the idle/touch video switch she wired as `switch1`: `is_touching → touch_lag (0.3 s in / 1.2 s out) → switch1.index` with Blend enabled, so the idle loop crossfades into the c-scrubbed axis video on contact and fades back after release.
+- Profiled the network for the lag report. Worst offenders per cook: `base3/script1` 498 ms, `base3/proximity1` 137 ms, `particle1` (50,000 particles) 110 ms, and both axis-video players at ~35–40 ms each. The video cost had a structural cause: H.264 is inter-frame coded, so scrubbing to an arbitrary frame forces a decode walk back to the nearest keyframe.
+- Re-encoded the axis video to HAP Q (`ffmpeg -c:v hap -format hap_q`, 23 MB → 278 MB), a per-frame, GPU-decoded codec built for random access, and repointed both movie players at it.
+
+**Decision and reason**
+
+Keep the division of labour explicit: the browser computes meaning (what the touch is worth), TD computes motion (how the image gets there). Putting the return-to-zero in TD rather than trusting the browser's decay makes the installation fail-safe — an unplugged network cable now produces a slow fade to dispersion, not a frozen frame. HAP Q was chosen over reducing particle counts first because the codec cost was structural and lossless to the artwork, whereas thinning particles changes the visual.
+
+**Evidence**
+
+- TouchDesigner project: `inkward_bound` network — `c_gate`, `c_filter`, `c_out`, `touch_lag`, `touch_out` nodes; `switch1` blend expression `op('touch_out')['is_touching']`.
+- `InWard Bound System/Movie/inkwb_full_axis_00004_hapq.mov` (HAP Q re-encode of the 481-frame axis video).
+- Profiling snapshot: cook times recorded via the TD Python API during the session.
+
+**Reflection / next step**
+
+The gesture now reads as intended: pressure gathers the ink, release lets it drift apart on its own clock. Remaining suspects if lag persists after the HAP test: cache or downsize `base3/script1` (1280×720 per-pixel Python), thin `particle1` below 50 k, and convert the 1080p ambient loop (`3.mp4`) to HAP as well. Then the full-system touch test.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:
