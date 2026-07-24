@@ -295,7 +295,7 @@ function updateState() {
   // Weights sum to 1.0 so a long, still, calm hold drives cTarget → 1.0,
   // which lets full_axis_video (index = c * 480) reach its final frame.
   const cTarget = isTouching
-    ? min(max(min(duration / 10, 1) * 0.7 + stability * 0.3 - agitation * 0.2, 0), 1)
+    ? min(max(min(duration / 18, 1) * 0.7 + stability * 0.3 - agitation * 0.2, 0), 1)
     : 0;
 
   cValue = isTouching
