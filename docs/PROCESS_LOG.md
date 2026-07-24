@@ -1234,6 +1234,36 @@ The gesture now reads as intended: pressure gathers the ink, release lets it dri
 
 ---
 
+### 2026-07-24 — Five ink axes: a video library with random selection per touch, and a slower climb to condensation
+
+**Intention / question**
+
+One axis video meant every visitor searched the same ink. The goal for this session: bake a library of five axis videos, have the idle state cycle through them, and have each new touch randomly select which ink the visitor will search — so no two interactions look alike. Alongside this, the climb to the final frame felt too quick; condensation should cost more patience.
+
+**Work completed**
+
+- Tuned the ComfyUI bake pipeline for perceptual smoothness before the batch: film grain seed set to `fixed` (per-frame random grain made the image "boil" when the scrub lingered), Video Combine `crf` 19 → 14 (the mp4 is an intermediate — H.264 artifacts would be inherited by the HAP re-encode), RIFE multiplier raised with `ensemble` on.
+- Baked five axis videos (`inkwb_full_axis_00001–00005.mp4`, 449–481 frames each) and converted all five to HAP Q for random-access scrubbing (~280–300 MB each, excluded from the repo).
+- Built the switching architecture in TouchDesigner without adding decoders: a `video_list` Table DAT holds the five paths and their frame counts; `touch_swap` (CHOP Execute on the rising edge of `is_touching`) loads a random video — always different from the previous one — into `full_axis_video` at the moment a touch begins, hidden inside the 0.3 s crossfade from idle; `idle_swap` advances the idle player to the next video each time its loop wraps, so the resting state cycles 1→2→3→4→5.
+- Fixed a cook dependency loop: the scrub expression originally asked an Info CHOP for the current video's frame count, but that Info CHOP watched the same player the expression drove. Frame counts now live in the playlist table and a `fa_len` Constant CHOP that `touch_swap` updates together with the file — the loop warning and the transient `NoneType` index error are both gone.
+- Slowed the c-value climb in the browser: the duration term now saturates at 18 s instead of 10 s (`duration/18`), so carrying the ink all the way to condensation requires a genuinely sustained, calm hold.
+
+**Decision and reason**
+
+Switching by swapping the file on two existing players, rather than five players feeding a Switch TOP, keeps only two decode streams alive — five simultaneous 1024² HAP decoders would have spent the frame budget the codec fix had just recovered. Randomising per touch (not per visitor) makes repetition itself expressive: the same hand returning meets different ink.
+
+**Evidence**
+
+- Commits: `d53767d` (TD smoothing chain and fixes), `c901a6c` (18 s climb).
+- Mid-frame of each of the five axis videos: ![Five axis videos, mid-frames](images/2026-07-24-axis-video-library.jpg)
+- TouchDesigner nodes: `video_list`, `fa_len`, `touch_swap`, `idle_swap` in the `inkward_bound` network.
+
+**Reflection / next step**
+
+The library turns one search into five possible searches, and the slower climb makes reaching the end feel earned. Still open: whether five variations are perceptibly different to visitors in situ, and whether the 18 s hold is patience or boredom — both questions for the next full-system touch test.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:
