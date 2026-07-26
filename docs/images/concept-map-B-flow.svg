@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 900" font-family="'PingFang SC','Noto Sans CJK SC','Noto Sans SC',sans-serif">
+  <style>
+    .band{fill:#eee;} .bandDark{fill:#dcdcdc;}
+    .blk{fill:#111;} .circleO{fill:#fff;stroke:#111;stroke-width:2;} .dash{fill:none;stroke:#111;stroke-width:1.2;stroke-dasharray:4 4;}
+    .tW{fill:#fff;font-size:20px;font-weight:700;text-anchor:middle;}
+    .tB{fill:#111;font-size:18px;font-weight:700;text-anchor:middle;}
+    .tS{fill:#111;font-size:14px;text-anchor:middle;}
+    .tG{fill:#777;font-size:12px;text-anchor:middle;}
+    .tStep{fill:#111;font-size:15px;font-weight:600;text-anchor:middle;}
+    .tag{fill:#111;} .tagT{fill:#fff;font-size:13px;text-anchor:middle;}
+    .lnG{stroke:#aaa;stroke-width:1;fill:none;}
+    .tRef{fill:#999;font-size:11px;font-style:italic;text-anchor:middle;}
+  </style>
+
+  <!-- central flow band -->
+  <path class="band" d="M240 450 L1450 400 L1450 360 L1560 450 L1450 540 L1450 500 L240 450 Z" opacity="0.9"/>
+
+  <!-- WHY -->
+  <rect class="blk" x="40" y="415" width="150" height="50"/>
+  <text class="tW" x="115" y="447">现实背景 Why</text>
+  <g>
+    <text class="tS" x="115" y="330">AI 接管注意力与记忆</text>
+    <text class="tS" x="115" y="360">计算空间不可见</text>
+    <text class="tS" x="115" y="390">经验不再完整</text>
+    <line class="lnG" x1="115" y1="400" x2="115" y2="415"/>
+  </g>
+
+  <!-- PROBLEM circle -->
+  <circle class="circleO" cx="360" cy="440" r="95"/>
+  <circle class="dash" cx="360" cy="440" r="115"/>
+  <text class="tB" x="360" y="425">核心问题</text>
+  <text class="tG" x="360" y="448">( Problem )</text>
+  <text class="tS" x="360" y="475">意识碎片散落潜空间</text>
+  <g>
+    <rect class="tag" x="230" y="290" width="110" height="30"/><text class="tagT" x="285" y="310">真实存在</text>
+    <rect class="tag" x="360" y="270" width="110" height="30"/><text class="tagT" x="415" y="290">不可见</text>
+    <rect class="tag" x="300" y="590" width="110" height="30"/><text class="tagT" x="355" y="610">不可触</text>
+    <text class="tRef" x="360" y="650">认知外包:Stiegler 技术义肢 · Hayles 分布式认知</text>
+    <text class="tRef" x="360" y="670">潜空间:Rombach et al., 2022(Latent Diffusion)</text>
+  </g>
+
+  <!-- HOW label top -->
+  <text class="tB" x="900" y="130">工作机制(How)</text>
+  <line class="lnG" x1="900" y1="145" x2="900" y2="230"/>
+
+  <!-- 5 steps -->
+  <g>
+    <text class="tStep" x="620" y="270">STEP 1</text><text class="tS" x="620" y="295">触摸</text><text class="tG" x="620" y="315">手指落下,门打开</text>
+    <text class="tStep" x="760" y="270">STEP 2</text><text class="tS" x="760" y="295">测量</text><text class="tG" x="760" y="315">时长 / 稳定 / 躁动</text>
+    <text class="tStep" x="900" y="270">STEP 3</text><text class="tS" x="900" y="295">计算</text><text class="tG" x="900" y="315">加权为 C 值(0–1)</text>
+    <text class="tStep" x="1040" y="270">STEP 4</text><text class="tS" x="1040" y="295">导航</text><text class="tG" x="1040" y="315">C 值擦动墨之轴</text>
+    <text class="tStep" x="1180" y="270">STEP 5</text><text class="tS" x="1180" y="295">回散</text><text class="tG" x="1180" y="315">松手,墨缓缓归零</text>
+    <line class="lnG" x1="680" y1="290" x2="700" y2="290"/><line class="lnG" x1="820" y1="290" x2="840" y2="290"/>
+    <line class="lnG" x1="960" y1="290" x2="980" y2="290"/><line class="lnG" x1="1100" y1="290" x2="1120" y2="290"/>
+  </g>
+
+  <!-- center seal -->
+  <rect x="850" y="405" width="100" height="70" fill="none" stroke="#111" stroke-width="3"/>
+  <text class="tB" x="900" y="435">潜空间</text><text class="tB" x="900" y="460">搜寻</text>
+
+  <!-- WHO bottom -->
+  <text class="tB" x="900" y="800">行动主体(Who)</text>
+  <line class="lnG" x1="900" y1="785" x2="900" y2="700"/>
+  <g>
+    <text class="tStep" x="640" y="660">1 观众的手</text><text class="tG" x="640" y="682">按压与停留,唯一的输入</text>
+    <text class="tStep" x="830" y="660">≫ 2 我</text><text class="tG" x="830" y="682">数据集与美学的作者</text>
+    <text class="tStep" x="1010" y="660">≫ 3 模型</text><text class="tG" x="1010" y="682">学会墨的词汇 inkwb</text>
+    <text class="tStep" x="1180" y="660">≫ 4 墨</text><text class="tG" x="1180" y="682">意识漂移的可见形态</text>
+  </g>
+
+  <!-- DESIGN circle -->
+  <circle class="circleO" cx="1430" cy="440" r="95"/>
+  <circle class="dash" cx="1430" cy="440" r="115"/>
+  <text class="tB" x="1430" y="425">设计介入</text>
+  <text class="tG" x="1430" y="448">( Design )</text>
+  <g>
+    <rect class="tag" x="1330" y="270" width="150" height="30"/><text class="tagT" x="1405" y="290">自建水墨数据集 + LoRA</text>
+    <rect class="tag" x="1500" y="320" width="120" height="30"/><text class="tagT" x="1560" y="340">五条墨之轴</text>
+    <rect class="tag" x="1540" y="430" width="150" height="30"/><text class="tagT" x="1615" y="450">慢交互:18 秒凝结</text>
+    <rect class="tag" x="1500" y="545" width="140" height="30"/><text class="tagT" x="1570" y="565">故障安全的回散</text>
+    <line class="lnG" x1="1405" y1="300" x2="1420" y2="345"/><line class="lnG" x1="1540" y1="350" x2="1505" y2="380"/>
+    <line class="lnG" x1="1540" y1="445" x2="1525" y2="443"/><line class="lnG" x1="1545" y1="545" x2="1505" y2="505"/>
+    <text class="tRef" x="1405" y="252">数据即材料,劳动可见:「模型的 DNA」(Ridler, 2018)</text>
+    <text class="tRef" x="1615" y="492">时延与在场的交互艺术脉络</text>
+    <text class="tRef" x="1430" y="620">过程公开:仓库与日志即可问责性(Barr, 2020)</text>
+  </g>
+
+  <!-- VALUE arrow -->
+  <path class="blk" d="M1560 420 h130 v-25 l80 45 l-80 45 v-25 h-130 z"/>
+  <text class="tB" x="1660" y="545">价值与意义(Value)</text>
+  <g>
+    <text class="tS" x="1660" y="590">让不可见的可被搜寻</text>
+    <text class="tS" x="1660" y="615">把被外包的注意力,以身体取回片刻</text>
+    <text class="tS" x="1660" y="640">重复即差异:每只手遇见不同的墨</text>
+  </g>
+</svg>
