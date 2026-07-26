@@ -1264,6 +1264,38 @@ The library turns one search into five possible searches, and the slower climb m
 
 ---
 
+### 2026-07-26 — Release choreography, a hidden gate bug, and moving the installation off the cloud
+
+**Intention / question**
+
+Three threads in one session. First, choreographing what happens at release: should the ink drift visibly back to dispersion before the idle loop returns, or should the crossfade happen immediately? Second, the idle loop needed a breath — a short hold on the final frame before the next video. Third, touch data stopped arriving in TouchDesigner entirely, which forced a diagnosis of the whole transport chain and a rethink of the network architecture for exhibition.
+
+**Work completed**
+
+- Built and then deliberately reverted a "wait for the ink to settle" release: a Logic CHOP (`c_active`, c > threshold) OR-ed with `is_touching` kept the axis video on screen while c drifted home, and only then faded to idle. In testing the tail of the drift read as a freeze — the low-c frames are nearly identical, so the last seconds looked like a stuck first frame. Reverted to release → 1.2 s crossfade immediately; the alternative wiring remains in the network (`c_active`, `touch_or_ink`) for A/B.
+- Caught a silent bug while wiring the above: `c_gate`'s Combine CHOPs parameter had never actually been set — the multiply token is `mul`, not `mult`, and the failed assignment left it at `off`. The gate had been passing channels through untouched, meaning TD-side return-to-zero had been relying on the browser's decay all along. Fixed; the fail-safe is now real.
+- Gave the idle loop its breath: `idle_swap` now pauses on the last frame for 1.5 s (tuned down from 2.5 s), then advances to the next video. Added `idle_reset` (Execute DAT, onStart) after a crash left the player stuck in its waiting state — every project launch now clears stale pause flags and resumes playback.
+- Diagnosed the "no touch data" failure: the WebSocket DAT showed connected with no errors, yet nothing arrived. Cause: Render's free tier spins down after idle and silently kills all sockets — both the browser page and TD were holding zombie connections. A connection is a belief each end holds separately; neither is notified when the other's end dies.
+- Moved the transport local for reliability: the Node relay now runs on the Mac itself (started detached so it survives terminal sessions), TD connects to `127.0.0.1:3000`, and the iPad joins over LAN (`http://<Mac-IP>:3000`). Same code, one failure point instead of five, ~1 ms latency, no sleep.
+- Added a `Touch Server` switch (custom Connection page on the `inkward_bound` COMP, backed by a Parameter Execute DAT): one dropdown flips the WebSocket between Local and Render and reconnects — the on-site fallback is now a two-click operation.
+- Also this session: three concept-map SVG drafts (ink-centred radial, four-lens radial, Why→Value flow) for the presentation, developed through a step-by-step concept walk-through that positioned ink as the translator between consciousness and latent space — the medium that makes the invisible space visible.
+
+**Decision and reason**
+
+Immediate fade over settle-then-fade: the drift-back reads beautifully in the mid-range but its asymptotic tail reads as a hang, and a visitor's trust in a touchscreen dies in seconds of apparent freeze. Local-first networking with a cloud fallback: an installation should not depend on a foreign data centre staying awake; Render remains for remote demos and assessment access.
+
+**Evidence**
+
+- TouchDesigner: `c_active`, `touch_or_ink`, `idle_reset`, `server_switch` nodes; `inkward_bound` custom parameter page `Connection`.
+- Concept maps: `docs/images/concept-map-ink-center.svg`, `concept-map-A-radial.svg`, `concept-map-B-flow.svg`.
+- Server log confirming both clients on the local relay: iPad (`10.237.x.x`) and TD (`127.0.0.1`).
+
+**Reflection / next step**
+
+The gate bug is the session's real lesson: a parameter set with an invalid token fails silently, and the system *appeared* to work because a different layer (the browser's decay) was covering for it. Verify by reading values back, not by watching behaviour. Before install: a one-click launch script for the Node relay (auto-start on boot, show IP and a QR code for the iPad), a TD-side watchdog that reconnects after silence, and the full-system touch test.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:
