@@ -1384,7 +1384,7 @@ ComfyUI 视频呈现的是墨的**身体**,单独存在偏纪实。在 TouchDesi
 
 **反思 / 下一步**
 
-`viewpoint_control` 的俯拍召回问题还没解决:把 atlas 里那段确实能生效的原话原样搬过来(它在 `generate_atlas.py` 自己的生成流程里是有效的),并没有把效果带过来,说明差异可能不只是 prompt 字符串本身,而是这个 cell 采样方式上的其他因素(seed、分辨率,或者某种只有 atlas 脚本完整生成流程才能绕开的"俯拍墨水微距"基础模型先验)。下一步应该逐行对比这两条代码路径,而不是继续只在 prompt 层面试错。
+逐行对比两条代码路径后找到一处具体差异:`generate_atlas.py` 在加载完 LoRA 之后明确把 scheduler 换成了 `DDIMScheduler.from_config(pipe.scheduler.config)`,而 notebook 的 Inference Test cell 一直没替换过默认 scheduler(PNDM)——也就是说,那段在 DDIM 采样下调出来的 atlas 措辞,搬到这里其实跑在了不同的采样器上。这大概率是残留细条纹结构的原因,以后如果想再优化,把 notebook 也换成 DDIM 是一个可选方向。目前作者看过第二轮的俯拍图,认为已经够用,这一条不再继续调 prompt 或 scheduler。
 
 ---
 

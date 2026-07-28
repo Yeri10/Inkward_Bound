@@ -78,8 +78,7 @@ conda activate ml-art
 - v4 —— 之前塌陷的 seed 恢复正常:![v4 矩阵 seed 123](../docs/images/2026-07-09-inkwb-lora-v4-matrix-seed123.png)
 - v5 —— 俯拍不靠容器词也能召回:![v5 矩阵 seed 42](../docs/images/2026-07-09-inkwb-lora-v5-matrix-seed42.png)
 - v6 —— c 0.0 的弧形质感回滚,第二轮:![v6 c0.0 弧形质感](../docs/images/2026-07-13-v6-c00-curved-texture-round2.jpg)
-- v7 —— recall 测试,每个新短语一张图:![v7 recall 测试](../docs/images/2026-07-13-v7-recall-tests.jpg)
-- v7 —— recall 测试第二轮,修好共享 seed 的 bug、并从 `generate_atlas.py` 搬来已验证过的 prompt/负向提示词之后(2026 年 7 月 28 日):![v7 recall 测试第二轮](../docs/images/2026-07-28-v7-recall-tests-round2.png)
+- v7 —— recall 测试,每个新短语一张图,修好共享 seed 的 bug、并从 `generate_atlas.py` 搬来已验证过的 prompt/负向提示词之后(2026 年 7 月 28 日):![v7 recall 测试](../docs/images/2026-07-28-v7-recall-tests-round2.png)
 - v7 —— 最终精选的 66 张 atlas:![最终 66 张 latent atlas](../docs/images/2026-07-13-latent-atlas-final-66.jpg)
 
 ## 墨水 Prompt 词汇表(v7)
@@ -142,6 +141,6 @@ Notebook 里 Inference Test cell 中的 `prompt_groups` 一共跑五组,每组�
 | `state_control` | 四个状态短语(diffusing / settling / disturbed / gathering)单独能不能产生不同形态 | 未改动——曾短暂给其中两条补过锚点,随后撤销,因为只改一半会让这组内部不一致(两条补过、两条裸词),这直接混淆了这组本来要做的对比。带锚点的词汇测试属于 `v7_recall` 的职责;这一组保持纯裸词测试 |
 | `phase_control` | `early → final phase`(配合测量出的密度短语)能不能沿一条合理的时间轴推进 | 未改动 |
 | `v7_recall` | v7 caption 重写时按类别写的物理过程短语能不能单独被模型记起来 | 改过两轮——第一轮给四条都补上了前置阶段锚点和 `{PHOTO}`,起因是 01(pure_diffusion)那条被发现渲染成了版画/雕刻感而不是照片感。第二轮(7 月 28 日)把 02–04 换成了从 `generate_atlas.py` 搬来的 prompt/负向提示词配方,其中 03 还单独配了一条负向提示词,专门用来召回细颗粒雾状质感 |
-| `viewpoint_control` | `top-down view` / `side view` 单独能不能切换镜头角度 | 第 0 条(俯拍)不再是裸词——为了修复条纹/大理石纹的问题,换成了从 `generate_atlas.py` 搬来的完整 c 0.0 配方(prompt + 负向提示词)。7 月 28 日重新测试后,画面依然是细条纹放射状加中间留白,没有变成实心块状,问题还没解决。第 1 条(侧视)没动,仍是裸词 |
+| `viewpoint_control` | `top-down view` / `side view` 单独能不能切换镜头角度 | 第 0 条(俯拍)不再是裸词——为了修复条纹/大理石纹的问题,换成了从 `generate_atlas.py` 搬来的完整 c 0.0 配方(prompt + 负向提示词)。7 月 28 日重新测试后,画面还带一些细放射状结构、不是完全平整的墨团,但作者看过后认为已经够用,这一条不再继续调 prompt。第 1 条(侧视)没动,仍是裸词 |
 
 另外说明:采样循环现在给每张图用 `seed + index` 生成种子,而不是所有图共享同一个 `seed`——这样图片之间不再从完全相同的初始噪声出发,同一组里 prompt 之间的差异也就不会再被共享的构图骨架掩盖掉。`NEGATIVE_OVERRIDES` 和 `GUIDANCE_OVERRIDES` 现在按 `(组名, 行号)` 生效,不再是按组生效——这样 `v7_recall` 03 那条专用的负向提示词就不会再泄漏到同组的其他行。

@@ -1384,7 +1384,7 @@ Chose to transplant wording that had already been validated ("final per user rev
 
 **Reflection / next step**
 
-`viewpoint_control`'s top-down recall is still open: transplanting the exact atlas wording (which does work inside `generate_atlas.py`'s own pipeline) did not carry the fix over, which suggests the difference isn't purely the prompt string but something else about how that line is sampled in this cell (seed, resolution, or a base-model prior for "top-down macro ink" that only the atlas script's full generation loop currently avoids). Next step is to compare the two code paths line by line rather than continue prompt-only iteration.
+Comparing the two code paths line by line surfaced one concrete difference: `generate_atlas.py` explicitly swaps in `DDIMScheduler.from_config(pipe.scheduler.config)` after loading the LoRA, while the notebook's Inference Test cell never overrides the pipeline's default scheduler (PNDM) — so the atlas wording, tuned under DDIM sampling, is running through a different sampler here. This is a plausible explanation for the residual thin radiating structure, and swapping the notebook to DDIM as well remains an option if the result is ever revisited. For now the artist reviewed the round-2 top-down image and accepted it as good enough — no further prompt or scheduler tuning is planned for this line.
 
 ---
 
