@@ -1296,6 +1296,98 @@ The gate bug is the session's real lesson: a parameter set with an invalid token
 
 ---
 
+### 2026-07-28 — A shared-seed bug and four recall-test prompts rewritten in the LoRA inference test
+
+**Intention / question**
+
+Reviewing generated images from the `inkwb_lora_v7` Inference Test cell surfaced two problems: the `v7_recall` group's per-category anchor phrases were producing images that didn't match their intended look — 01 (pure_diffusion) rendered as a graphic engraving rather than photographic ink, 03 (disturbed_ink) and 04 (gathering_ink) both rendered as near-identical tangled swirls instead of the intended "fine grain mist" vs "settled mound" — and separately, the `state_control` group's bare state prompts also produced generic, similar-looking results with `top-down view` not visibly respected. Needed to find why the images across a prompt group weren't separating and fix it.
+
+**Work completed**
+
+- Found a shared-seed bug: `torch.manual_seed(seed)` was called with the same fixed `seed` value before every single image in the generation loop, across all five prompt groups. Every image therefore started from identical initial noise, which strongly determines a diffusion image's overall composition — so prompt differences were being visually masked by a shared "skeleton". Changed to `torch.manual_seed(seed + index)`, so each image gets different (but still reproducible) noise.
+- Rewrote all four `v7_recall` prompts (01–04) to include the preceding physical-process stage phrase from the v7 caption rewrite (e.g. "black ink freshly poured into the still water, pooling into a solid opaque blob" ahead of the "curved flowing washes" phrase already there) plus the `{PHOTO}` qualifier, which all four lines had been missing.
+- Tried the same fix on `state_control`'s diffusion and disturbance lines (adding anchors, plus an explicit "seen directly from above" phrase on diffusion), then reverted both: patching only two of the group's four lines left it internally inconsistent — comparing an anchor-enriched line against two still-bare ones no longer tests what the group is for (whether the bare state words alone separate). Anchored-vocabulary testing already has its own group (`v7_recall`); `state_control` stays a clean bare-word test.
+- Left `viewpoint_control`'s two lines untouched — that group is deliberately bare, isolating the `top-down view` / `side view` words alone with no other anchors, so it stays a clean test of whether the viewpoint word itself does anything.
+- Added a new "Prompt groups" reference table to `training/README.md`, documenting what each of the five `prompt_groups` tests and whether it currently carries extra anchor phrases — the notebook itself remains the source of truth for exact wording, since that keeps changing with each tuning round.
+
+**Decision and reason**
+
+Fixed the seed sharing first because it was confounding every other diagnosis — with identical noise, it's impossible to tell whether a lack of visual separation comes from weak prompt conditioning or from the sampling setup itself. Kept the README table pointing at, rather than duplicating, the notebook's exact prompt strings, to avoid the two drifting out of sync on every future edit.
+
+**Evidence**
+
+- `training/Inkward Bound LoRA Training.ipynb` — Inference Test cell: seed formula, `v7_recall` and `state_control` prompt edits.
+- `training/README.md` — new "Prompt groups" section.
+
+**Reflection / next step**
+
+Re-run the Inference Test cell with the new seed formula and prompts to see whether recall accuracy and state/viewpoint separation actually improve. If `state_control`'s bare words and `viewpoint_control` still don't separate after this round, that points back to a training-side vocabulary gap (as the v7 caption rewrite already fixed for 03) rather than something further prompt tuning can solve.
+
+---
+
+### 2026-07-28 — Dataset capture log accuracy pass: corrected counts, a broken table, and new processing evidence
+
+**Intention / question**
+
+The dataset capture and production log (`ink_dataset/DATASET_CAPTURE_LOG.md`) had accumulated stale and self-contradictory statements since it was last edited, and several factual gaps — raw codec, per-session clip counts, the exact selection and processing method — that the artist now had real answers for. Needed a pass to resolve the contradictions, fill the gaps with real figures, and add supporting evidence.
+
+**Work completed**
+
+- Fixed a self-contradiction in the Evidence checklist: "Behind-the-scenes image" was unchecked despite every session record already linking two setup photos.
+- Replaced a stale "exact system mapping still to be tested" line in the Connection to the final work table with an accurate description of the system as actually built: the five-axis video library, the c-value formula, and how the four dataset categories (including the reversed-video gathering technique) map onto the installation's dispersed-to-condensed states.
+- Filled in real production numbers from the artist: raw capture is MP4 at 4K resolution; total video clips corrected from an earlier estimate of 64 to the actual 54 (13 in Session 01, 35 in Session 02, 6 in Session 03), of which 26 were selected — a roughly 48% selection rate, not the previously stated 41%. Removed the unresolved "raw video storage location TBC" line rather than leave it dangling, since the artist doesn't need that location recorded.
+- Documented the actual selection and processing workflow: clips were selected on clarity, length and representativeness (e.g. `disturbed_ink` needed visible dispersal after stirring) between 26–29 June; four clear, distinct phases per selected clip were then chosen in CapCut between 28–29 June, colour-corrected and reframed to a square crop, screenshotted, and retouched in Photoshop to remove interference elements (air bubbles, tank-bottom reflections) before cropping and converting to monochrome.
+- Found and fixed a markdown bug introduced while adding processing-evidence image links: a paragraph inserted between two table rows had split the Selection and processing log table in half, orphaning its third row from the header. Fixed by moving the evidence paragraph after the full table.
+- Rewrote the stale opening Purpose paragraph, which still claimed "complete file counts are not yet stored," directly contradicting the figures now recorded a few lines below it.
+- Added four new evidence images to `docs/images/dataset_record/`: the CapCut phase-selection screen, a Photoshop still with interference elements boxed in red, the same still after correction, and a Finder screenshot of the `01_pure_diffusion` output folder showing six clips × four selected phases = 24 images — linked into the Selection and processing log section.
+- All of the above mirrored into `DATASET_CAPTURE_LOG.zh-CN.md` to keep the two language versions in sync, as established practice this session.
+
+**Decision and reason**
+
+Corrected numbers over leaving `TBC`: a capture log exists to be trusted, and once real figures were available there was no reason to keep placeholder text that actively contradicted them. Removed, rather than left unresolved, the one field (raw storage location) the artist chose not to specify — a dangling `TBC` there would read as an oversight rather than a decision.
+
+**Evidence**
+
+- `ink_dataset/DATASET_CAPTURE_LOG.md`, `ink_dataset/DATASET_CAPTURE_LOG.zh-CN.md`.
+- `docs/images/dataset_record/2026-07-28-processing-jianying-phase-select.jpg`, `2026-07-28-processing-ps-interference-marked.jpg`, `2026-07-28-processing-ps-corrected.jpg`, `2026-07-28-01_pure_diffusion-finder-folder.jpg`.
+
+**Reflection / next step**
+
+One timing detail is now tight but no longer contradictory: Session 03 was captured on 29 June, and the selection window is recorded as 26–29 June, so the last day of capture is also the last day of selection. Remaining gaps are lower priority: raw frame rate, lens settings, licensing/backup procedures, and the per-session breakdown of which of the 26 selected clips came from which session.
+
+---
+
+### 2026-07-28 — Transplanting proven prompts from `generate_atlas.py` into the Inference Test cell
+
+**Intention / question**
+
+After the seed fix and first anchor-phrase pass (same-day entry above), a re-run still showed two unresolved problems: `viewpoint_control`'s top-down line kept generating a striped, marbled composition instead of the pooled solid-blob look the dataset actually documents, and `v7_recall`'s 02–04 lines were still not clearly separated from each other. A `guidance_scale=9.0` override was tried first on `viewpoint_control` alone; the re-generated image showed no visible change, ruling out CFG strength as the lever. The next idea was to stop coining new prompt wording ad hoc and instead reuse the prompt/negative recipes already proven and marked "final per user review" in `generate_atlas.py` — the script that generates the actual production latent atlas.
+
+**Work completed**
+
+- Read `generate_atlas.py` in full and extracted its `build_prompt()` assembly order and the `BINS` list's per-c-value recipes (state, viewpoint, container, water/density toggles, morphology phrase, and — for some bins — a full negative-prompt replacement rather than an append).
+- Replaced `viewpoint_control`'s top-down (line 0) prompt and negative with the atlas's c 0.0 recipe verbatim.
+- Replaced `v7_recall` lines 02 (layered_ink), 03 (disturbed_ink) and 04 (gathering_ink) with their corresponding atlas recipes; line 03 required its own distinct negative prompt (not the shared default) to recall the fine-grain fog look specifically.
+- Discovered that `NEGATIVE_OVERRIDES` and `GUIDANCE_OVERRIDES` were keyed by group name only, so a group-level override was silently reused for every line in that group — this meant `viewpoint_control`'s untouched side-view line (line 1) was unintentionally inheriting the top-down-specific override the moment one was added. Refactored both dicts to key by `(group, line_idx)` and moved the lookup inside the per-line loop so each line's override is independent.
+- Verified all notebook edits via `ast.parse()` on the joined cell source (the `Edit` tool cannot touch `.ipynb` files directly, so every change here was made through `mcp__workspace__bash` scripts that load/mutate/dump the notebook JSON).
+- Re-ran the cell and reviewed the output: `v7_recall`'s four lines are now visibly distinct — 01 shows a top-down swirl-void, 02 shows dripping ink strands, 03 shows a genuine hazy fine-grain fog along the lower frame (the look that had been unreachable through this session's earlier rounds), 04 shows a gathered dark mass. `viewpoint_control`'s top-down line still shows a thin radiating striped pattern with a pale void at centre rather than a solid blocky mass — the atlas-recipe transplant did not fix this particular view.
+
+**Decision and reason**
+
+Chose to transplant wording that had already been validated ("final per user review" in the atlas script) rather than continue hand-writing new phrases, since this session's earlier rounds of ad hoc wording had not reliably separated the groups. Fixed the override-keying bug immediately on discovery rather than deferring it, since a silent cross-line leak would have made any future per-line result impossible to trust.
+
+**Evidence**
+
+- `training/Inkward Bound LoRA Training.ipynb` — Inference Test cell: `viewpoint_control` line 0 and `v7_recall` lines 02–04 prompt/negative replacement; `NEGATIVE_OVERRIDES`/`GUIDANCE_OVERRIDES` refactored to `(group, line_idx)` keys.
+- `training/README.md`, `training/README.zh-CN.md` — "Training versions" evidence list (new round-2 `v7_recall` image) and "Prompt groups" table (updated `v7_recall`/`viewpoint_control` status descriptions).
+- `docs/images/2026-07-28-v7-recall-tests-round2.png` — round-2 output grid, screenshotted by the artist after re-running the cell.
+
+**Reflection / next step**
+
+`viewpoint_control`'s top-down recall is still open: transplanting the exact atlas wording (which does work inside `generate_atlas.py`'s own pipeline) did not carry the fix over, which suggests the difference isn't purely the prompt string but something else about how that line is sampled in this cell (seed, resolution, or a base-model prior for "top-down macro ink" that only the atlas script's full generation loop currently avoids). Next step is to compare the two code paths line by line rather than continue prompt-only iteration.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:

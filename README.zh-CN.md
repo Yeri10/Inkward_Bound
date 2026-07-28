@@ -2,7 +2,7 @@
 
 **中文** | [English](README.md)
 
-Inkward Bound 是一个将浏览器触摸界面与 TouchDesigner 连接起来的交互装置原型。浏览器将触摸和指针行为转换为交互数据，Node.js WebSocket 中继服务器再将数据发送至 TouchDesigner 视觉系统。
+Inkward Bound 是一个将浏览器触摸界面与 TouchDesigner 连接起来的交互装置,触摸驱动的是一套经过训练的墨水扩散视觉系统。浏览器将触摸和指针行为转换为一个收敛值(`c` 值),Node.js WebSocket 中继服务器再将其发送至 TouchDesigner,由其实时播放一段潜扩散视频——由一个在 101 张真实墨水入水照片上训练出的 LoRA 生成——在离散与凝结两种状态之间移动。
 
 - [在线浏览器界面](https://inkward-bound.onrender.com)
 - [开发流程日志](docs/PROCESS_LOG.zh-CN.md)
@@ -54,6 +54,11 @@ Inkward_Bound/
 │   ├── 04_gathering_ink/
 │   ├── DATASET_CAPTURE_LOG.md
 │   └── DATASET_CAPTURE_LOG.zh-CN.md
+├── training/                   # LoRA 训练管线、七个版本的迭代记录、prompt 词汇表（见 training/README.zh-CN.md）
+│   ├── Inkward Bound LoRA Training.ipynb
+│   ├── prepare_dataset.py
+│   ├── generate_atlas.py
+│   └── measure_ink_coverage.py
 └── docs/
     ├── images/                 # 过程草图、模型与截图
     ├── PROCESS_LOG.md
@@ -116,6 +121,14 @@ Inkward_Bound/
 }
 ```
 
+## LoRA 训练
+
+装置里的墨水视觉本身来自一个在 [ink_dataset/](ink_dataset/README.zh-CN.md) 上训练的 LoRA(`inkwb`),经过七次迭代重训(v1 → v7),每一次都是被具体诊断出的问题推着走的——容器特征泄漏进触发词、阶段轴拉不出差异、seed 相关的状态塌陷、俯拍视角怎么写都会连带召唤出真实的水盆。完整的版本差异和证据见 [training/README.zh-CN.md](training/README.zh-CN.md);每一轮的推理过程记在 [docs/PROCESS_LOG.zh-CN.md](docs/PROCESS_LOG.zh-CN.md)(2026 年 7 月 6 日–14 日的条目)。
+
+![v7 精选出的最终 66 张 latent atlas](docs/images/2026-07-13-latent-atlas-final-66.jpg)
+
+v7 权重生成出手工精选的 66 张 latent atlas,之后经 RIFE 插帧转成五段连续的轴向视频,由触摸计算出的 `c` 值在 TouchDesigner 中实时 scrub 播放。
+
 ## 过程证据
 
 [开发流程日志](docs/PROCESS_LOG.zh-CN.md)把设计决策与带日期的 Git 提交、TouchDesigner 保留版本相互链接。后续记录应继续加入截图、简短测试结果以及范围明确的提交，使视觉与技术开发可以被共同审阅。
@@ -124,5 +137,6 @@ Inkward_Bound/
 
 - [开发流程文档](docs/PROCESS_LOG.zh-CN.md)
 - [Dataset 拍摄与制作日志](ink_dataset/DATASET_CAPTURE_LOG.zh-CN.md)
+- [LoRA 训练管线与版本迭代记录](training/README.zh-CN.md)
 - [Git 提交历史](https://github.com/Yeri10/Inkward_Bound/commits/main)
 - [在线浏览器界面](https://inkward-bound.onrender.com)

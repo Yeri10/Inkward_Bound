@@ -6,7 +6,7 @@
 
 This document records the production of any photographed, filmed, scanned or otherwise captured dataset used by Inkward Bound. It provides evidence of work that is not visible in source-code commits: planning, setup, capture sessions, rejected material, selection criteria, processing, permissions and the relationship between the dataset and the final interactive system.
 
-The repository now contains eight dataset contact-sheet screenshots documenting ink-diffusion experiments conducted on 22, 26 and 29 June 2026. All sessions were captured at the artist's home. Raw photographs or videos and complete file counts are not yet stored in the repository, so unknown fields remain marked `TBC`.
+The repository now contains eight dataset contact-sheet screenshots and processing-evidence images documenting ink-diffusion experiments conducted on 22, 26 and 29 June 2026. All sessions were captured at the artist's home. Raw video files themselves are not stored in the repository, but clip counts, selection numbers and the selection/processing workflow are now recorded below; a smaller set of fields (raw frame rate, lens settings, licensing and backup procedures) remain marked `TBC`.
 
 ## Dataset overview
 
@@ -20,9 +20,9 @@ The repository now contains eight dataset contact-sheet screenshots documenting 
 | Participant(s) / subject(s) | No people; water, ink, salt/salt water, hand soap and stirring tools |
 | Capture device(s) | Two devices compared: camera and phone |
 | Lighting | Two environments compared: controlled artificial light (phone lights in a darkened room) and natural soft light (window daylight / soft evening light) |
-| File formats | Raw format TBC; process evidence stored as PNG contact sheets |
-| Person responsible | TBC |
-| Storage location | Raw-material location TBC; public previews in `docs/images/dataset_record/` |
+| File formats | Raw capture is video (MP4, 4K resolution; frame rate TBC); still frames were extracted from video by screenshotting selected moments, then cropped and converted to the monochrome JPEGs in `ink_dataset/`; process evidence stored as PNG contact sheets |
+| Person responsible | Yerie (sole author of capture, selection and captioning) |
+| Storage location | Public previews in `docs/images/dataset_record/`; raw video files are not included in the repository |
 
 ## Capture intention
 
@@ -40,7 +40,7 @@ The capture compares how different materials and forces alter ink diffusion in w
 | --- | --- | --- | --- |
 | Subject / material | Water, ink, salt/salt water, hand soap, chopsticks/small stick and pipette | Produce varied diffusion, gathering and disturbance | Documented |
 | Camera / sensor | Camera and phone | Compare the two devices under both lighting environments | Documented |
-| Resolution / frame rate | TBC | TBC | Not documented |
+| Resolution / frame rate | 4K resolution; frame rate TBC | Preserve fine diffusion detail for close crops | Partly documented |
 | Lighting | Two environments compared: controlled artificial light (phone lights in a darkened room) and natural soft light (window daylight / soft evening light) | Compare controlled fill and available soft light | Documented |
 | Background / environment | Transparent vessel and bright background at home | Keep ink contours visible | Partly documented |
 | Action list | Natural drop, outward stirring, small central stirring, drawing/releasing ink with pipette | Produce different directions and densities | Documented |
@@ -53,9 +53,11 @@ Add one row immediately after each session.
 
 | Session | Date | Location | Files captured | Selected | Main outcome | Evidence |
 | --- | --- | --- | ---: | ---: | --- | --- |
-| 01 | 22 June 2026 | Home | TBC | Representative frames organised | Camera + two phone lights; diffusion and stirring | Contact sheets 03, 05 |
-| 02 | 26 June 2026 | Home | TBC | Representative frames organised | Phone/camera; salt, stirring tools, pipette and small stick | Contact sheets 01, 02, 04, 06, 07 |
-| 03 | 29 June 2026 | Home | TBC | Representative frames organised | Phone + soft evening light; hand soap, pipette and local stirring | Contact sheets 04, 08 |
+| 01 | 22 June 2026 | Home | 13 | part of 26 total (per-session split TBC) | Camera + two phone lights; diffusion and stirring | Contact sheets 03, 05 |
+| 02 | 26 June 2026 | Home | 35 | part of 26 total (per-session split TBC) | Phone/camera; salt, stirring tools, pipette and small stick | Contact sheets 01, 02, 04, 06, 07 |
+| 03 | 29 June 2026 | Home | 6 | part of 26 total (per-session split TBC) | Phone + soft evening light; hand soap, pipette and local stirring | Contact sheets 04, 08 |
+
+**Totals:** 54 video clips were recorded across the three sessions — 13 in Session 01, 35 in Session 02, 6 in Session 03. Of these, 26 clips were selected as source material, a selection rate of roughly 48% at the clip level. Selected clips were screenshotted at four clear, distinct phases per clip to produce still frames, which were then cropped and converted to monochrome — and retouched in Photoshop to remove visual interference such as air bubbles and tank-bottom reflections — to build the 101-image training set in `ink_dataset/`. The selected-clip breakdown per session is not yet split out; add it here if recovered from folder metadata.
 
 ## Detailed session record
 
@@ -67,7 +69,7 @@ Add one row immediately after each session.
 **Materials:** Water and ink; water, salt/salt water and ink; chopsticks  
 **Methods:** Natural diffusion and outward stirring
 
-This session tested baseline ink forms under controlled fill lighting. Representative frames include fine smoke-like tendrils, dense pools gathered at the bottom and directional clouds produced by stirring. Raw file count and lens settings remain TBC.
+This session recorded 13 video clips and tested baseline ink forms under controlled fill lighting. Representative frames include fine smoke-like tendrils, dense pools gathered at the bottom and directional clouds produced by stirring. Lens settings remain TBC.
 
 **Setup:** The camera was mounted on a tripod at the table edge, framing a transparent acrylic tank placed on white foam boards over a cloth-covered desk. A phone light stood beside the tank as a hard side light, casting crossing shadows across the white board and backdrop, with the room otherwise darkened; a second phone light was kept beside the setup.
 
@@ -81,7 +83,7 @@ This session tested baseline ink forms under controlled fill lighting. Represent
 **Materials:** Water, ink, salt/salt water, chopsticks, small stick and pipette  
 **Methods:** Natural diffusion, outward stirring, small central stirring and drawing/releasing ink with a pipette
 
-This session expanded the variables. Salt and salt water altered ink boundaries and gathering; chopsticks and a small stick created different scales of mechanical disturbance; the pipette produced concentrated injection or drawing effects. Representative frames range from smooth black masses to thin tendrils, curls and cloud forms.
+This session recorded 35 video clips and expanded the variables. Salt and salt water altered ink boundaries and gathering; chopsticks and a small stick created different scales of mechanical disturbance; the pipette produced concentrated injection or drawing effects. Representative frames range from smooth black masses to thin tendrils, curls and cloud forms.
 
 **Setup:** A phone was mounted horizontally on a tripod directly above the tank for top-down recording, by a window in daylight, with the tank sitting on a white foam-board base. A second phone on a mini tripod served as an additional light source beside the setup.
 
@@ -95,7 +97,7 @@ This session expanded the variables. Salt and salt water altered ink boundaries 
 **Materials:** Water, ink, hand soap, salt, small stick and pipette  
 **Methods:** Natural diffusion, small central stirring and pipette actions
 
-This session introduced hand soap and repeated pipette and local-stirring methods to observe how a surfactant and local force affect ink contours. The selected frames add thinner, more dispersed and locally gathered forms. Original settings and material quantities remain TBC.
+This session recorded 6 video clips and introduced hand soap and repeated pipette and local-stirring methods to observe how a surfactant and local force affect ink contours. The selected frames add thinner, more dispersed and locally gathered forms. Original settings and material quantities remain TBC.
 
 **Setup:** A phone on a tripod recorded the tank side-on beside a window under soft evening light. The water-filled acrylic tank stood on a white board raised above the desk, with ink already diffusing during recording; a light stand was positioned at the right of the window bay.
 
@@ -129,32 +131,15 @@ The v7 captions encode each category as a time process. The underlying physical 
 
 Representative frames from the three experiment dates were assembled into eight screenshots labelled with device, lighting, materials, method and date. The screenshots were created between 21:35 and 21:36 BST on 1 July; they document earlier experiments and do not indicate that capture occurred on 1 July.
 
-## File organisation and naming
-
-Keep private or high-volume raw media outside the public Git repository. A suggested working structure is:
-
-```text
-dataset/
-├── raw/          # Original, unchanged captures
-├── selected/     # Approved source files
-├── processed/    # Cropped, cleaned, labelled or converted outputs
-├── metadata/     # Shot lists, labels and checksums
-└── previews/     # Small images suitable for process documentation
-```
-
-Suggested filename format:
-
-```text
-YYYYMMDD_session##_subject##_take##_description.ext
-```
-
-Never overwrite raw files. Record processing as a reproducible step or keep the original and processed outputs side by side.
-
 ## Selection and processing log
 
 | Date | Source range | Action | Tool / settings | Output | Reason |
 | --- | --- | --- | --- | --- | --- |
+| 26–29 June 2026 | 54 video clips (13 / 35 / 6 across Sessions 01–03) | Selected 26 clips as source material | Visual clarity and sufficient clip length; representative morphology — each clip had to clearly express the target state of its experimental condition (e.g. for `disturbed_ink`, visible dispersal after chopstick stirring); absence of interference such as reflections | 26 selected video clips | Narrow raw footage to material worth extracting frames from |
+| 28–29 June 2026 | 26 selected video clips | Selected four clear, visually distinct phases per clip in CapCut (剪映); colour-corrected and reframed each clip from its original landscape recording to a square crop for a consistent screenshot format (also convenient for ML training); took screenshots at those four phases; retouched the stills in Photoshop to remove interference elements such as surface air bubbles and tank-bottom reflections, so the model would not learn these artefacts; cropped and converted to monochrome | CapCut (剪映) for phase selection, colour correction and square-crop screenshots; Adobe Photoshop for interference removal | 101 JPEG stills, 4320×4320 | Build the LoRA training set from the clearest representative moments in each clip, free of capture artefacts |
 | 1 July 2026 | Experiments from 22, 26 and 29 June | Selected representative frames and added device, lighting, material, method and date labels | Layout tool and export settings TBC | Eight PNG contact sheets | Create publicly reviewable evidence of dataset production |
+
+**Processing evidence:** [CapCut phase selection](../docs/images/dataset_record/2026-07-28-processing-jianying-phase-select.jpg) — selecting the four screenshot phases from a clip's timeline. [Photoshop interference marked](../docs/images/dataset_record/2026-07-28-processing-ps-interference-marked.jpg) — an unprocessed still with interference elements (air bubbles, tank-bottom reflection line) boxed in red. [Photoshop corrected](../docs/images/dataset_record/2026-07-28-processing-ps-corrected.jpg) — the same still after the interference elements were removed, matching the version used in the training set. [`01_pure_diffusion` folder listing](../docs/images/dataset_record/2026-07-28-01_pure_diffusion-finder-folder.jpg) — the resulting output folder, showing six clips (`1`–`6`) each contributing four selected phases (`-1` to `-4`), 24 images in total, matching the `<experiment>-<frame>.jpg` naming convention in the [dataset README](README.md#sequences).
 
 For each stage, state the criteria used to exclude or retain material. Examples include focus, exposure, framing consistency, movement visibility, duplication, permission status and relevance to the intended interaction.
 
@@ -176,16 +161,17 @@ Use this table to demonstrate how dataset production influenced the installation
 | --- | --- | --- |
 | Capture in high-contrast monochrome | Continue the installation's black-and-white language of ink appearing, diffusing and disappearing | Eight contact sheets |
 | Vary salinity, surfactant and mechanical disturbance | Provide different edge, density and flow references for Latent Atlas and TouchDesigner states | Sessions 01–03 |
-| Retain natural diffusion, stirring and pipette methods | Establish morphological references for stability, agitation, gathering and diffusion | Contact sheets 03–08; exact system mapping still to be tested |
+| Retain natural diffusion, stirring and pipette methods | Established the four morphological categories (`01_pure_diffusion`, `02_layered_ink`, `03_disturbed_ink`, `04_gathering_ink`) that structure the LoRA dataset and map directly onto the installation's dispersed-to-condensed axis | `ink_dataset/` category folders; captions encode each category as a temporal arc (see [dataset README](README.md#mapping-to-the-c-value)) |
+| Reversed-video gathering footage (Session outcome, `04_gathering_ink` series 5–8) | Baked into five continuous axis videos (`inkwb_full_axis_00001–00005`), scrubbed live by the touch-derived c-value in TouchDesigner | See [process log](../docs/PROCESS_LOG.md), 2026-07-24 entry |
 
 ## Evidence checklist
 
 - [x] Capture materials and methods record
 - [x] Equipment and lighting record
-- [ ] Behind-the-scenes image
+- [x] Behind-the-scenes image (setup photos linked under each session)
 - [x] Contact sheets and representative frames
-- [ ] Complete selection and rejection notes
-- [ ] Processing/export settings
+- [ ] Complete selection and rejection notes (selection criteria documented in the Selection and processing log; per-clip rejection notes TBC)
+- [x] Processing/export settings (CapCut phase selection and square-crop screenshots; Photoshop interference removal — see Selection and processing log)
 - [ ] Location, material-permission or licensing record where applicable
 - [ ] Backup/storage record
 - [ ] Link to the TouchDesigner or interface change informed by the dataset

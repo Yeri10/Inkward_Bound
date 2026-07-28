@@ -1296,6 +1296,98 @@ ComfyUI 视频呈现的是墨的**身体**,单独存在偏纪实。在 TouchDesi
 
 ---
 
+### 2026 年 7 月 28 日 — LoRA 推理测试里的共享 seed bug,以及四条 recall 测试 prompt 的重写
+
+**开发意图 / 问题**
+
+回看 `inkwb_lora_v7` Inference Test cell 生成的图片,发现两个问题:`v7_recall` 组里几条按类别写的锚点短语,出来的图没有对上预期效果——01(pure_diffusion)recall 出来像版画而不是照片感的墨,03(disturbed_ink)和 04(gathering_ink)两条 recall 出来是几乎一样的缠绕甩动形状,而不是各自该有的"细颗粒雾" vs "沉降凝聚团";另外 `state_control` 组的裸状态词也生成出千篇一律的戏剧性甩动构图,`top-down view` 也没有明显生效。需要找出同一组 prompt 之间为什么拉不开差距,并修复。
+
+**已完成工作**
+
+- 找到一个共享 seed 的 bug:生成循环里 `torch.manual_seed(seed)` 对每一张图都用同一个固定的 `seed` 值,跨全部五组 prompt 都是如此——每张图因此都从完全相同的初始噪声出发,而扩散模型的初始噪声在很大程度上决定了整体构图,所以 prompt 之间的差异被这个共享的"构图骨架"掩盖了。改成 `torch.manual_seed(seed + index)`,让每张图使用不同(但依然可复现)的噪声。
+- 重写了 `v7_recall` 组全部四条 prompt(01–04),补上 v7 caption 重写时对应的前一阶段物理过程短语(比如在已有的"晕染扩散"短语前面补上"black ink freshly poured into the still water, pooling into a solid opaque blob"),以及四条都缺失的 `{PHOTO}` 摄影限定词。
+- 用同样的思路试着改了 `state_control` 组的扩散、扰动两条(补锚点,并给扩散那条加了一句"seen directly from above"),随后又都撤销了:一组四条只改两条,会让这组变得内部不一致——用一条补过锚点的和另外两条还是裸词的放在一起比,已经测不出这组本来要测的东西(裸状态词本身有没有区分度)。带锚点的词汇测试本来就有专门的一组(`v7_recall`)在负责,`state_control` 保持干净的裸词测试。
+- `viewpoint_control` 组的两条没有动——这一组是故意保持裸词的,只用 `top-down view` / `side view` 这两个词本身来测视角有没有效果,不加其他锚点才能干净地测出这一个变量。
+- 在 `training/README.md` 里新增了"Prompt groups"参考表,记录五组 prompt 各自在测什么、目前是否带了额外锚点——具体的 prompt 原文仍以 notebook 为准,因为每轮调优都会变,写进文档容易过时。
+
+**决策及原因**
+
+先修共享 seed 的问题,因为它会混淆所有其他诊断——初始噪声完全相同的情况下,根本分不清"画面拉不开差距"到底是 prompt 条件太弱,还是采样设置本身的问题。README 里的表只指向 notebook,不重复 prompt 原文,避免两边以后各改各的、越改越不一致。
+
+**证据**
+
+- `training/Inkward Bound LoRA Training.ipynb` —— Inference Test cell:seed 公式、`v7_recall` 与 `state_control` 的 prompt 改动。
+- `training/README.md` —— 新增的"Prompt groups"章节。
+
+**反思 / 下一步**
+
+用新的 seed 公式和 prompt 重新跑一遍 Inference Test cell,看 recall 准确度和状态/视角的区分度是不是真的变好了。如果这一轮之后 `state_control` 的裸词和 `viewpoint_control` 还是拉不开,那就说明问题回到了训练端的词汇覆盖不足(就像 v7 caption 重写当初解决 03 类别那样),而不是 prompt 调优能解决的。
+
+---
+
+### 2026 年 7 月 28 日 — Dataset 拍摄日志的准确性排查:修正数字、修好一处被拆散的表格、补上新的处理证据
+
+**开发意图 / 问题**
+
+`ink_dataset/DATASET_CAPTURE_LOG.md` 这份记录自上次编辑以来积累了一些过时、自相矛盾的表述,还有几处事实空白——原始视频编码、各场次拍摄条数、具体的筛选与处理方式——而这些作者现在都已经能提供真实答案了。需要做一次排查:解决矛盾、用真实数字填空、补上支撑证据。
+
+**已完成工作**
+
+- 修好了证据清单里的一处自相矛盾:"幕后拍摄照片"一直标着未完成,但每个 Session 记录下其实都已经附了两张现场布置照片。
+- 把"与最终作品的连接"表里那句过时的"具体系统映射仍待测试",换成了对实际已建成系统的准确描述:五轴视频库、c 值公式,以及四个 Dataset 类别(包括反转视频聚集技术)如何对应到装置从"离散"到"凝结"的状态。
+- 用作者提供的真实生产数字填空:原始拍摄是 4K 分辨率的 MP4;视频总条数从早先估计的 64 段订正为实际的 54 段(Session 01 拍 13 段、Session 02 拍 35 段、Session 03 拍 6 段),其中精选 26 段——筛选率约 48%,而不是之前写的 41%。"原始视频存储位置待补充"这一句直接删掉了,而不是继续留着悬而未决,因为作者本来就不需要记录那个位置。
+- 记录了实际的筛选与处理流程:6月26–29日之间按清晰度、时长、代表性(比如 disturbed_ink 需要能看到搅动后墨水明显散开)筛出精选片段;6月28–29日之间在剪映里为每段精选视频挑出 4 个清晰且有明显区别的阶段,做颜色校正并裁成正方形,截图后在 Photoshop 里修去气泡、水缸底部反光等干扰元素,再裁剪并转为单色。
+- 发现并修好了一个在加处理证据图片链接时引入的 markdown bug:插在两行表格之间的一段说明文字,把"筛选与处理日志"表格从中拆成了两截,导致第三行(contact sheet 那行)脱离表头。已把证据段落挪到整张表格后面。
+- 重写了过时的开头 Purpose 段落——它还写着"完整文件数量尚未存入仓库",跟下面几行刚记录的真实数字直接矛盾。
+- 往 `docs/images/dataset_record/` 新增了四张证据图:剪映阶段选取截图、Photoshop 标注干扰元素的静帧、修正后的静帧,以及 `01_pure_diffusion` 输出文件夹的 Finder 截图(6 段视频 × 4 个入选阶段 = 24 张图)——链接进了筛选与处理日志那一段。
+- 以上改动全部同步进了 `DATASET_CAPTURE_LOG.zh-CN.md`,保持中英文两个版本一致,延续本次会话一直以来的做法。
+
+**决策及原因**
+
+有真实数字就用真实数字,不留"待补充"占位:拍摄日志存在的意义就是要能被信任,一旦拿到了真实数字,就没理由继续留着和它矛盾的占位文字。作者主动不想记录的那一项(原始存储位置)选择直接删掉而不是悬着——悬着的"待补充"读起来像遗漏,删掉才读起来像一个决定。
+
+**证据**
+
+- `ink_dataset/DATASET_CAPTURE_LOG.md`、`ink_dataset/DATASET_CAPTURE_LOG.zh-CN.md`。
+- `docs/images/dataset_record/2026-07-28-processing-jianying-phase-select.jpg`、`2026-07-28-processing-ps-interference-marked.jpg`、`2026-07-28-processing-ps-corrected.jpg`、`2026-07-28-01_pure_diffusion-finder-folder.jpg`。
+
+**反思 / 下一步**
+
+有一处时间线现在变紧了但不再矛盾:Session 03 是 6 月 29 日拍的,而选片窗口记录为 6 月 26–29 日,也就是最后一天拍摄同时也是最后一天选片。剩下的空白优先级较低:原始帧率、镜头参数、授权与备份流程,以及 26 段精选片段具体来自哪个场次的拆分。
+
+---
+
+### 2026 年 7 月 28 日 — 把 `generate_atlas.py` 里验证过的 prompt 搬进 Inference Test cell
+
+**开发意图 / 问题**
+
+修好 seed 共享问题、做完第一轮锚点短语补丁(见同日上一条记录)之后,重新跑出来的图还是有两个问题没解决:`viewpoint_control` 的俯拍那条一直生成条纹状、大理石纹的构图,而不是这套 dataset 本身记录的那种"聚拢实心墨团"观感;`v7_recall` 的 02–04 三条彼此之间还是分不太开。先在 `viewpoint_control` 上单独试了 `guidance_scale=9.0`,重新生成后画面没有明显变化,排除了 CFG 强度这个方向。接下来的思路是不再临时现编新短语,而是直接复用 `generate_atlas.py`(生成正式 latent atlas 的那份脚本)里已经验证过、标注为"经用户复核定稿"的 prompt/负向提示词配方。
+
+**已完成工作**
+
+- 通读了 `generate_atlas.py`,提取出它的 `build_prompt()` 拼接顺序,以及 `BINS` 列表里每个 c 值对应的配方(状态、视角、容器、水/密度开关、形态短语,部分分箱还有完整替换而非追加的负向提示词)。
+- 把 `viewpoint_control` 俯拍那条(第 0 行)的 prompt 和负向提示词原样换成了 atlas 里 c 0.0 的配方。
+- 把 `v7_recall` 的第 02(layered_ink)、03(disturbed_ink)、04(gathering_ink)行换成了对应的 atlas 配方;03 那条单独配了一条自己的负向提示词(不用共享默认值),专门用来召回细颗粒雾状质感。
+- 发现 `NEGATIVE_OVERRIDES` 和 `GUIDANCE_OVERRIDES` 之前只按组名生效,导致一个组级别的 override 会被组内每一行悄悄复用——这意味着 `viewpoint_control` 里没动过的侧视那条(第 1 行)一旦给俯拍那条加了 override,就会被意外一起继承。已把这两个字典重构成按 `(组名, 行号)` 生效,并把取值逻辑挪到每行的循环内部,让每一行的 override 都相互独立。
+- 每次改动都通过 `ast.parse()` 校验拼接后的 cell 源码语法(`Edit` 工具不能直接改 `.ipynb`,所有这次改动都是通过 `mcp__workspace__bash` 脚本读取/修改/写回 notebook JSON 完成的)。
+- 重新跑了这个 cell 并查看输出:`v7_recall` 四条现在明显能区分开了——01 是俯拍漩涡带留白,02 是滴落的墨丝,03 出现了真正的雾状细颗粒(这是本次会话前几轮一直没能达到的效果),04 是聚拢的墨团。`viewpoint_control` 的俯拍那条依然是细条纹放射状加中间大片留白,没有变成实心块状——atlas 配方的搬运没能修好这一个视角。
+
+**决策及原因**
+
+选择直接搬运已经验证过的措辞(在 atlas 脚本里标注为"经用户复核定稿"),而不是继续手写新短语,因为本次会话前几轮临时现编的措辞一直没能稳定拉开各组之间的差异。发现 override 按组生效的 bug 后立刻修掉,而不是往后拖,因为一个悄悄跨行泄漏的 override 会让之后任何"按行"的结果都不可信。
+
+**证据**
+
+- `training/Inkward Bound LoRA Training.ipynb` —— Inference Test cell:`viewpoint_control` 第 0 行、`v7_recall` 第 02–04 行的 prompt/负向提示词替换;`NEGATIVE_OVERRIDES`/`GUIDANCE_OVERRIDES` 重构为按 `(组名, 行号)` 生效。
+- `training/README.md`、`training/README.zh-CN.md` —— "Training versions" 证据列表新增的第二轮 `v7_recall` 图,以及 "Prompt groups" 表格里更新过的 `v7_recall`/`viewpoint_control` 状态描述。
+- `docs/images/2026-07-28-v7-recall-tests-round2.png` —— 作者重新跑完 cell 后截的第二轮输出图。
+
+**反思 / 下一步**
+
+`viewpoint_control` 的俯拍召回问题还没解决:把 atlas 里那段确实能生效的原话原样搬过来(它在 `generate_atlas.py` 自己的生成流程里是有效的),并没有把效果带过来,说明差异可能不只是 prompt 字符串本身,而是这个 cell 采样方式上的其他因素(seed、分辨率,或者某种只有 atlas 脚本完整生成流程才能绕开的"俯拍墨水微距"基础模型先验)。下一步应该逐行对比这两条代码路径,而不是继续只在 prompt 层面试错。
+
+---
+
 ## 当前验证清单
 
 仓库能够证明代码和版本历史。下一次完整系统测试应补充以下运行证据：
