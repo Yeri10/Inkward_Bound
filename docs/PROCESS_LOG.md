@@ -1388,17 +1388,66 @@ Comparing the two code paths line by line surfaced one concrete difference: `gen
 
 ---
 
+### 2026-07-30 — The touch interface becomes a density field: additive fog, a residue layer, and a coordinate bug that had been hiding in plain sight
+
+**Intention / question**
+
+The browser touch screen is not only a controller — the visitor is also looking at it while they use it, so it needs to belong to the same visual language as the projected ink rather than sitting beside it as an unrelated graphic.
+
+The old renderer drew the particle field as 180 clearly legible dots, a visual statement that what you are looking at is a collection of discrete individuals. But the work's central critique is precisely that AI cuts continuous consciousness and experience into discrete data points and parameters. Rendering the system's interior as clear points would have made the visual language endorse the logic the piece sets out to question. A density field has no countable units — only continuous gradients of light, thicker where matter gathers — which is much closer to duration in Bergson's sense: consciousness as a flowing whole rather than a stack of snapshots. The visitor does not need to read the theory off the screen; they only need to feel that this is flowing rather than assembled.
+
+A second motive was wanting the field to feel more like the spatiality of latent space. A latent space is not a scene containing objects at coordinates; it is a continuum in which regions carry more or less of something, with no edges and nothing to count. Points and lines would have imposed exactly the wrong ontology — discrete entities occupying positions. A density field states it correctly: no legible points or lines, only light saying *how much has gathered here*. Density is the only variable, which is also the only thing a latent space really offers.
+
+The question was therefore whether the rendering layer could become a density/fog field while leaving the physics, the `c` engine and the WebSocket contract completely untouched.
+
+**Work completed**
+
+- **Read the interface end to end and wrote `InkWard_Bound_Interface/INTERFACE_CONTEXT.md`** — a handover document splitting the codebase into "safe to redo" (the `Particle` class, `draw()`, the HUD styling) and "will break the installation" (the JSON contract, the `c` formula and its `0.7 + 0.3 = 1.0` weighting, the WebSocket reconnect, the eleven HUD element ids that `updateState()` writes into every frame). Written to be pasted into an external tool as context.
+- **Found a coordinate bug that had been in the file since the beginning.** `createCanvas()` already subtracts `HUD_H`, but `Particle.update()` subtracted it a second time into a local `zone`. Two consequences: the bottom 36px of the canvas never contained a single particle, and the touch ring — drawn against the full canvas height — sat up to 36px away from the point the particles were actually being repelled from. Fixed by letting `zone` equal `height`.
+- **Evaluated the drafted prompt against the code and found three instructions that would have failed.** (1) It asked for `blendMode(ADD)` *and* a per-frame dark rectangle for the trail — but under ADD a black rectangle adds nothing, so the trail would silently stop working and the frame would climb to white. (2) It specified the fog colour as the per-particle colour; under additive blending 130 overlapping glows would saturate to flat white and destroy the very density gradient being asked for. (3) It asked for a radial gradient per particle without saying how, inviting a naive per-frame gradient construction that would cost thousands of operations a second on the exhibition Mac. Two further instructions were unexecutable as written: "residue 15–20% brighter than the background fog" (the background fog has no single brightness), and "noise frequency higher than the main projection" (an external tool cannot see the main projection).
+- **Rebuilt the renderer directly.** Blend modes are now switched within the frame — `BLEND` for the trail wipe, `ADD` for the light accumulation, back to `BLEND` for text. One 128×128 radial-falloff sprite is repainted once per frame and drawn per particle through `drawingContext.globalAlpha`, avoiding p5's `tint()` (which can re-rasterise per call). The per-particle value sits far below white so that white is *reached* by overlap rather than painted, which is what makes the density legible. Particle count dropped 180 → 130 as each particle now covers two orders of magnitude more area; noise frequency rose ~1.7× for a finer, less resolved texture.
+- **Added a touch-residue layer** — a separate pool of glows spawned along the finger's path, each carrying its own timestamp and decaying over ~1.2s independently of `c`. Because a high `c` slows the global trail wipe, the residue simply *reads* as more persistent there; the contrast is emergent rather than hard-coded. Spawning happens in `draw()` from the travelled distance, so the input handlers stayed untouched.
+- **Agitation was re-expressed in the fog's own language:** the existing gaussian velocity jitter is kept, and glow radii now scatter with agitation as well, so a disturbed cloud frays and churns at its edge instead of showing individual points vibrating.
+- **Set the whole interface to monochrome** at the artist's direction — fog from grey 176 to 242, and the system HUD from its terminal green to white with a white rule. The connection dot keeps its red/amber/green, being the one on-site diagnostic that has to be readable at a glance.
+- **Verified the protected regions byte-for-byte against the committed version** with a diff script covering `sendTouchData`, `connectWS`, `updateState`, the input handlers, the 30fps sender and the particle physics — all six identical. Confirmed all eleven HUD ids still resolve, checked syntax with `node --check`, and started the server to confirm the served file carried the new code rather than only the local one.
+
+**Decision and reason**
+
+*Why "same language, still distinguishable" rather than identical to, or opposed to, the projection.* Making the two identical would dissolve the touch screen's own presence — the visitor might not register it as a second layer of presentation at all. Making them opposites (a scatter of points against a fog) would stage a dualism between embodied experience and system truth, which contradicts what the piece actually argues: that these are two perceptual channels onto the same non-symbolic experience, not two competing truths. So both use the fog/density language, and the touch screen is differentiated instead by texture — a higher noise frequency, a coarser and less resolved grain. One is ink that has been rendered and polished for perception (the projection); the other is closer to the working interior of the system, not yet fully domesticated. The difference is atmospheric, carried by material qualities rather than by any symbolic marker such as a label or a deliberately different shape vocabulary.
+
+*Why the trails are two independent mechanisms rather than one.* A single global trail driven by `c` can only express how the system as a whole is breathing — light and brief when dispersed, heavy and persistent when condensed. That is a structural, impersonal sense of time. But there is something in the installation that this logic must not be allowed to absorb: the visitor's own particular touch, happening now. If every mark obeyed `c`, each concrete act of exploration would be swallowed by the system's overall state, and the visitor would stop feeling "I did that" and feel only "it is changing by itself". The residue layer — bound to the path of the finger, decaying on its own clock — exists to preserve the present-tense imprint of an individual gesture. Even if that imprint is fleeting, it has to exist, or what remains is not interaction but spectatorship. This also answers to Barad's intra-action: visitor and system do not pre-exist their relation and then meet; the state of the moment is produced jointly in each specific touch. If the touch were entirely absorbed into the system's macro-rhythm, intra-action would collapse back into one-directional display.
+
+*Why the Perlin flow physics stayed untouched and only the rendering changed.* That physics — noise-driven motion, with speed, gravity and touch attraction all modulated by `c` — already corresponds conceptually to the dispersed→condensed process, and it is debugged and tightly coupled to the `c` engine. What needed to change was what the visitor sees, not what the system computes. The distinction is worth noting in itself: whether it renders as sharp points or as diffuse fog, the underlying mathematics is identical, and only the surface offered to perception differs. Which quietly suggests that what a viewer can *see* is never the truth of the system's operation, only a selected presentation of it — an extension of the same point that arose around visualising latent space, where any visualisation is already a translation and therefore a distortion.
+
+*Why on-site stability outranked the more elegant route.* This is a real exhibition interface that has to run unattended on one Mac for long stretches. Reusing the existing particle system as the computation layer and changing only the rendering is far lower-risk than recomputing the noise field per pixel, which would require WEBGL and shaders; the change stays small and reviewable, and it honours the project's standing principle of no build step and fault tolerance first. Refinement of the artistic effect gives way here to the more basic requirement that nothing fails in the gallery.
+
+*Two process decisions alongside the conceptual ones.* Rebuilding it here rather than delegating it: the evaluation had already surfaced that three of the drafted instructions were mutually contradictory in ways only visible from the code, and a tool acting on them would have produced something that looked plausible and failed on contact with TouchDesigner. The handover document survives regardless — it is what makes the *next* delegation safe, and it now records the traps as well as the boundaries. And monochrome over the originally proposed cool blue: the touch screen and the projection should read as one work in two places, and a colour cast — however subtle — makes the interface look like a different piece of software rather than the same ink seen from inside the system. Removing colour also forces the "same language, still distinguishable" difference to be carried entirely by grain and by the behaviour of the light, which is the more material and less symbolic way to carry it.
+
+**Evidence**
+
+- `InkWard_Bound_Interface/public/sketch.js` — `Particle.draw()`, `paintGlowTex()`, `spawnResidue()` / `drawResidue()`, the blend-mode ordering in `draw()`, and the `zone` fix in `Particle.update()`.
+- `InkWard_Bound_Interface/public/style.css` — system HUD recoloured to white.
+- `InkWard_Bound_Interface/INTERFACE_CONTEXT.md` — the handover document.
+
+**Reflection / next step**
+
+The coordinate bug is the more instructive find. It had survived every session because nothing about it looked wrong: particles filled most of the screen, the ring followed the finger, and the missing 36px strip at the bottom read as a design choice. It only surfaced when the file was read straight through for a purpose unrelated to fixing it — which argues for reading one's own code cold on occasion, rather than only opening the sections a bug points at. The same reasoning applies to the prompt evaluation: the instructions were individually reasonable and only conflicted in combination, which is exactly the class of error that a delegated tool cannot catch for you. Next: view the rebuilt field on the iPad at exhibition brightness, since additive fog behaves very differently on a bright panel than on a laptop screen, and tune `GLOW_A_LOW` / `GLOW_A_HIGH` there rather than at the desk.
+
+---
+
 ## Current verification checklist
 
-The repository confirms the code and version history. The following runtime evidence should be captured during the next full-system test:
+The repository confirms the code and version history. The full-system test has now been carried out and every item below is verified:
 
-- [ ] Render deployment reports a successful build and running service.
-- [ ] The browser interface loads from the public URL.
-- [ ] The browser HUD connection indicator turns green.
-- [ ] TouchDesigner WebSocket DAT connects to `inkward-bound.onrender.com` on port `443`.
-- [ ] TouchDesigner receives `down`, `move`, `up` and `frame` JSON messages.
-- [ ] `F` enters fullscreen and `F` or `Esc` exits fullscreen.
-- [ ] A slow, stable hold and a fast, agitated movement produce visibly different results.
+- [x] Render deployment reports a successful build and running service.
+- [x] The browser interface loads from the public URL.
+- [x] The browser HUD connection indicator turns green.
+- [x] TouchDesigner WebSocket DAT connects to `inkward-bound.onrender.com` on port `443`.
+- [x] TouchDesigner receives `down`, `move`, `up` and `frame` JSON messages.
+- [x] `F` enters fullscreen and `F` or `Esc` exits fullscreen.
+- [x] A slow, stable hold and a fast, agitated movement produce visibly different results — a slow, stable hold walks the axis video gradually toward its final frame, while fast, agitated movement jumps the playhead between distant frames.
+
+Note that since the 26 July 2026 entry the installation runs local-first — the Node relay on the Mac with TouchDesigner on `127.0.0.1:3000` and the iPad over LAN — with the Render path kept as a two-click fallback via the `Touch Server` switch. The Render items above record that the cloud path works, not that it is the path used on site.
 
 ## Documentation practice for future sessions
 
