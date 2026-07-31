@@ -1,8 +1,29 @@
 // ── CONFIG ───────────────────────────────────────────────────────
 const SEND_FPS  = 30;
-const N_PART    = 180;
+const N_PART    = 130;   // fewer than the old dot field: each particle is now a wide glow
 const HUD_H     = 36;
 const SPEED_MAX = 600;
+
+// ── FOG LOOK (tuning block) ──────────────────────────────────────
+// Everything visual is gathered here so the look can be tuned without
+// touching the physics or the data pipeline below.
+const GLOW_TEX     = 128;          // pre-rendered glow sprite resolution
+const GLOW_R_LOW   = 17;           // glow radius at c = 0  (fine, broken-up mist)
+const GLOW_R_HIGH  = 38;           // glow radius at c = 1  (thick, merging cloud)
+const GLOW_A_LOW   = 16;           // per-particle alpha at c = 0  (0..255)
+const GLOW_A_HIGH  = 30;           // per-particle alpha at c = 1
+// Monochrome. The per-particle value is deliberately far below white: under ADD
+// blending, overlapping glows accumulate toward white only where particles
+// actually cluster, while sparse regions stay a dim grey. That tonal spread IS
+// the density read — the image is built out of overlap, not out of colour.
+const FOG_LOW      = [176, 176, 176];   // c = 0  — dimmer, finer mist
+const FOG_HIGH     = [242, 242, 242];   // c = 1  — denser, closer to white
+const TRAIL_LIFE   = 1.2;          // touch-residue lifetime, seconds (0.8–1.5)
+const TRAIL_GAIN   = 1.18;         // residue sits ~18% brighter than the base fog
+const TRAIL_MAX    = 220;          // pool cap
+const TRAIL_MIN_D  = 6;            // min px travelled before dropping a new residue
+
+let glowTex = null;   // p5.Graphics: white radial falloff, re-tinted each frame
 
 // ── WEBSOCKET ─────────────────────────────────────────────────────
 let ws = null;
@@ -83,18 +104,27 @@ let noiseT    = 0;
 class Particle {
   constructor() {
     this.x    = random(width);
-    this.y    = random(height - HUD_H);
+    this.y    = random(height);
     this.vx   = 0;
     this.vy   = 0;
     this.nox  = random(1000);
     this.noy  = random(1000);
     this.life = random(0.4, 1.0);
-    this.r    = random(1.2, 3.0);
+    this.r    = random(1.2, 3.0);   // retained: seeds per-particle glow size variance
   }
 
+  // Physics is unchanged from the dot-field version — the noise flow, the centre
+  // pull, the touch push/pull inversion and the agitation jitter all stay.
+  // Only the rendering below became a density field instead of a point.
   update(c) {
-    const zone       = height - HUD_H;
-    const noiseScale = lerp(0.0035, 0.0012, c);
+    // The canvas is already created at (windowHeight - HUD_H), so its height
+    // excludes the HUD bar. Subtracting HUD_H again here used to shrink the
+    // particle field by a further 36px and offset it from the touch ring drawn
+    // in draw(), which uses the full canvas height.
+    const zone       = height;
+    // Higher noise frequency than the dot field (~1.7x): the fog reads as raw
+    // and finely broken rather than smoothly rendered — a system-internal view.
+    const noiseScale = lerp(0.0060, 0.0022, c);
     const spd        = lerp(2.8, 0.4, c);
     const noiseSpeed = lerp(0.012, 0.003, c);
 
@@ -149,13 +179,79 @@ class Particle {
     if (this.y > zone + 10)  this.y = -5;
   }
 
+  // Rendered as a wide, soft radial falloff rather than a visible disc.
+  // Call inside blendMode(ADD): overlapping glows sum into continuous fog,
+  // and it is the amount of overlap — not any drawn outline — that reads as density.
   draw(c) {
-    const a = lerp(30, 110, c) * this.life;
-    const r = this.r + c * 0.8;
-    fill(255, 255, 255, a);
-    noStroke();
-    ellipse(this.x, this.y, r, r);
+    let d = lerp(GLOW_R_LOW, GLOW_R_HIGH, c) * 2;
+    d *= 0.75 + this.r * 0.12;   // per-particle size variance
+
+    // Agitation destabilises the fog: glow sizes scatter, so the cloud's edge
+    // breaks up and churns instead of holding a smooth boundary.
+    if (agitation > 0.4) {
+      d *= 1 + randomGaussian(0, agitation * 0.22);
+      if (d < 4) d = 4;
+    }
+
+    const a = lerp(GLOW_A_LOW, GLOW_A_HIGH, c) * this.life;
+    drawingContext.globalAlpha = a / 255;
+    image(glowTex, this.x, this.y, d, d);
   }
+}
+
+// ── TOUCH RESIDUE ─────────────────────────────────────────────────
+// A second, independent layer: the path a finger just took keeps glowing for
+// ~1.2s on its own clock. It is NOT driven by c — but because a high c slows
+// the global trail wipe, the residue simply reads as more persistent up there.
+// That contrast is emergent, not hard-coded.
+let residue      = [];
+let lastResX     = -999, lastResY = -999;
+
+function spawnResidue() {
+  if (!isTouching) { lastResX = -999; lastResY = -999; return; }
+  const mx = touchX * width;
+  const my = touchY * height;
+  if (dist(mx, my, lastResX, lastResY) < TRAIL_MIN_D) return;
+  residue.push({ x: mx, y: my, born: millis() });
+  if (residue.length > TRAIL_MAX) residue.shift();
+  lastResX = mx; lastResY = my;
+}
+
+function drawResidue(c) {
+  const now  = millis();
+  const base = lerp(GLOW_A_LOW, GLOW_A_HIGH, c) * TRAIL_GAIN;
+  for (let i = residue.length - 1; i >= 0; i--) {
+    const age = (now - residue[i].born) / 1000;
+    if (age >= TRAIL_LIFE) { residue.splice(i, 1); continue; }
+    const k = 1 - age / TRAIL_LIFE;         // independent linear decay
+    const d = lerp(GLOW_R_LOW, GLOW_R_HIGH, c) * 2 * (0.45 + 0.55 * k);
+    drawingContext.globalAlpha = (base * k * k) / 255;
+    image(glowTex, residue[i].x, residue[i].y, d, d);
+  }
+}
+
+// ── GLOW SPRITE ───────────────────────────────────────────────────
+// One radial-gradient texture, built once and re-tinted per frame. Drawing a
+// real gradient per particle per frame would cost thousands of operations a
+// second; this costs one fill.
+function paintGlowTex(c) {
+  const col = [
+    lerp(FOG_LOW[0], FOG_HIGH[0], c),
+    lerp(FOG_LOW[1], FOG_HIGH[1], c),
+    lerp(FOG_LOW[2], FOG_HIGH[2], c),
+  ].map((v) => Math.round(v));
+
+  const ctx = glowTex.drawingContext;
+  glowTex.clear();
+  const r = GLOW_TEX / 2;
+  const g = ctx.createRadialGradient(r, r, 0, r, r, r);
+  g.addColorStop(0.00, `rgba(${col[0]},${col[1]},${col[2]},1)`);
+  g.addColorStop(0.22, `rgba(${col[0]},${col[1]},${col[2]},0.52)`);
+  g.addColorStop(0.50, `rgba(${col[0]},${col[1]},${col[2]},0.17)`);
+  g.addColorStop(0.78, `rgba(${col[0]},${col[1]},${col[2]},0.04)`);
+  g.addColorStop(1.00, `rgba(${col[0]},${col[1]},${col[2]},0)`);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, GLOW_TEX, GLOW_TEX);
 }
 
 // ── SETUP ─────────────────────────────────────────────────────────
@@ -164,6 +260,9 @@ function setup() {
   cnv.parent('sketch-container');
   background(0);
   colorMode(RGB, 255, 255, 255, 255);
+  imageMode(CENTER);
+  glowTex = createGraphics(GLOW_TEX, GLOW_TEX);
+  paintGlowTex(0);
   lastMoveTime = millis();
   for (let i = 0; i < N_PART; i++) particles.push(new Particle());
   connectWS();
@@ -175,35 +274,48 @@ function windowResized() {
 
 // ── DRAW ──────────────────────────────────────────────────────────
 function draw() {
-  // Fade trail
-  fill(0, 0, 0, lerp(22, 8, cValue));
+  // Blend order matters. The trail wipe is a dark rectangle, and a dark
+  // rectangle adds nothing under ADD — so the wipe must happen in BLEND, and
+  // only then does the frame switch to ADD to accumulate light.
+  blendMode(BLEND);
+  drawingContext.globalAlpha = 1;
   noStroke();
+  fill(0, 0, 0, lerp(18, 6, cValue));
   rect(0, 0, width, height);
 
   noiseT += lerp(0.008, 0.002, cValue);
+  paintGlowTex(cValue);
+  spawnResidue();
+
+  // ── additive pass: fog ──
+  blendMode(ADD);
+  noTint();
+
+  drawResidue(cValue);
 
   for (let pt of particles) {
     pt.update(cValue);
     pt.draw(cValue);
   }
 
-  // Touch ring
+  // Touch point, as a soft core rather than a drawn ring — the fog language
+  // has no lines in it.
   if (isTouching) {
-    const mx   = touchX * width;
-    const my   = touchY * (height);
-    const ring = lerp(40, 8, cValue);
-    noFill();
-    stroke(255, 255, 255, lerp(15, 40, cValue));
-    strokeWeight(0.5);
-    ellipse(mx, my, ring * 2, ring * 2);
-    fill(255, 255, 255, lerp(20, 70, cValue));
-    noStroke();
-    ellipse(mx, my, 3, 3);
+    const mx = touchX * width;
+    const my = touchY * height;
+    const halo = lerp(70, 26, cValue);
+    drawingContext.globalAlpha = lerp(0.05, 0.14, cValue);
+    image(glowTex, mx, my, halo * 2, halo * 2);
+    drawingContext.globalAlpha = lerp(0.20, 0.42, cValue);
+    image(glowTex, mx, my, 13, 13);
   }
 
-  // Idle hint
+  // ── back to normal blending for anything with an edge ──
+  blendMode(BLEND);
+  drawingContext.globalAlpha = 1;
+
   if (!isTouching && cValue < 0.1 && frameCount % 120 < 60) {
-    fill(255, 255, 255, 12);
+    fill(200, 200, 200, 26);
     noStroke();
     textSize(11);
     textAlign(CENTER, CENTER);
