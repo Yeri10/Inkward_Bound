@@ -9,6 +9,12 @@ training/atlas_candidates_v7/
 training/__pycache__/
 InWard Bound System/Movie/*
 !InWard Bound System/Movie/inkwb_full_axis_00004.mp4
+
+# TouchDesigner's Movie File Out writes here by default, outside Movie/, and
+# the raw MJPEG renders run to hundreds of MB — past GitHub's 100MB file limit.
+# The web-sized derivative lives in docs/media/.
+InWard Bound System/TDMovieOut*
+*.mov
 /package-lock.json
 
 InWard Bound System/Backup/
