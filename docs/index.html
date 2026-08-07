@@ -319,8 +319,6 @@
   @media(prefers-reduced-motion:reduce){
     .r{opacity:1;transform:none;transition:none}
     html{scroll-behavior:auto}
-    /* Falls back to the still underneath. */
-    .hero-img video{display:none}
   }
 </style>
 </head>
@@ -805,6 +803,19 @@
     apply(next);
     try { localStorage.setItem(KEY, next); } catch(e){}
   });
+
+  /* ── cover video ──────────────────────── */
+  /* Some browsers refuse the autoplay attribute but allow a scripted play()
+     on a muted, inline video. If it is still refused the poster and the still
+     underneath remain, so nothing breaks. */
+  var cover = document.querySelector('.hero-img video');
+  if (cover) {
+    var start = function(){ var p = cover.play(); if (p) p.catch(function(){}); };
+    start();
+    document.addEventListener('visibilitychange', function(){
+      if (!document.hidden) start();
+    });
+  }
 
   /* ── reveal on scroll ─────────────────── */
   var els = document.querySelectorAll('.r');
