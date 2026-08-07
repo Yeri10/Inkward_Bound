@@ -9,7 +9,16 @@ training/atlas_candidates_v7/
 training/__pycache__/
 InWard Bound System/Movie/*
 !InWard Bound System/Movie/inkwb_full_axis_00004.mp4
-.DS_Store
 /package-lock.json
 
 InWard Bound System/Backup/
+
+# TouchDesigner writes a numbered .toe on every incremental save. Only the
+# current file is tracked; the numbered snapshots are local history.
+InWard Bound System/*.[0-9].toe
+InWard Bound System/*.[0-9][0-9].toe
+InWard Bound System/*.[0-9][0-9][0-9].toe
+
+# Web-delivery copies of the documentation video (33MB) — generated from the
+# source in Movie/ with ffmpeg, see docs/index.html
+!docs/media/
