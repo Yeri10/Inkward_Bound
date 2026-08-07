@@ -48,6 +48,8 @@
     border:1px solid var(--rule);color:var(--dim);
     padding:.5rem .85rem;cursor:pointer;border-radius:2px;
     transition:color .25s ease,border-color .25s ease;
+    /* Comfortable touch target even though the label is small. */
+    min-height:38px;min-width:52px;
   }
   #lang:hover{color:var(--paper);border-color:rgba(242,242,240,.4)}
 
@@ -55,7 +57,6 @@
   .wrap{max-width:var(--measure);margin:0 auto;padding:0 1.6rem}
   .wide{max-width:78rem;margin:0 auto;padding:0 1.6rem}
   section{padding:7rem 0}
-  @media(max-width:640px){section{padding:4.5rem 0}}
 
   /* ── type ───────────────────────────────── */
   .mono{
@@ -87,7 +88,10 @@
 
   /* ── hero ───────────────────────────────── */
   header{
-    min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;
+    /* vh first as the fallback; svh keeps the hero from being pushed under
+       mobile browser chrome on browsers that support it. */
+    min-height:100vh;min-height:100svh;
+    display:flex;flex-direction:column;justify-content:space-between;
     padding:2.2rem 0 3rem;position:relative;
   }
   .hero-img{position:absolute;inset:0;z-index:0;overflow:hidden}
@@ -167,6 +171,58 @@
 
   footer{padding:5rem 0 6rem;border-top:1px solid var(--rule)}
   .foot-row{display:flex;justify-content:space-between;gap:1.4rem;flex-wrap:wrap}
+
+  /* ══ RESPONSIVE ═══════════════════════════
+     One page, three settings. Tablet mainly relaxes the wide grids; phone
+     drops everything to a single column, because a two-up grid on a 375px
+     screen leaves each figure too small to read. */
+
+  @media(max-width:900px){
+    .grid2{grid-template-columns:1fr;gap:1.6rem}
+    .sheets{gap:1.8rem}
+    section{padding:5.5rem 0}
+  }
+
+  @media(max-width:640px){
+    body{font-size:15px}
+    section{padding:4rem 0}
+    .wrap,.wide{padding:0 1.25rem}
+
+    /* Header rows stop being justified pairs and stack, so nothing has to
+       wrap awkwardly mid-label. */
+    header{padding:1.5rem 0 2rem}
+    .hero-top{flex-direction:column;gap:.35rem}
+    .hero-top:last-of-type{gap:.35rem}
+    .hero-sub{margin-top:1.5rem}
+    h1{letter-spacing:-.035em}
+
+    .grid4{grid-template-columns:1fr;gap:1.2rem}
+    .kicker{margin-bottom:1.8rem}
+    h2{margin-bottom:1.3rem}
+    .bleed{margin:2.6rem 0}
+
+    /* The step table would otherwise force a horizontal scroll. */
+    .steps{font-size:.82rem}
+    .steps td,.steps th{padding:.7rem .35rem}
+    .steps td:first-child{width:1.5rem}
+
+    .links a{padding:1.2rem 0}
+    footer{padding:3.5rem 0 4rem}
+    .foot-row{flex-direction:column;gap:2rem}
+
+    /* Clear of the notch, and small enough not to sit on the title. */
+    #lang{
+      top:max(.9rem,env(safe-area-inset-top));
+      right:max(.9rem,env(safe-area-inset-right));
+      padding:.42rem .7rem;font-size:.6rem;
+    }
+  }
+
+  /* Very small phones: the hero title is the only thing that still overflows. */
+  @media(max-width:360px){
+    h1{font-size:2.5rem}
+    .lead{font-size:1rem}
+  }
 
   /* ── reveal ─────────────────────────────── */
   .r{opacity:0;transform:translateY(18px);transition:opacity 1s ease,transform 1s ease}
