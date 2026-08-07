@@ -158,15 +158,23 @@
     padding:4.4rem 0 4.4rem;position:relative;
   }
   .hero-img{position:absolute;inset:0;z-index:0;overflow:hidden}
-  .hero-img img,
-  .hero-img video{
+  .hero-img img{
     position:absolute;inset:0;
     width:100%;height:100%;object-fit:cover;object-position:50% 40%;
     opacity:.34;filter:grayscale(1) contrast(1.06) brightness(.84);
   }
-  /* The still sits underneath as the first paint and as the fallback if the
-     video cannot play; the video covers it once it starts. */
-  .hero-img video{z-index:1}
+  /* YouTube always serves a 16:9 player, so the iframe is sized to cover the
+     hero at that ratio and centred — whichever axis is short overflows rather
+     than letterboxing. The upload is 2:3, so its own pillarbox sits inside
+     that frame; it reads as black against a near-black page.
+     Not interactive: it is wallpaper, so it takes no clicks and no focus. */
+  .hero-img iframe{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:max(100%, calc(100vh * 16 / 9));
+    height:max(100%, calc(100vw * 9 / 16));
+    border:0;pointer-events:none;z-index:1;
+    opacity:.34;filter:grayscale(1) contrast(1.06) brightness(.84);
+  }
   /* The cover is a high-key image — black ink on pale ground — so the scrim
      darkens the middle band where the title sits and fades both edges to solid
      ink, instead of opening a transparent hole at the centre. */
@@ -329,10 +337,10 @@
 <!-- ══ HERO ══════════════════════════════════ -->
 <header class="wide">
   <div class="hero-img">
-    <video autoplay muted loop playsinline preload="auto"
-           poster="images/2026-07-27-installation-still-cover.jpg">
-      <source src="media/cover.mp4" type="video/mp4">
-    </video>
+    <iframe
+      src="https://www.youtube-nocookie.com/embed/89MPvNDpwsc?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=89MPvNDpwsc&amp;controls=0&amp;modestbranding=1&amp;playsinline=1&amp;rel=0&amp;disablekb=1&amp;iv_load_policy=3&amp;fs=0"
+      allow="autoplay; encrypted-media" title="" tabindex="-1" aria-hidden="true"
+      frameborder="0"></iframe>
     <img src="images/2026-07-27-installation-still-cover.jpg" alt="">
   </div>
 
@@ -803,19 +811,6 @@
     apply(next);
     try { localStorage.setItem(KEY, next); } catch(e){}
   });
-
-  /* ── cover video ──────────────────────── */
-  /* Some browsers refuse the autoplay attribute but allow a scripted play()
-     on a muted, inline video. If it is still refused the poster and the still
-     underneath remain, so nothing breaks. */
-  var cover = document.querySelector('.hero-img video');
-  if (cover) {
-    var start = function(){ var p = cover.play(); if (p) p.catch(function(){}); };
-    start();
-    document.addEventListener('visibilitychange', function(){
-      if (!document.hidden) start();
-    });
-  }
 
   /* ── reveal on scroll ─────────────────── */
   var els = document.querySelectorAll('.r');
