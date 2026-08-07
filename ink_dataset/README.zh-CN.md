@@ -6,6 +6,22 @@
 
 拍摄条件、材料、授权与素材筛选决策记录在 [Dataset 拍摄与制作日志](DATASET_CAPTURE_LOG.zh-CN.md)。
 
+## 素材来源
+
+2026 年 6 月在家中的三场拍摄共录制 54 段视频,从中精选 26 段。每段精选视频截取四个清晰且有区别的阶段,在 Photoshop 中修去气泡、水缸底部反光等干扰元素,再裁切为单色方图——构成下文的 101 张训练图。
+
+拍摄本身是按对照实验组织的,而不是单纯的取景:两种设备(相机 / 手机)、两种灯光环境(暗室双手机灯 / 傍晚自然柔光),以及一组材料与动作(盐、洗手液、筷子、小棍子、滴管)相互交叉。以下四张记录了各组画面背后的具体条件。
+
+![手机,傍晚柔光——水、盐、墨](../docs/images/dataset_record/2026-08-07-ink-dataset-contact-sheet-01.jpg)
+
+![相机,双手机灯——清水与盐水中的自然扩散](../docs/images/dataset_record/2026-08-07-ink-dataset-contact-sheet-02.jpg)
+
+![手机,傍晚柔光——用筷子搅动](../docs/images/dataset_record/2026-08-07-ink-dataset-contact-sheet-03.jpg)
+
+![相机,双手机灯——滴管吸取与局部搅动](../docs/images/dataset_record/2026-08-07-ink-dataset-contact-sheet-04.jpg)
+
+另有八张按拍摄场次(而非按条件)编排的 contact sheet,链接在[拍摄日志](DATASET_CAPTURE_LOG.zh-CN.md#详细-session-记录)中。
+
 ## 结构
 
 ```text

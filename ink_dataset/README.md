@@ -6,6 +6,22 @@ Photographic dataset of black ink in water, captured for LoRA training. The trai
 
 Capture conditions, materials, permissions and selection decisions are documented in the [dataset capture and production log](DATASET_CAPTURE_LOG.md).
 
+## Source material
+
+Three sessions at home across June 2026 produced 54 clips, of which 26 were selected. Four clear, distinct phases were screenshotted from each selected clip, retouched in Photoshop to remove interference — air bubbles, tank-bottom reflections — and cropped to a monochrome square, giving the 101 training images below.
+
+The capture was run as a comparison rather than a shoot: two devices (camera / phone), two lighting environments (two phone lights in a darkened room / soft evening daylight), and a set of materials and actions (salt, hand soap, chopsticks, a small stick, a pipette) varied against each other. These sheets record the conditions behind each set of frames.
+
+![Phone, evening soft light — water, salt and ink](../docs/images/dataset_record/2026-08-07-ink-dataset-contact-sheet-01.jpg)
+
+![Camera, two phone lights — natural diffusion in water and salt water](../docs/images/dataset_record/2026-08-07-ink-dataset-contact-sheet-02.jpg)
+
+![Phone, evening soft light — ink stirred with chopsticks](../docs/images/dataset_record/2026-08-07-ink-dataset-contact-sheet-03.jpg)
+
+![Camera, two phone lights — ink drawn with a pipette and stirred locally](../docs/images/dataset_record/2026-08-07-ink-dataset-contact-sheet-04.jpg)
+
+Eight further contact sheets, arranged per capture session rather than per condition, are linked from the [capture log](DATASET_CAPTURE_LOG.md#detailed-session-record).
+
 ## Structure
 
 ```text
