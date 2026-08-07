@@ -12,10 +12,16 @@
   :root{
     --ink:#0a0a0c;
     --paper:#f2f2f0;
-    --dim:#8a8a8e;
-    --dimmer:#57575c;
+    /* One text value throughout. There were three tiers — body, secondary and
+       label — which made captions and section numbers read as faded next to
+       the body copy. Kept as separate names so a hierarchy can be
+       reintroduced in one place if it ever reads too flat. */
+    --dim:#f2f2f0;
+    --dimmer:#f2f2f0;
     --rule:rgba(242,242,240,.14);
-    --measure:34rem;
+    /* Text runs the full width of the page, like the media. */
+    --measure:100%;
+    --gutter:4.5rem;   /* page edge inset; media goes full-bleed past it */
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -37,13 +43,28 @@
   /* ── language switching ─────────────────── */
   html[data-lang="en"] .zh{display:none}
   html[data-lang="zh"] .en{display:none}
-  html[data-lang="zh"] body{line-height:1.85;letter-spacing:.005em}
+  /* Chinese is set in Lantinghei. Latin families are listed first so that
+     numerals and words like LORA still come from Helvetica — Lantinghei's own
+     Latin is weaker, and neither Helvetica nor Arial carries CJK, so the
+     cascade lands on Lantinghei exactly for the Chinese characters. */
+  html[data-lang="zh"] body{
+    font-family:"Helvetica Neue",Helvetica,Arial,
+                "Lantinghei SC","Lantinghei TC","FZLTXHK--GBK1-0",
+                "PingFang SC","Hiragino Sans GB","Noto Sans CJK SC",
+                "Microsoft YaHei",sans-serif;
+    line-height:1.85;letter-spacing:.005em;
+  }
+  html[data-lang="zh"] .mono{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,
+                "Lantinghei SC","Lantinghei TC",
+                "PingFang SC","Noto Sans CJK SC",monospace;
+  }
   html[data-lang="zh"] .lead{line-height:1.72}
 
   #lang{
     position:fixed;top:1.4rem;right:1.4rem;z-index:99;
     font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-    font-size:.66rem;letter-spacing:.18em;
+    font-size:.78rem;letter-spacing:.14em;
     background:rgba(10,10,12,.72);backdrop-filter:blur(10px);
     border:1px solid var(--rule);color:var(--dim);
     padding:.5rem .85rem;cursor:pointer;border-radius:2px;
@@ -53,18 +74,45 @@
   }
   #lang:hover{color:var(--paper);border-color:rgba(242,242,240,.4)}
 
-  /* ── layout ─────────────────────────────── */
-  .wrap{max-width:var(--measure);margin:0 auto;padding:0 1.6rem}
-  .wide{max-width:78rem;margin:0 auto;padding:0 1.6rem}
-  section{padding:7rem 0}
+  /* ── layout ─────────────────────────────────
+     Everything runs the full width of the viewport. Media goes edge to edge;
+     text keeps a readable measure but sits left inside that full width rather
+     than being centred in a narrow column, so the page reads as full-bleed
+     without pushing lines to 200 characters on a large display. */
+  /* Horizontal only — the shorthand would also zero the vertical padding, and
+     .wrap outranks the `section` rule that sets the rhythm between modules. */
+  .wrap{max-width:none;margin:0;padding-left:var(--gutter);padding-right:var(--gutter)}
+  .wrap > *{max-width:var(--measure)}
+
+  /* .wide is a full-bleed container: it carries no padding at all, so media
+     inside it meets the screen edges by default. Text is what gets inset,
+     rather than media having to cancel a gutter it never wanted. */
+  .wide{max-width:none;margin:0;padding-left:0;padding-right:0}
+  .wide > .kicker,
+  .wide > h2,
+  .wide > h3,
+  .wide > p,
+  .wide > .wrap,
+  .wide > .links,
+  figcaption{padding-left:var(--gutter);padding-right:var(--gutter)}
+  .wide > h2,
+  .wide > h3,
+  .wide > p:not(.kicker){max-width:100%}
+
+  /* Asymmetric on purpose. With equal space above and below, the section
+     number floated between two modules and read as belonging to neither;
+     a much larger gap above binds it to the content that follows it. */
+  section{padding:12rem 0 6rem}
 
   /* ── type ───────────────────────────────── */
   .mono{
     font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-    font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+    /* Tracking eases off as the size goes up — .22em was set for 10px type and
+       reads as gappy once the label is large enough to have its own presence. */
+    font-size:.84rem;letter-spacing:.17em;text-transform:uppercase;
     color:var(--dimmer);
   }
-  html[data-lang="zh"] .mono{letter-spacing:.14em}
+  html[data-lang="zh"] .mono{letter-spacing:.11em}
   /* Sans-serif needs tighter tracking as it scales up, or large settings
      drift apart; serif did not. */
   h1{
@@ -72,11 +120,23 @@
     font-weight:500;letter-spacing:-.045em;
   }
   html[data-lang="zh"] h1{letter-spacing:-.02em}
-  h2{
-    font-size:clamp(1.45rem,3.4vw,2.15rem);line-height:1.18;
-    font-weight:500;letter-spacing:-.024em;margin-bottom:1.7rem;
+  /* The section number and its label are the display heading; the sentence
+     that used to be the heading now sits beneath as a subtitle. */
+  h2.kicker{
+    font-size:clamp(1.6rem,4.4vw,3.1rem);line-height:1.1;
+    font-weight:500;letter-spacing:.02em;text-transform:none;
+    margin-bottom:.9rem;padding-bottom:0;border-bottom:0;
   }
-  html[data-lang="zh"] h2{line-height:1.42;letter-spacing:-.005em;font-weight:600}
+  html[data-lang="zh"] h2.kicker{letter-spacing:.04em;font-weight:500}
+  /* The dash is gone; the gap does its work. Set in em so it scales with the
+     heading rather than drifting at small sizes. */
+  .num{margin-right:.85em}
+  .subtitle{
+    font-size:clamp(1.05rem,1.9vw,1.32rem);line-height:1.45;
+    letter-spacing:-.012em;color:var(--dim);
+    margin-bottom:2.8rem;
+  }
+  html[data-lang="zh"] .subtitle{letter-spacing:0;line-height:1.6}
   h3{font-size:1.02rem;font-weight:600;letter-spacing:-.008em;margin-bottom:.5rem}
   p{margin-bottom:1.2rem}
   p:last-child{margin-bottom:0}
@@ -92,7 +152,10 @@
        mobile browser chrome on browsers that support it. */
     min-height:100vh;min-height:100svh;
     display:flex;flex-direction:column;justify-content:space-between;
-    padding:2.2rem 0 3rem;position:relative;
+    /* Enough head room that the top label row clears the fixed language
+       button, and enough at the foot that the bottom row is not sitting on
+       the edge of the screen. */
+    padding:4.4rem 0 4.4rem;position:relative;
   }
   .hero-img{position:absolute;inset:0;z-index:0;overflow:hidden}
   .hero-img img{
@@ -112,33 +175,47 @@
         var(--ink) 100%),
       radial-gradient(ellipse 72% 56% at 50% 46%, rgba(10,10,12,.38), transparent 72%);
   }
-  header>*{position:relative;z-index:1}
+  /* The cover image fills the viewport; only the type is inset. */
+  header>*{position:relative;z-index:1;padding:0 var(--gutter)}
+  header>.hero-img{padding:0}
   .hero-top{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  /* The year sits under the fixed language button otherwise. */
+  header>.hero-top:first-of-type{padding-right:calc(var(--gutter) + 5rem)}
   .hero-mid{margin:auto 0}
-  .hero-sub{margin-top:2rem;max-width:31rem}
+  /* Three lines, no punctuation — each phrase gets its own line so the breaks
+     do the work the commas used to. */
+  .hero-sub{margin-top:2rem;max-width:44rem}
+  .hero-sub span{display:block;line-height:1.4}
+  html[data-lang="zh"] .hero-sub span{line-height:1.55}
 
   /* ── figures ────────────────────────────── */
   figure{margin:0}
   figcaption{
     margin-top:.85rem;font-size:.82rem;line-height:1.55;color:var(--dim);
-    max-width:36rem;
+    max-width:100%;
   }
+  /* Media is already full-bleed inside .wide, so this only sets rhythm. */
   .bleed{margin:4.5rem 0}
   .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem}
+  /* The two setup photographs were shot at 4:3 and 3:2, so side by side they
+     ended at different heights. Cropped to a shared ratio in CSS rather than
+     on disk, which keeps the originals intact as capture evidence. */
+  .evenpair img{aspect-ratio:3/2;object-fit:cover;object-position:center}
   .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem}
   @media(max-width:760px){.grid4{grid-template-columns:repeat(2,1fr)}}
-  /* Contact sheets are 16:9 and already sit on black, so they stack full width
-     and blend into the page rather than being boxed into a grid, where their
-     captions would be too small to read. */
-  .sheets{display:grid;gap:2.6rem}
+  /* Contact sheets run four across as one band. Their own captions are too
+     small to read at this size — they work as a set of conditions seen at a
+     glance, and the detail is carried by the body copy above. */
+  .sheets{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem}
   /* A tall portrait still would dominate the column grid, so it is held to a
      narrower centred measure and reads as a plate rather than a banner. */
   .portrait{max-width:33rem;margin-left:auto;margin-right:auto}
   .portrait figcaption{margin-left:auto;margin-right:auto}
   .frame{border:1px solid var(--rule)}
 
-  hr{border:0;border-top:1px solid var(--rule);margin:0}
-  .kicker{margin-bottom:2.6rem;padding-bottom:.7rem;border-bottom:1px solid var(--rule)}
+  /* A section number with no subtitle under it (01) takes the spacing the
+     subtitle would otherwise have supplied. */
+  h2.kicker:not(:has(+ .subtitle)):not(:has(+ .wrap)){margin-bottom:2.8rem}
 
   /* ── steps table ────────────────────────── */
   .steps{width:100%;border-collapse:collapse;font-size:.93rem}
@@ -146,7 +223,7 @@
     padding:.95rem .6rem;border-bottom:1px solid var(--rule);
     text-align:left;vertical-align:top;
   }
-  .steps th{font-weight:400;color:var(--dimmer);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase}
+  .steps th{font-weight:400;color:var(--dimmer);font-size:.82rem;letter-spacing:.13em;text-transform:uppercase}
   .steps td:first-child{color:var(--dimmer);width:2.4rem}
   .steps td:last-child{color:var(--dim)}
 
@@ -178,28 +255,35 @@
      screen leaves each figure too small to read. */
 
   @media(max-width:900px){
+    :root{--gutter:3.2rem}
     .grid2{grid-template-columns:1fr;gap:1.6rem}
-    .sheets{gap:1.8rem}
-    section{padding:5.5rem 0}
+    .sheets{grid-template-columns:repeat(2,1fr);gap:1.2rem}
+    section{padding:9.5rem 0 5rem}
   }
 
   @media(max-width:640px){
+    :root{--gutter:2.1rem}
     body{font-size:15px}
-    section{padding:4rem 0}
-    .wrap,.wide{padding:0 1.25rem}
+    section{padding:7.5rem 0 4rem}
 
     /* Header rows stop being justified pairs and stack, so nothing has to
        wrap awkwardly mid-label. */
-    header{padding:1.5rem 0 2rem}
-    .hero-top{flex-direction:column;gap:.35rem}
-    .hero-top:last-of-type{gap:.35rem}
-    .hero-sub{margin-top:1.5rem}
+    /* The hero's lower labels sat almost on top of the first paragraph; the
+       cover needs room to end before the text begins. */
+    header{padding:4rem 0 3.5rem}
+    header>.hero-top:first-of-type{padding-right:calc(var(--gutter) + 4rem)}
+    .hero-top{flex-direction:column;gap:.5rem}
+    .hero-sub{margin-top:1.75rem}
     h1{letter-spacing:-.035em}
 
     .grid4{grid-template-columns:1fr;gap:1.2rem}
-    .kicker{margin-bottom:1.8rem}
-    h2{margin-bottom:1.3rem}
-    .bleed{margin:2.6rem 0}
+    /* One per row on a phone: at two across these become unreadable smudges. */
+    .sheets{grid-template-columns:1fr;gap:1.6rem}
+    h2.kicker{margin-bottom:.7rem}
+    .subtitle{margin-bottom:2.2rem}
+    h2{margin-bottom:1.5rem}
+    p{margin-bottom:1.35rem}
+    .bleed{margin:3.4rem 0}
 
     /* The step table would otherwise force a horizontal scroll. */
     .steps{font-size:.82rem}
@@ -214,7 +298,7 @@
     #lang{
       top:max(.9rem,env(safe-area-inset-top));
       right:max(.9rem,env(safe-area-inset-right));
-      padding:.42rem .7rem;font-size:.6rem;
+      padding:.45rem .75rem;font-size:.72rem;
     }
   }
 
@@ -250,11 +334,14 @@
   <div class="hero-mid">
     <h1>Inkward<br>Bound</h1>
     <p class="lead hero-sub dim en">
-      An interactive generative installation working with ink to examine
-      the spatialisation of consciousness.
+      <span>An interactive generative installation</span>
+      <span>working with ink</span>
+      <span>to examine the spatialisation of consciousness</span>
     </p>
     <p class="lead hero-sub dim zh">
-      一件互动生成装置,以墨为材料,探讨意识的空间化。
+      <span>一件互动生成装置</span>
+      <span>以墨为材料</span>
+      <span>探讨意识的空间化</span>
     </p>
   </div>
 
@@ -292,8 +379,8 @@
 
 <!-- ══ VIDEO ═════════════════════════════════ -->
 <section class="wide r" id="work">
-  <p class="mono kicker en">01 — The work</p>
-  <p class="mono kicker zh">01 — 作品</p>
+  <h2 class="mono kicker en"><span class="num">01</span>The work</h2>
+  <h2 class="mono kicker zh"><span class="num">01</span>作品</h2>
 
   <figure>
     <!--
@@ -327,11 +414,11 @@
 
 <!-- ══ CONCEPT ═══════════════════════════════ -->
 <section class="wrap r" id="idea">
-  <p class="mono kicker en">02 — From temporal being to spatial being</p>
-  <p class="mono kicker zh">02 — 从时间存在性变成空间存在性</p>
+  <h2 class="mono kicker en"><span class="num">02</span>From temporal being to spatial being</h2>
+  <h2 class="mono kicker zh"><span class="num">02</span>从时间存在性变成空间存在性</h2>
 
   <div class="en">
-    <h2>Consciousness comes into being in time. A model holds it as coordinates.</h2>
+    <p class="subtitle">Consciousness comes into being in time. A model holds it as coordinates</p>
     <p>
       Duration, in Bergson's sense, is a multiplicity that cannot be counted: its
       moments interpenetrate and have no edges. Listening to a melody, the note
@@ -355,7 +442,7 @@
   </div>
 
   <div class="zh">
-    <h2>意识在时间中生成,模型把它存成坐标。</h2>
+    <p class="subtitle">意识在时间中生成,模型把它存成坐标</p>
     <p>
       柏格森意义上的绵延是数不出来的多:各时刻相互渗透,没有边界。听一段旋律,
       此刻这个音之所以是它,是因为前面的音仍在它里面起作用。
@@ -376,12 +463,12 @@
 
 <!-- ══ INK ═══════════════════════════════════ -->
 <section class="wide r" id="ink">
-  <p class="mono kicker en">03 — Why ink</p>
-  <p class="mono kicker zh">03 — 为何是墨</p>
+  <h2 class="mono kicker en"><span class="num">03</span>Why ink</h2>
+  <h2 class="mono kicker zh"><span class="num">03</span>为何是墨</h2>
 
-  <div class="wrap" style="padding-left:0;padding-right:0">
+  <div class="wrap">
     <div class="en">
-      <h2>Ink is not a metaphor for consciousness.</h2>
+      <p class="subtitle">Ink is not a metaphor for consciousness</p>
       <p>
         Ink in water interpenetrates, has no edges and cannot be counted. Ink on
         paper has dried, holds a shape, occupies a position. The material carries
@@ -395,7 +482,7 @@
       </p>
     </div>
     <div class="zh">
-      <h2>墨不是意识的比喻。</h2>
+      <p class="subtitle">墨不是意识的比喻</p>
       <p>
         水中的墨相互渗透,没有边界,数不出来;纸上的墨干了,有形状,占据位置。
         这一材料同时承载了论证的两端——而它本身又是最早的空间化技术,
@@ -408,12 +495,12 @@
     </div>
   </div>
 
-  <div class="bleed grid2">
+  <div class="bleed grid2 evenpair">
     <figure><img class="frame" loading="lazy" src="images/dataset_record/2026-06-22-capture-setup-01.jpg" alt="Camera on a tripod facing a water tank lit by phone lights"></figure>
     <figure><img class="frame" loading="lazy" src="images/dataset_record/2026-06-29-capture-setup-01.jpg" alt="Phone on a tripod filming a water tank by a window"></figure>
   </div>
 
-  <div class="wrap" style="padding-left:0;padding-right:0">
+  <div class="wrap">
     <p class="dim en">
       Three sessions at home across June 2026 produced 54 clips, of which 26 were
       selected. Four distinct phases were screenshotted from each, retouched to
@@ -454,11 +541,11 @@
 
 <!-- ══ PIPELINE ══════════════════════════════ -->
 <section class="wrap r" id="pipeline">
-  <p class="mono kicker en">04 — How the ink is flattened</p>
-  <p class="mono kicker zh">04 — 墨如何被摊平</p>
+  <h2 class="mono kicker en"><span class="num">04</span>How the ink is flattened</h2>
+  <h2 class="mono kicker zh"><span class="num">04</span>墨如何被摊平</h2>
 
-  <h2 class="en">The pipeline performs what the work describes.</h2>
-  <h2 class="zh">管线执行了作品所描述的事。</h2>
+  <p class="subtitle en">The pipeline performs what the work describes</p>
+  <p class="subtitle zh">管线执行了作品所描述的事</p>
 
   <table class="steps en">
     <tr><th></th><th>Operation</th><th>What happens to the ink</th></tr>
@@ -532,11 +619,11 @@
 
 <!-- ══ INTERACTION ═══════════════════════════ -->
 <section class="wrap r" id="interaction">
-  <p class="mono kicker en">05 — The interaction</p>
-  <p class="mono kicker zh">05 — 交互</p>
+  <h2 class="mono kicker en"><span class="num">05</span>The interaction</h2>
+  <h2 class="mono kicker zh"><span class="num">05</span>交互</h2>
 
   <div class="en">
-    <h2>Waiting is written into the formula, not asked of the visitor.</h2>
+    <p class="subtitle">Waiting is written into the formula, not asked of the visitor</p>
     <p>
       Touch produces a single value, <em>c</em>, running from 0 to 1 — from ink
       dispersed to ink condensed. It is not a readout of position but an integral
@@ -560,7 +647,7 @@
   </div>
 
   <div class="zh">
-    <h2>等待被写进了公式本身,而不是被要求于观众。</h2>
+    <p class="subtitle">等待被写进了公式本身,而不是被要求于观众</p>
     <p>
       触摸产生一个值 <em>c</em>,从 0 到 1——从墨的弥散到墨的凝结。它不是位置的
       读数,而是手势在时间中的积分:按压时长占七成权重,稳定度占三成,躁动则是
@@ -615,11 +702,11 @@
 
 <!-- ══ PROCESS ═══════════════════════════════ -->
 <section class="wrap r" id="process">
-  <p class="mono kicker en">06 — Process</p>
-  <p class="mono kicker zh">06 — 过程</p>
+  <h2 class="mono kicker en"><span class="num">06</span>Process</h2>
+  <h2 class="mono kicker zh"><span class="num">06</span>过程</h2>
 
-  <h2 class="en">Seven retrainings, each triggered by a specific failure.</h2>
-  <h2 class="zh">七次重训,每一次都由一个具体的失败推动。</h2>
+  <p class="subtitle en">Seven retrainings, each triggered by a specific failure</p>
+  <p class="subtitle zh">七次重训,每一次都由一个具体的失败推动</p>
 
   <p class="dim en">
     Container features leaking into the trigger word. A flat phase axis. States
