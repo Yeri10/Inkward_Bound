@@ -396,12 +396,23 @@ function endTouch() {
 function updateState() {
   duration = isTouching ? (millis() - touchStartT) / 1000 : 0;
 
+  // A finger held still fires no move events, so rawSpeed would otherwise stay
+  // frozen at whatever it last measured — the system would never notice that the
+  // gesture had stopped, stability could not recover, and a hold that began with
+  // movement could never reach a high c. Decaying it here is what lets "stop and
+  // wait" read as stillness, so the field slows and gathers instead of churning.
+  if (isTouching && millis() - lastMoveTime > 60) rawSpeed *= 0.90;
+
   const normSpd = min(rawSpeed / SPEED_MAX, 1);
   stability = isTouching ? max(0, 1 - normSpd) : 0;
 
-  const clickP = min(clickCount / 6, 1);
+  // clickCount is still counted and still reported to TouchDesigner, but it no
+  // longer feeds agitation. Repeated tapping used to hold a floor of 0.35 under
+  // agitation for the rest of the hold, so a gesture that began with taps could
+  // never fully settle however still the hand became. Agitation now reads
+  // movement alone, which is the only thing that should keep the ink disturbed.
   agitation = isTouching
-    ? min(normSpd * 0.65 + clickP * 0.35, 1)
+    ? normSpd
     : max(0, agitation - 0.02);
 
   // Weights sum to 1.0 so a long, still, calm hold drives cTarget → 1.0,
