@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inkward Bound — Yerie</title>
+<meta name="description" content="An interactive generative installation asking, through ink and touch, whether consciousness can still be sensed.">
+<meta property="og:title" content="Inkward Bound">
+<meta property="og:description" content="An interactive generative installation asking, through ink and touch, whether consciousness can still be sensed.">
+<meta property="og:image" content="images/2026-07-27-installation-still-cover.jpg">
+<style>
+  :root{
+    --ink:#0a0a0c;
+    --paper:#f2f2f0;
+    --dim:#8a8a8e;
+    --dimmer:#57575c;
+    --rule:rgba(242,242,240,.14);
+    --measure:34rem;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    background:var(--ink);color:var(--paper);
+    /* Neo-grotesque stack, no webfont: nothing to download, nothing to fail
+       on site. Chinese falls to PingFang / Noto Sans so both scripts stay
+       in the same tonal register. */
+    font-family:"Helvetica Neue",Helvetica,Inter,system-ui,-apple-system,
+                "Segoe UI","PingFang SC","Hiragino Sans GB",
+                "Noto Sans CJK SC","Microsoft YaHei",Arial,sans-serif;
+    font-size:16px;line-height:1.62;letter-spacing:-.003em;
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+  img{display:block;width:100%;height:auto}
+  a{color:inherit}
+
+  /* ── language switching ─────────────────── */
+  html[data-lang="en"] .zh{display:none}
+  html[data-lang="zh"] .en{display:none}
+  html[data-lang="zh"] body{line-height:1.85;letter-spacing:.005em}
+  html[data-lang="zh"] .lead{line-height:1.72}
+
+  #lang{
+    position:fixed;top:1.4rem;right:1.4rem;z-index:99;
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.66rem;letter-spacing:.18em;
+    background:rgba(10,10,12,.72);backdrop-filter:blur(10px);
+    border:1px solid var(--rule);color:var(--dim);
+    padding:.5rem .85rem;cursor:pointer;border-radius:2px;
+    transition:color .25s ease,border-color .25s ease;
+  }
+  #lang:hover{color:var(--paper);border-color:rgba(242,242,240,.4)}
+
+  /* ── layout ─────────────────────────────── */
+  .wrap{max-width:var(--measure);margin:0 auto;padding:0 1.6rem}
+  .wide{max-width:78rem;margin:0 auto;padding:0 1.6rem}
+  section{padding:7rem 0}
+  @media(max-width:640px){section{padding:4.5rem 0}}
+
+  /* ── type ───────────────────────────────── */
+  .mono{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--dimmer);
+  }
+  html[data-lang="zh"] .mono{letter-spacing:.14em}
+  /* Sans-serif needs tighter tracking as it scales up, or large settings
+     drift apart; serif did not. */
+  h1{
+    font-size:clamp(2.9rem,11.5vw,8rem);line-height:.9;
+    font-weight:500;letter-spacing:-.045em;
+  }
+  html[data-lang="zh"] h1{letter-spacing:-.02em}
+  h2{
+    font-size:clamp(1.45rem,3.4vw,2.15rem);line-height:1.18;
+    font-weight:500;letter-spacing:-.024em;margin-bottom:1.7rem;
+  }
+  html[data-lang="zh"] h2{line-height:1.42;letter-spacing:-.005em;font-weight:600}
+  h3{font-size:1.02rem;font-weight:600;letter-spacing:-.008em;margin-bottom:.5rem}
+  p{margin-bottom:1.2rem}
+  p:last-child{margin-bottom:0}
+  .lead{font-size:clamp(1.1rem,2vw,1.34rem);line-height:1.5;letter-spacing:-.012em}
+  html[data-lang="zh"] .lead{letter-spacing:0}
+  .dim{color:var(--dim)}
+  em{font-style:italic}
+  strong{font-weight:600}
+
+  /* ── hero ───────────────────────────────── */
+  header{
+    min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;
+    padding:2.2rem 0 3rem;position:relative;
+  }
+  .hero-img{position:absolute;inset:0;z-index:0;overflow:hidden}
+  .hero-img img{
+    width:100%;height:100%;object-fit:cover;object-position:50% 40%;
+    opacity:.34;filter:grayscale(1) contrast(1.06) brightness(.84);
+  }
+  /* The cover is a high-key image — black ink on pale ground — so the scrim
+     darkens the middle band where the title sits and fades both edges to solid
+     ink, instead of opening a transparent hole at the centre. */
+  .hero-img::after{
+    content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(to bottom,
+        var(--ink) 0%,
+        rgba(10,10,12,.50) 26%,
+        rgba(10,10,12,.52) 60%,
+        var(--ink) 100%),
+      radial-gradient(ellipse 72% 56% at 50% 46%, rgba(10,10,12,.38), transparent 72%);
+  }
+  header>*{position:relative;z-index:1}
+  .hero-top{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .hero-mid{margin:auto 0}
+  .hero-sub{margin-top:2rem;max-width:31rem}
+
+  /* ── figures ────────────────────────────── */
+  figure{margin:0}
+  figcaption{
+    margin-top:.85rem;font-size:.82rem;line-height:1.55;color:var(--dim);
+    max-width:36rem;
+  }
+  .bleed{margin:4.5rem 0}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem}
+  @media(max-width:760px){.grid4{grid-template-columns:repeat(2,1fr)}}
+  /* Contact sheets are 16:9 and already sit on black, so they stack full width
+     and blend into the page rather than being boxed into a grid, where their
+     captions would be too small to read. */
+  .sheets{display:grid;gap:2.6rem}
+  /* A tall portrait still would dominate the column grid, so it is held to a
+     narrower centred measure and reads as a plate rather than a banner. */
+  .portrait{max-width:33rem;margin-left:auto;margin-right:auto}
+  .portrait figcaption{margin-left:auto;margin-right:auto}
+  .frame{border:1px solid var(--rule)}
+
+  hr{border:0;border-top:1px solid var(--rule);margin:0}
+  .kicker{margin-bottom:2.6rem;padding-bottom:.7rem;border-bottom:1px solid var(--rule)}
+
+  /* ── steps table ────────────────────────── */
+  .steps{width:100%;border-collapse:collapse;font-size:.93rem}
+  .steps td,.steps th{
+    padding:.95rem .6rem;border-bottom:1px solid var(--rule);
+    text-align:left;vertical-align:top;
+  }
+  .steps th{font-weight:400;color:var(--dimmer);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase}
+  .steps td:first-child{color:var(--dimmer);width:2.4rem}
+  .steps td:last-child{color:var(--dim)}
+
+  /* ── video ──────────────────────────────── */
+  .video-slot{
+    aspect-ratio:16/9;border:1px solid var(--rule);
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,.015);
+  }
+  .video-slot .mono{color:var(--dimmer);text-align:center;padding:1rem}
+  video{width:100%;height:auto;display:block}
+
+  /* ── links ──────────────────────────────── */
+  .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:0}
+  .links a{
+    display:block;padding:1.5rem 0;border-top:1px solid var(--rule);
+    text-decoration:none;transition:padding-left .25s ease;
+  }
+  .links a:hover{padding-left:.7rem}
+  .links .t{display:block;margin-bottom:.15rem}
+  .links .d{display:block;font-size:.83rem;color:var(--dim)}
+
+  footer{padding:5rem 0 6rem;border-top:1px solid var(--rule)}
+  .foot-row{display:flex;justify-content:space-between;gap:1.4rem;flex-wrap:wrap}
+
+  /* ── reveal ─────────────────────────────── */
+  .r{opacity:0;transform:translateY(18px);transition:opacity 1s ease,transform 1s ease}
+  .r.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){
+    .r{opacity:1;transform:none;transition:none}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<button id="lang" type="button" aria-label="Switch language">中文</button>
+
+<!-- ══ HERO ══════════════════════════════════ -->
+<header class="wide">
+  <div class="hero-img"><img src="images/2026-07-27-installation-still-cover.jpg" alt=""></div>
+
+  <div class="hero-top">
+    <span class="mono en">Yerie — MA Computational Arts, Goldsmiths</span>
+    <span class="mono zh">Yerie — 伦敦大学金史密斯学院 计算艺术硕士</span>
+    <span class="mono">2026</span>
+  </div>
+
+  <div class="hero-mid">
+    <h1>Inkward<br>Bound</h1>
+    <p class="lead hero-sub dim en">
+      An interactive generative installation working with ink to examine
+      the spatialisation of consciousness.
+    </p>
+    <p class="lead hero-sub dim zh">
+      一件互动生成装置,以墨为材料,探讨意识的空间化。
+    </p>
+  </div>
+
+  <div class="hero-top">
+    <span class="mono en">Ink · LoRA · TouchDesigner · Latent space</span>
+    <span class="mono zh">墨 · LoRA · TouchDesigner · 潜空间</span>
+    <span class="mono en">Scroll ↓</span>
+    <span class="mono zh">向下 ↓</span>
+  </div>
+</header>
+
+<!-- ══ STATEMENT ═════════════════════════════ -->
+<section class="wrap r">
+  <div class="en">
+    <p class="lead">
+      As the temporal becoming of consciousness is taken over by AI and flattened
+      into retrievable coordinates, the visitor moves and waits within that space
+      by hand, and the ink follows — diffused, disturbed, condensed.
+    </p>
+    <p class="lead">
+      In the seconds when the system does not obey at once, time regains its
+      thickness, bound inward.
+    </p>
+  </div>
+  <div class="zh">
+    <p class="lead">
+      当意识在时间中的生成被 AI 接管、被摊平为可检索的坐标,观众用手在这片空间里
+      移动、等待,墨随之扩散、扰动、聚拢。
+    </p>
+    <p class="lead">
+      在系统不立即服从的那几秒里,时间重新有了厚度,朝向内里。
+    </p>
+  </div>
+</section>
+
+<!-- ══ VIDEO ═════════════════════════════════ -->
+<section class="wide r" id="work">
+  <p class="mono kicker en">01 — The work</p>
+  <p class="mono kicker zh">01 — 作品</p>
+
+  <figure>
+    <!--
+      ▸ STILL NEEDED: a recording of the installation itself — the touch screen
+        and the projection together, with a hand in shot.
+        1. encode it to  docs/media/installation.mp4
+        2. delete the placeholder block below (class "video-slot")
+        3. remove the two comment markers around the <video> element after it
+        (The capture-experiment video lives in section 03, where it belongs.)
+    -->
+    <div class="video-slot">
+      <span class="mono en">Installation recording<br>to be added</span>
+      <span class="mono zh">装置现场记录<br>待添加</span>
+    </div>
+    <!--
+    <video controls playsinline preload="none" poster="media/installation-poster.jpg">
+      <source src="media/installation.mp4" type="video/mp4">
+    </video>
+    -->
+    <figcaption class="en">
+      The installation in use. A touch screen carries the visitor's hand; a
+      projection carries the ink. Holding still for long enough draws the ink
+      together — releasing lets it drift apart on its own clock.
+    </figcaption>
+    <figcaption class="zh">
+      装置使用中。触摸屏承载观众的手,投影承载墨。持续按住不动会让墨聚拢——
+      松开后,它按自己的节奏重新散开。
+    </figcaption>
+  </figure>
+</section>
+
+<!-- ══ CONCEPT ═══════════════════════════════ -->
+<section class="wrap r" id="idea">
+  <p class="mono kicker en">02 — From temporal being to spatial being</p>
+  <p class="mono kicker zh">02 — 从时间存在性变成空间存在性</p>
+
+  <div class="en">
+    <h2>Consciousness comes into being in time. A model holds it as coordinates.</h2>
+    <p>
+      Duration, in Bergson's sense, is a multiplicity that cannot be counted: its
+      moments interpenetrate and have no edges. Listening to a melody, the note
+      sounding now is the note it is because the notes before it are still at work
+      inside it.
+    </p>
+    <p>
+      Things can be counted only because they lie outside one another. Latent space
+      is that condition in its textbook form — vectors occupy coordinates, distances
+      can be measured, values interpolated. To place a continuous process on an axis
+      from 0 to 1 is to give positions to something that has none.
+    </p>
+    <p class="dim">
+      Bergson could argue for a return to duration because the habit he confronted
+      was internal to consciousness, and could be suspended by reflection. The
+      spatialisation at issue here is carried out by technical systems, outside
+      consciousness, and does not change when one's attitude changes. That is why
+      this work does not adjudicate: not as an openness of posture, but because the
+      place from which one might adjudicate no longer exists.
+    </p>
+  </div>
+
+  <div class="zh">
+    <h2>意识在时间中生成,模型把它存成坐标。</h2>
+    <p>
+      柏格森意义上的绵延是数不出来的多:各时刻相互渗透,没有边界。听一段旋律,
+      此刻这个音之所以是它,是因为前面的音仍在它里面起作用。
+    </p>
+    <p>
+      能数,是因为彼此外在。潜空间正是这一条件的标准形态——向量各占坐标、
+      可算距离、可插值。把一个连续的过程放上 0 到 1 的坐标轴,就是给本没有位置的
+      东西分配位置。
+    </p>
+    <p class="dim">
+      柏格森之所以能主张回到绵延,是因为他面对的是意识内部的习惯,可以反省、
+      可以悬置。而这里的空间化由技术系统在意识之外执行,不因态度改变而改变。
+      这正是作品不作裁定的原因:不是姿态上的开放,而是可供裁定的那个位置
+      已经不存在了。
+    </p>
+  </div>
+</section>
+
+<!-- ══ INK ═══════════════════════════════════ -->
+<section class="wide r" id="ink">
+  <p class="mono kicker en">03 — Why ink</p>
+  <p class="mono kicker zh">03 — 为何是墨</p>
+
+  <div class="wrap" style="padding-left:0;padding-right:0">
+    <div class="en">
+      <h2>Ink is not a metaphor for consciousness.</h2>
+      <p>
+        Ink in water interpenetrates, has no edges and cannot be counted. Ink on
+        paper has dried, holds a shape, occupies a position. The material carries
+        both states of the argument — and it is also the earliest technology of
+        spatialisation, the first version of storing anything at all.
+      </p>
+      <p class="dim">
+        It shares an origin with the model, too. Diffusion models move from noise
+        towards form, and that mathematics came out of the study of physical
+        diffusion in the first place — not a coincidence of naming.
+      </p>
+    </div>
+    <div class="zh">
+      <h2>墨不是意识的比喻。</h2>
+      <p>
+        水中的墨相互渗透,没有边界,数不出来;纸上的墨干了,有形状,占据位置。
+        这一材料同时承载了论证的两端——而它本身又是最早的空间化技术,
+        是"存下来"这件事的第一个版本。
+      </p>
+      <p class="dim">
+        它与模型也同源。扩散模型从噪声走向形态,而这套数学本就源自对物理扩散
+        过程的研究,不是命名上的巧合。
+      </p>
+    </div>
+  </div>
+
+  <div class="bleed grid2">
+    <figure><img class="frame" loading="lazy" src="images/dataset_record/2026-06-22-capture-setup-01.jpg" alt="Camera on a tripod facing a water tank lit by phone lights"></figure>
+    <figure><img class="frame" loading="lazy" src="images/dataset_record/2026-06-29-capture-setup-01.jpg" alt="Phone on a tripod filming a water tank by a window"></figure>
+  </div>
+
+  <div class="wrap" style="padding-left:0;padding-right:0">
+    <p class="dim en">
+      Three sessions at home across June 2026 produced 54 clips, of which 26 were
+      selected. Four distinct phases were screenshotted from each, retouched to
+      remove air bubbles and tank reflections, and cropped to a monochrome square:
+      101 training images in four categories — pure diffusion, layered ink,
+      disturbed ink, gathering ink.
+    </p>
+    <p class="dim zh">
+      2026 年 6 月在家中的三场拍摄共录制 54 段视频,从中精选 26 段。
+      每段截取四个清晰且有区别的阶段,在 Photoshop 中修去气泡与水缸反光,
+      裁切为单色方图——最终得到四个类别、共 101 张训练图:自然扩散、
+      层叠、扰动、聚拢。
+    </p>
+  </div>
+
+  <figure class="bleed">
+    <video controls playsinline preload="none" poster="media/video-poster.jpg">
+      <source src="media/inkward-bound-documentation.mp4" type="video/mp4">
+    </video>
+    <figcaption class="en">
+      The capture experiments, 6′37″ — each run labelled with its equipment,
+      lighting, materials and method. Salt, hand soap, chopsticks, a small stick
+      and a pipette, filmed against two lighting environments on two devices.
+    </figcaption>
+    <figcaption class="zh">
+      拍摄实验全过程,6 分 37 秒——每一次实验都标注了设备、灯光、材料与方法。
+      盐、洗手液、筷子、小棍子与滴管,在两种灯光环境、两种设备下逐一拍摄。
+    </figcaption>
+  </figure>
+
+  <div class="bleed sheets">
+    <img loading="lazy" src="media/contact-sheet-01.jpg" alt="Contact sheet: phone, evening soft light — water, salt and ink, 26 June">
+    <img loading="lazy" src="media/contact-sheet-02.jpg" alt="Contact sheet: camera, two phone lights — water, salt and ink, 22 June">
+    <img loading="lazy" src="media/contact-sheet-03.jpg" alt="Contact sheet: phone, evening soft light — ink stirred with chopsticks, 26 June">
+    <img loading="lazy" src="media/contact-sheet-04.jpg" alt="Contact sheet: camera, two phone lights — ink drawn with a dropper and stirred locally, 26 June">
+  </div>
+</section>
+
+<!-- ══ PIPELINE ══════════════════════════════ -->
+<section class="wrap r" id="pipeline">
+  <p class="mono kicker en">04 — How the ink is flattened</p>
+  <p class="mono kicker zh">04 — 墨如何被摊平</p>
+
+  <h2 class="en">The pipeline performs what the work describes.</h2>
+  <h2 class="zh">管线执行了作品所描述的事。</h2>
+
+  <table class="steps en">
+    <tr><th></th><th>Operation</th><th>What happens to the ink</th></tr>
+    <tr><td>1</td><td>Filming → frames</td><td>The flow is cut into single frames</td></tr>
+    <tr><td>2</td><td>Grouping and captioning</td><td>States are named as categories</td></tr>
+    <tr><td>3</td><td>LoRA training</td><td>Ink becomes a distribution of features</td></tr>
+    <tr><td>4</td><td>Latent-space mapping</td><td>Each state acquires a coordinate</td></tr>
+    <tr><td>5</td><td>Multi-seed generation + interpolation</td><td>Retrievable; continuity stitched back on</td></tr>
+  </table>
+  <table class="steps zh">
+    <tr><th></th><th>操作</th><th>墨发生了什么</th></tr>
+    <tr><td>1</td><td>拍摄 → 切帧</td><td>流动被切成一格一格</td></tr>
+    <tr><td>2</td><td>分组与标注</td><td>状态被命名为类别</td></tr>
+    <tr><td>3</td><td>LoRA 训练</td><td>墨成为特征分布</td></tr>
+    <tr><td>4</td><td>潜空间映射</td><td>每个状态有了坐标</td></tr>
+    <tr><td>5</td><td>多 seed 生成 + 插帧</td><td>可检索;连续性被缝回</td></tr>
+  </table>
+
+  <div class="en" style="margin-top:2.2rem">
+    <p>
+      Every step makes the ink more retrievable. The last step attempts to
+      manufacture continuity again — which is precisely what the work is asking
+      about.
+    </p>
+    <p class="dim">
+      Pre-baking is not a compromise; it is the argument. Everything the visitor
+      sees already exists inside a retrievable structure, and nothing is being
+      generated in front of them. If the image really were coming into being in
+      time, the work would contradict itself.
+    </p>
+  </div>
+  <div class="zh" style="margin-top:2.2rem">
+    <p>
+      每一步都让墨更可被检索。最后一步试图把连续性重新造出来——
+      这正是作品在问的事。
+    </p>
+    <p class="dim">
+      预烘焙不是妥协,而是论点。观众看到的一切都已存在于一个可检索的结构里,
+      没有任何东西在观众面前"正在生成"。如果画面真的在时间中生成,
+      作品反而自相矛盾。
+    </p>
+  </div>
+</section>
+
+<section class="wide r">
+  <figure>
+    <img loading="lazy" src="images/2026-07-13-latent-atlas-final-66.jpg" alt="The final 66-image latent atlas, curated from v7">
+    <figcaption class="en">
+      The final latent atlas: 66 images curated from 192 candidates, after seven
+      retrainings of the LoRA. Each was generated at a fixed coordinate on the
+      c-axis, then interpolated into five continuous videos.
+    </figcaption>
+    <figcaption class="zh">
+      最终的 latent atlas:经过七次重训后,从 192 张候选图中精选出的 66 张。
+      每一张都生成于 c 轴上的一个固定坐标,再经插帧连成五段连续视频。
+    </figcaption>
+  </figure>
+
+  <figure class="bleed">
+    <img class="frame" loading="lazy" src="images/2026-07-28-v7-recall-tests-round2.png" alt="Four generated images testing whether the trained vocabulary can be recalled">
+    <figcaption class="en">Recall tests — whether the phrases written into the captions can be summoned back one by one.</figcaption>
+    <figcaption class="zh">召回测试——写进 caption 的短语能否被逐个唤回。</figcaption>
+  </figure>
+
+  <figure class="bleed portrait">
+    <img loading="lazy" src="media/particle-layer.jpg" alt="Ink with a fine particle layer composited over it in TouchDesigner">
+    <figcaption class="en">A particle layer composited over the interpolated video in TouchDesigner — the ink sheds and regathers grain, so the material grows a second skin closer to the work's language than fluid footage alone.</figcaption>
+    <figcaption class="zh">在 TouchDesigner 中叠加于插帧视频之上的粒子层——墨会散出颗粒、又重新聚回,让材料长出第二层皮肤,比单纯的流体影像更接近作品本身的语言。</figcaption>
+  </figure>
+</section>
+
+<!-- ══ INTERACTION ═══════════════════════════ -->
+<section class="wrap r" id="interaction">
+  <p class="mono kicker en">05 — The interaction</p>
+  <p class="mono kicker zh">05 — 交互</p>
+
+  <div class="en">
+    <h2>Waiting is written into the formula, not asked of the visitor.</h2>
+    <p>
+      Touch produces a single value, <em>c</em>, running from 0 to 1 — from ink
+      dispersed to ink condensed. It is not a readout of position but an integral
+      of the gesture over time: duration of contact carries seven tenths of the
+      weight, steadiness three tenths, and agitation subtracts. Eighteen seconds of
+      holding still are needed to reach the far end. There is no way to simply set
+      it.
+    </p>
+    <p>
+      Under pressure the value approaches its target smoothly without ever
+      arriving; on release it recedes at a constant rate. What appears depends on
+      the input that came before, not on the command of the moment.
+    </p>
+    <p class="dim">
+      That lag is the material realisation of the Husserlian layer — the slow onset
+      is protention, the slow recession is retention, and the present acquires
+      thickness instead of being a point. The fall is set far slower than the rise:
+      gathering takes more time than dispersing. It is the only part of the work
+      that is genuinely temporal.
+    </p>
+  </div>
+
+  <div class="zh">
+    <h2>等待被写进了公式本身,而不是被要求于观众。</h2>
+    <p>
+      触摸产生一个值 <em>c</em>,从 0 到 1——从墨的弥散到墨的凝结。它不是位置的
+      读数,而是手势在时间中的积分:按压时长占七成权重,稳定度占三成,躁动则是
+      减分项。要抵达另一端,需要按住不动整整十八秒。没有办法直接把它设定成某个值。
+    </p>
+    <p>
+      按压时,这个值向目标平滑逼近却永不到达;松开后,它以恒定速率缓缓退回。
+      当前画面取决于此前的输入,而非此刻的指令。
+    </p>
+    <p class="dim">
+      那段迟滞是胡塞尔那一层的物质实现——慢启动是前摄,缓慢退回是持存,
+      当下由此有了厚度,而不再是一个点。回落被设定得远慢于上升:
+      聚拢比消散更需要时间。它是整件作品里唯一真正具有时间性的部分。
+    </p>
+  </div>
+</section>
+
+<section class="wide r">
+  <div class="grid2">
+    <figure>
+      <img class="frame" loading="lazy" src="images/2026-07-24-axis-video-library.jpg" alt="The library of five axis videos in TouchDesigner">
+      <figcaption class="en">Five axis videos, one drawn at random per touch, so a returning hand meets different ink.</figcaption>
+      <figcaption class="zh">五段轴向视频,每次触摸随机抽取一段——同一只手再次前来,遇到的是不同的墨。</figcaption>
+    </figure>
+    <figure>
+      <img class="frame" loading="lazy" src="images/2026-07-15-full-axis-video-frames.jpg" alt="Frames sampled along one continuous axis video">
+      <figcaption class="en">Frames along one axis video — the traverse from dispersed to condensed, scrubbed live by <em>c</em>.</figcaption>
+      <figcaption class="zh">一段轴向视频中的若干帧——从弥散到凝结的行程,由 <em>c</em> 值实时擦动播放。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="wrap r">
+  <h3 class="en">Two screens, neither annotating the other</h3>
+  <h3 class="zh">两块屏幕,谁也不是谁的注解</h3>
+  <p class="dim en">
+    The projection carries the ink changing state, seen frontally: you are inside
+    it. A second screen carries machine-vision readouts, coordinates and
+    parameters, seen from above: you are over it. One is qualitative multiplicity,
+    the other quantitative. They are present at once and equal in standing — if
+    one had to be read before the other, the second would become an instruction
+    manual, and would imply that the data side is the more real one. Every shift
+    of the eyes performs an act of spatialisation in person.
+  </p>
+  <p class="dim zh">
+    投影承载墨的状态变化,正面观看:你在里面。副屏承载机器视觉的读数、坐标与
+    参数,俯视观看:你在上方。一边是质的多样性,另一边是量的多样性。两者同时
+    在场、地位平等——若必须先读其一再读其二,副屏就成了说明书,并暗示数据
+    那一边更真实。观众每一次移开视线,都在亲身做一次空间化。
+  </p>
+</section>
+
+<!-- ══ PROCESS ═══════════════════════════════ -->
+<section class="wrap r" id="process">
+  <p class="mono kicker en">06 — Process</p>
+  <p class="mono kicker zh">06 — 过程</p>
+
+  <h2 class="en">Seven retrainings, each triggered by a specific failure.</h2>
+  <h2 class="zh">七次重训,每一次都由一个具体的失败推动。</h2>
+
+  <p class="dim en">
+    Container features leaking into the trigger word. A flat phase axis. States
+    collapsing at certain seeds. A top-down view that could not be summoned
+    without also summoning literal basins. Captions so generic the model could not
+    tell one frame from another. The full reasoning for every round — including
+    the rounds that did not work — is kept in the process log.
+  </p>
+  <p class="dim zh">
+    容器特征泄漏进触发词。阶段轴拉不开差异。某些 seed 下状态塌陷。
+    俯视视角怎么写都会连带召唤出真实的水盆。caption 笼统到模型分不出帧与帧的
+    区别。每一轮完整的推理——包括那些没有成功的轮次——都记在过程日志里。
+  </p>
+
+  <div class="links en" style="margin-top:2.5rem">
+    <a href="PROCESS_LOG.md"><span class="t">Process log →</span><span class="d">Dated entries: decisions, failures, evidence</span></a>
+    <a href="PROJECT_TEXT.md"><span class="t">Project text →</span><span class="d">The full concept, references and position</span></a>
+    <a href="../ink_dataset/DATASET_CAPTURE_LOG.md"><span class="t">Dataset log →</span><span class="d">Capture sessions, selection criteria, processing</span></a>
+    <a href="../training/README.md"><span class="t">LoRA training →</span><span class="d">Pipeline, v1→v7 history, prompt vocabulary</span></a>
+  </div>
+  <div class="links zh" style="margin-top:2.5rem">
+    <a href="PROCESS_LOG.zh-CN.md"><span class="t">开发流程日志 →</span><span class="d">带日期的条目:决策、失败与证据</span></a>
+    <a href="PROJECT_TEXT.zh-CN.md"><span class="t">项目文本 →</span><span class="d">完整的概念、参考与立场</span></a>
+    <a href="../ink_dataset/DATASET_CAPTURE_LOG.zh-CN.md"><span class="t">数据集日志 →</span><span class="d">拍摄场次、筛选标准与处理流程</span></a>
+    <a href="../training/README.zh-CN.md"><span class="t">LoRA 训练 →</span><span class="d">管线、v1→v7 迭代、prompt 词汇表</span></a>
+  </div>
+</section>
+
+<!-- ══ FOOTER ════════════════════════════════ -->
+<footer class="wrap">
+  <div class="foot-row" style="margin-bottom:3rem">
+    <div>
+      <p class="mono" style="margin-bottom:.6rem">Inkward Bound</p>
+      <p class="dim en" style="font-size:.9rem">
+        Yerie — MA Computational Arts<br>
+        Goldsmiths, University of London, 2026
+      </p>
+      <p class="dim zh" style="font-size:.9rem">
+        Yerie — 计算艺术硕士<br>
+        伦敦大学金史密斯学院,2026
+      </p>
+    </div>
+    <div>
+      <p class="mono en" style="margin-bottom:.6rem">Built with</p>
+      <p class="mono zh" style="margin-bottom:.6rem">技术构成</p>
+      <p class="dim" style="font-size:.9rem">
+        p5.js · Node.js · Stable Diffusion + LoRA<br>
+        RIFE · TouchDesigner
+      </p>
+    </div>
+  </div>
+
+  <div class="links en">
+    <a href="https://github.com/Yeri10/Inkward_Bound"><span class="t">Repository →</span><span class="d">Source, documentation and process evidence</span></a>
+    <a href="https://inkward-bound.onrender.com"><span class="t">Live touch interface →</span><span class="d">The browser layer, running on its own</span></a>
+  </div>
+  <div class="links zh">
+    <a href="https://github.com/Yeri10/Inkward_Bound"><span class="t">代码仓库 →</span><span class="d">源码、文档与过程证据</span></a>
+    <a href="https://inkward-bound.onrender.com"><span class="t">在线触摸界面 →</span><span class="d">可单独运行的浏览器层</span></a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  /* ── language ─────────────────────────── */
+  var html = document.documentElement,
+      btn  = document.getElementById('lang'),
+      KEY  = 'inkward-lang';
+
+  function apply(l){
+    html.setAttribute('data-lang', l);
+    html.setAttribute('lang', l === 'zh' ? 'zh-CN' : 'en');
+    btn.textContent = (l === 'zh') ? 'EN' : '中文';
+    document.title = (l === 'zh') ? 'Inkward Bound — 墨向内' : 'Inkward Bound — Yerie';
+  }
+
+  var saved;
+  try { saved = localStorage.getItem(KEY); } catch(e){}
+  apply(saved || ((navigator.language || '').toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en'));
+
+  btn.addEventListener('click', function(){
+    var next = html.getAttribute('data-lang') === 'zh' ? 'en' : 'zh';
+    apply(next);
+    try { localStorage.setItem(KEY, next); } catch(e){}
+  });
+
+  /* ── reveal on scroll ─────────────────── */
+  var els = document.querySelectorAll('.r');
+  if(!('IntersectionObserver' in window)){
+    Array.prototype.forEach.call(els, function(e){ e.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  },{rootMargin:'0px 0px -12% 0px'});
+  Array.prototype.forEach.call(els, function(e){ io.observe(e); });
+})();
+</script>
+</body>
+</html>
