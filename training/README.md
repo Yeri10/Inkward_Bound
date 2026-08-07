@@ -13,6 +13,8 @@ Trains the `inkwb` LoRA on the [ink dataset](../ink_dataset/README.md), reusing 
 | `train_text_to_image_lora.py` | Official diffusers LoRA training script; the notebook re-downloads the version matching the installed diffusers, this copy is the offline fallback |
 | `measure_ink_coverage.py` | Measures each image's dark-pixel ratio and writes the five-level density phrase into its caption |
 | `generate_atlas.py` | Batch-generates latent-atlas candidates along the c-value grid (6 bins × N seeds) into `atlas_candidates/`, with a `manifest.jsonl` recording every prompt/seed |
+| `bake_transitions.py` | Drives ComfyUI's API to bake interpolated transitions between curated atlas stills, from a seeded, manifest-recorded plan |
+| `comfyui_workflows/` | Exported ComfyUI graphs for the atlas→video stage (see the note below on `full_axis_v1.json`) |
 | `dataset/` | Generated training data, not committed to git (re-run `prepare_dataset.py` after caption changes) |
 | `runs/` | Training outputs (weights, checkpoints, logs) |
 
@@ -133,6 +135,25 @@ Shared across all four categories:
 - Do `top-down view` / `side view` switch the camera angle?
 
 Once these hold, batch-generate the pre-baked latent atlas along the c-value grid and replace the placeholder images in the TouchDesigner atlas folders.
+
+## From atlas to video (ComfyUI)
+
+The curated atlas is a set of stills at fixed coordinates. Turning it into something the c-value can scrub continuously happens in ComfyUI, in one chain:
+
+**11 keyframes** drawn from the curated atlas → **img2img repaint** through SD 1.5 + the v7 LoRA (denoise 0.24, seed fixed at 42 — a light repaint unifies texture across keyframes without flicker) → **RealESRGAN ×2** upscale with light sharpen → **RIFE ×32** interpolation (`fast_mode` off, `ensemble` on) → **film grain** applied *after* interpolation, so the grain sits per-frame instead of being smeared along the motion → **24 fps H.264**.
+
+Repaint-before-interpolate was chosen over the reverse for cost (11 sampler runs rather than 400) and for zero flicker risk. Keyframe density is doubled in the early bins, because interpolation connects states but cannot invent process: the unfolding of diffusion has visual content that no morph supplies. Full reasoning is in the 14–15 July entries of [`docs/PROCESS_LOG.md`](../docs/PROCESS_LOG.md).
+
+The output is five continuous axis videos, each re-encoded to HAP Q for random-access scrubbing in TouchDesigner — H.264 is inter-frame coded, so scrubbing to an arbitrary frame forces a decode walk back to the nearest keyframe (23 July entry).
+
+Two graphs are kept in `comfyui_workflows/`:
+
+| File | What it is |
+|---|---|
+| `full_axis_v2_production.json` | **The graph that produced the five axis videos.** 95 `LoadImage` nodes batched into five chains, plus a `ColorMatchV2` pass. Carries the 24 July tuning: film-grain seed `fixed` and Video Combine `crf` 14 |
+| `full_axis_v1.json` | The first single-chain experiment, exported 14 July — 11 keyframes, one output. Kept as the record of the test that validated the recipe, not for reproduction |
+
+The difference between them is worth knowing before re-running either: v1 still has the film-grain seed on `randomize`, which makes the image boil whenever a scrub lingers on one frame — the failure the 24 July entry diagnosed and fixed.
 
 ## Prompt groups (Inference Test cell)
 
