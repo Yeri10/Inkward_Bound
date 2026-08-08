@@ -66,7 +66,7 @@
   .lang-row{display:flex;justify-content:flex-end;margin-bottom:2.4rem}
   #lang{
     font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
-    font-size:.78rem;letter-spacing:.14em;
+    font-size:1.02rem;letter-spacing:.12em;
     background:none;border:0;color:var(--paper);
     padding:.4rem .2rem;cursor:pointer;
     /* The rule follows the text rather than the box, which is held taller than
@@ -185,6 +185,19 @@
     object-fit:cover;object-position:50% 45%;
     z-index:1;pointer-events:none;
   }
+  /* A fade at each edge rather than a scrim over the whole frame: the footage
+     keeps its contrast in the middle, and the bottom dissolves into the page
+     colour so the cover ends by giving way to the text instead of stopping at
+     a hard line. */
+  .hero-img::after{
+    content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    background:linear-gradient(to bottom,
+      rgba(10,10,12,.55) 0%,
+      rgba(10,10,12,0)   22%,
+      rgba(10,10,12,0)   58%,
+      rgba(10,10,12,.72) 88%,
+      var(--ink)         100%);
+  }
 
   /* ── figures ────────────────────────────── */
   figure{margin:0}
@@ -290,7 +303,7 @@
     footer{padding:3.5rem 0 4rem}
     .foot-row{flex-direction:column;gap:2rem}
 
-    #lang{padding:.45rem .2rem;font-size:.72rem}
+    #lang{padding:.45rem .2rem;font-size:.94rem}
     .lang-row{margin-bottom:2rem}
   }
 
