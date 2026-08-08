@@ -61,18 +61,23 @@
   }
   html[data-lang="zh"] .lead{line-height:1.72}
 
+  /* Underline instead of a box: the label sits on the cover video, and a
+     bordered chip read as a piece of interface pasted onto the image. */
   #lang{
     position:fixed;top:1.4rem;right:1.4rem;z-index:99;
     font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
     font-size:.78rem;letter-spacing:.14em;
-    background:rgba(10,10,12,.72);backdrop-filter:blur(10px);
-    border:1px solid var(--rule);color:var(--dim);
-    padding:.5rem .85rem;cursor:pointer;border-radius:2px;
-    transition:color .25s ease,border-color .25s ease;
-    /* Comfortable touch target even though the label is small. */
-    min-height:38px;min-width:52px;
+    background:none;border:0;color:var(--paper);
+    padding:.5rem .2rem;cursor:pointer;
+    border-bottom:1px solid rgba(242,242,240,.45);
+    transition:border-color .25s ease;
+    /* Padding keeps the touch target comfortable while the rule stays tight
+       to the word. */
+    min-height:38px;
+    /* Legible over whatever frame of the video is behind it. */
+    text-shadow:0 1px 6px rgba(10,10,12,.85);
   }
-  #lang:hover{color:var(--paper);border-color:rgba(242,242,240,.4)}
+  #lang:hover{border-bottom-color:var(--paper)}
 
   /* ── layout ─────────────────────────────────
      Everything runs the full width of the viewport. Media goes edge to edge;
@@ -312,7 +317,7 @@
     #lang{
       top:max(.9rem,env(safe-area-inset-top));
       right:max(.9rem,env(safe-area-inset-right));
-      padding:.45rem .75rem;font-size:.72rem;
+      padding:.45rem .2rem;font-size:.72rem;
     }
   }
 
