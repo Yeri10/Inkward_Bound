@@ -61,24 +61,22 @@
   }
   html[data-lang="zh"] .lead{line-height:1.72}
 
-  /* Underline instead of a box: the label sits on the cover video, and a
-     bordered chip read as a piece of interface pasted onto the image. */
+  /* Sits at the right of the first block of text rather than floating over the
+     cover, so the opening screen is only the footage. */
+  .lang-row{display:flex;justify-content:flex-end;margin-bottom:2.4rem}
   #lang{
-    position:fixed;top:1.4rem;right:1.4rem;z-index:99;
     font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
     font-size:.78rem;letter-spacing:.14em;
     background:none;border:0;color:var(--paper);
-    padding:.5rem .2rem;cursor:pointer;
-    /* The rule follows the text rather than the box: a border-bottom would sit
-       on the edge of the 38px tap target, well clear of the word. */
+    padding:.4rem .2rem;cursor:pointer;
+    /* The rule follows the text rather than the box, which is held taller than
+       the word so the tap target stays comfortable. */
     text-decoration:underline;
     text-decoration-thickness:1px;
     text-underline-offset:.32em;
     text-decoration-color:rgba(242,242,240,.5);
     transition:text-decoration-color .25s ease;
     min-height:38px;
-    /* Legible over whatever frame of the video is behind it. */
-    text-shadow:0 1px 6px rgba(10,10,12,.85);
   }
   #lang:hover{text-decoration-color:var(--paper)}
 
@@ -296,12 +294,8 @@
     footer{padding:3.5rem 0 4rem}
     .foot-row{flex-direction:column;gap:2rem}
 
-    /* Clear of the notch, and small enough not to sit on the title. */
-    #lang{
-      top:max(.9rem,env(safe-area-inset-top));
-      right:max(.9rem,env(safe-area-inset-right));
-      padding:.45rem .2rem;font-size:.72rem;
-    }
+    #lang{padding:.45rem .2rem;font-size:.72rem}
+    .lang-row{margin-bottom:2rem}
   }
 
   /* ── reveal ─────────────────────────────── */
@@ -314,8 +308,6 @@
 </style>
 </head>
 <body>
-
-<button id="lang" type="button" aria-label="Switch language">中文</button>
 
 <!-- ══ HERO ══════════════════════════════════ -->
 <header class="wide">
@@ -334,6 +326,10 @@
 
 <!-- ══ STATEMENT ═════════════════════════════ -->
 <section class="wrap r">
+  <div class="lang-row">
+    <button id="lang" type="button" aria-label="Switch language">中文</button>
+  </div>
+
   <div class="en">
     <p class="lead">
       As the temporal becoming of consciousness is taken over by AI and flattened
