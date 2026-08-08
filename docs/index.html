@@ -168,9 +168,14 @@
      so the frame is filled edge to edge with no bars.
      Not interactive: it is wallpaper, so it takes no clicks and no focus. */
   .hero-img iframe{
-    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    width:max(100%, calc(100vh * 16 / 9));
-    height:max(100%, calc(100vw * 9 / 16));
+    position:absolute;top:50%;left:50%;
+    /* Classic cover for a fixed-ratio frame: size to 16:9 off one axis, then
+       force at least full coverage on the other. Whichever constraint binds,
+       the frame overflows instead of leaving a bar. --cover-zoom crops in a
+       little further if the composition ever needs tightening. */
+    width:177.78vh;  min-width:100vw;
+    height:56.25vw;  min-height:100vh;
+    transform:translate(-50%,-50%) scale(var(--cover-zoom,1.02));
     border:0;pointer-events:none;z-index:1;
     opacity:.34;filter:grayscale(1) contrast(1.06) brightness(.84);
   }
