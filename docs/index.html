@@ -306,11 +306,17 @@
 <!-- ══ HERO ══════════════════════════════════ -->
 <header class="wide">
   <div class="hero-img">
-    <!-- The source is chosen in script, not here: a <source media> attribute is
-         not reliably honoured for video, and phones need the smaller file. -->
+    <!-- The phone-sized file is the one in the markup, so a phone plays it with
+         no script involved at all. iPhone Safari applies a stricter autoplay
+         policy than iPadOS (which uses the desktop one), so the environment
+         with the least margin gets the shortest path to a playable source.
+         Wide screens are upgraded to the 2160 version in script, where a
+         failure costs sharpness rather than playback. -->
     <video autoplay muted loop playsinline preload="auto"
-           data-src-lg="media/cover.mp4" data-src-sm="media/cover-sm.mp4"
-           poster="images/2026-07-27-installation-still-cover.jpg"></video>
+           data-src-lg="media/cover.mp4"
+           poster="images/2026-07-27-installation-still-cover.jpg">
+      <source src="media/cover-sm.mp4" type="video/mp4">
+    </video>
   </div>
 
 </header>
@@ -775,22 +781,70 @@
   /* ── cover video ──────────────────────── */
   var cover = document.querySelector('.hero-img video');
   if (cover) {
-    /* The full-size file is 2160 wide and encoded at H.264 level 5.1, which is
-       past what many phones will decode inline — they fall back to the poster
-       rather than refusing out loud. Small screens get a 1080-wide level 4.0
-       file, which is also a far lighter download on cellular. */
-    var wide = window.matchMedia('(min-width: 900px)').matches;
-    cover.src = cover.getAttribute(wide ? 'data-src-lg' : 'data-src-sm');
+    /* The markup already carries the 1080-wide level 4.0 file. Only wide
+       screens are switched to the 2160 level 5.1 version, which is past what
+       many phones will decode inline — they fall back to the poster rather
+       than refusing out loud. Assigning src overrides the <source> child, and
+       load() is required to make the element pick the new source up. */
+    if (window.matchMedia('(min-width: 900px)').matches) {
+      cover.src = cover.getAttribute('data-src-lg');
+      cover.load();
+    }
 
     /* Set as a property as well as an attribute: some browsers check the
        property when deciding whether a scripted play() is allowed. */
     cover.muted = true;
 
-    var start = function(){ var p = cover.play(); if (p) p.catch(function(){}); };
+    var start = function(){
+      var p = cover.play();
+      if (p && p.catch) p.catch(function(){});
+    };
+
+    /* Autoplay can be refused for reasons no amount of encoding will fix —
+       iOS Low Power Mode and Low Data Mode both block it outright. Rather than
+       swallow that silently, every plausible opening is tried: as soon as
+       there are frames, when the tab comes back, and on the user's first
+       touch anywhere on the page, which costs them nothing since they have to
+       touch it to scroll. The listener removes itself once playback starts. */
     start();
+    cover.addEventListener('loadeddata', start);
+    cover.addEventListener('canplay', start);
     document.addEventListener('visibilitychange', function(){
       if (!document.hidden) start();
     });
+    var kick = function(){
+      start();
+      if (!cover.paused) {
+        document.removeEventListener('touchstart', kick);
+        document.removeEventListener('click', kick);
+      }
+    };
+    document.addEventListener('touchstart', kick, {passive:true});
+    document.addEventListener('click', kick);
+
+    /* Append #debug to the URL to read the element's state on a device with no
+       inspector. Never shown otherwise. */
+    if (location.hash === '#debug') {
+      var box = document.createElement('pre');
+      box.style.cssText = 'position:fixed;left:0;top:0;z-index:99;margin:0;'
+        + 'padding:.6rem;font:11px/1.5 monospace;background:#000;color:#0f0;'
+        + 'max-width:100%;white-space:pre-wrap';
+      document.body.appendChild(box);
+      var NET = ['EMPTY','IDLE','LOADING','NO_SOURCE'];
+      var ERR = ['', 'ABORTED','NETWORK','DECODE','SRC_NOT_SUPPORTED'];
+      setInterval(function(){
+        box.textContent =
+          'src      ' + (cover.currentSrc || '(none)').split('/').pop() + '\n' +
+          'network  ' + NET[cover.networkState] + '\n' +
+          'ready    ' + cover.readyState + ' /4\n' +
+          'paused   ' + cover.paused + '\n' +
+          'time     ' + cover.currentTime.toFixed(2) + '\n' +
+          'size     ' + cover.videoWidth + 'x' + cover.videoHeight + '\n' +
+          'error    ' + (cover.error ? ERR[cover.error.code] : 'none') + '\n' +
+          'screen   ' + window.innerWidth + 'x' + window.innerHeight +
+                        ' @' + (window.devicePixelRatio || 1) + 'x';
+      }, 250);
+    }
   }
 
   /* ── reveal on scroll ─────────────────── */
