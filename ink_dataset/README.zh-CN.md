@@ -55,7 +55,7 @@ inkwb, black ink diffusing freely across still water, developing phase of diffus
 | 部分 | 作用 |
 |---|---|
 | `inkwb` | 触发词(Inkward Bound 缩写)。无既有语义的词,吸收整体视觉风格。 |
-| 状态短语 | 每个文件夹一条:自由扩散 / 悬浮分层 / 湍流扰动 / 凝聚收束,对应装置的系统状态。 |
+| 状态短语 | 每个文件夹一条:自由扩散 / 悬浮分层 / 湍流扰动 / 凝聚收束。四条短语承载装置的五种状态,因为五种里有两种是同一种材料行为从相反方向抵达的:`autonomous`(无人触碰)和 `rediffusion`(松手后散开)调用的都是自由扩散。状态对照表见[项目 README](../README.zh-CN.md#交互方式)。 |
 | 阶段短语 | `early / developing / advanced / final phase of <过程>`,按序列内帧位置分配,生成时可控制时间阶段。 |
 | 视角 | `top-down view`（01 俯拍）或 `side view`（02–04 侧拍），对应各拍摄 session 的机位。 |
 | 容器语境 | `inside a shallow pale basin`（01）或 `inside a clear water tank`（02–04），个别图另加 `water surface line at the top` 等。把容器特征绑定到词汇上，生成时即可用负面提示排除。 |

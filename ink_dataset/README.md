@@ -55,7 +55,7 @@ inkwb, black ink diffusing freely across still water, developing phase of diffus
 | Part | Purpose |
 |---|---|
 | `inkwb` | Trigger word (Inkward Bound). A meaningless token that absorbs the overall visual style. |
-| State phrase | One per folder: diffusing freely / layered suspended / turbulent agitated / gathering and condensing. Aligns with the installation's five system states. |
+| State phrase | One per folder: diffusing freely / layered suspended / turbulent agitated / gathering and condensing. Four phrases carry the installation's five states, because two of the five are the same material behaviour reached from opposite directions: `autonomous` (untouched) and `rediffusion` (unwinding after release) both call on free diffusion. See the [state table in the project README](../README.md#interaction). |
 | Phase phrase | `early / developing / advanced / final phase of <process>`, assigned by frame position within each sequence. Enables temporal control at generation time. |
 | Viewpoint | `top-down view` (01) or `side view` (02–04), matching the camera angle of each capture session. |
 | Container context | `inside a shallow pale basin` (01) or `inside a clear water tank` (02–04), plus extras like `water surface line at the top` where visible. Binds vessel features to words so they can be excluded (negative prompt) at generation time. |
