@@ -1,6 +1,22 @@
 #!/usr/bin/env python3
 """Bake the atlas transition library through ComfyUI's API.
 
+    ⚠ NOT THE PRODUCTION ROUTE — this approach was designed, written, and then
+    not adopted. It is kept as process evidence, not as part of the working
+    system.
+
+    Three candidate forms were on the table once the interpolate-and-repaint
+    recipe had been validated (15 July entry in docs/PROCESS_LOG.md): a single
+    full-axis video scrubbed by c, this per-bridge transition library with
+    random pairing, and the bin-breathing crossfade already live in
+    TouchDesigner. The full-axis video won on interaction feel, and the
+    installation runs on comfyui_workflows/full_axis_v2_production.json.
+
+    This script therefore never produced anything — latent_atlas/
+    transitions_manifest.json does not exist. Nothing downstream reads it, and
+    deleting it would break nothing; it is here because a rejected design is
+    part of the record of how the final one was chosen.
+
 For every adjacent bin pair (7 bridges), every source image gets
 TARGETS_PER_IMAGE random destination images in the next bin. Each pair is
 submitted to ComfyUI as a RIFE interpolation job (2 stills -> MULTIPLIER
@@ -12,9 +28,13 @@ The pairing plan is written to latent_atlas/transitions_manifest.json with a
 fixed random seed, so the bake is reproducible and TouchDesigner can read the
 same plan to know which bridges exist.
 
-Prerequisites:
-  * ComfyUI running at COMFY_URL with ComfyUI-Frame-Interpolation installed
-  * COMFY_INPUT points at ComfyUI's input folder (images are copied there)
+Prerequisites, were it ever run:
+  * ComfyUI running at --comfy-url with ComfyUI-Frame-Interpolation installed
+  * --comfy-input pointing at ComfyUI's input folder (images are copied there)
+
+Note that even --dry-run has a side effect: it writes the manifest. Nothing
+reads that file, so if you run it to inspect the plan, delete the manifest
+afterwards rather than leaving a rejected route's artefact in latent_atlas/.
 
     python3 training/bake_transitions.py            # bake everything
     python3 training/bake_transitions.py --dry-run  # just write the plan
@@ -29,8 +49,12 @@ import urllib.request
 from pathlib import Path
 
 # ---- config ----------------------------------------------------------------
-COMFY_URL = "http://127.0.0.1:8000"   # ComfyUI desktop default; check 设置→服务器配置 if it differs
-COMFY_INPUT = Path.home() / "Documents" / "ComfyUI-Shared" / "input"
+# Both of these describe one particular machine's ComfyUI install, so they are
+# defaults rather than constants — override with --comfy-url / --comfy-input.
+# The port is the ComfyUI desktop default; if it differs, it is shown under
+# Settings → Server Config.
+DEFAULT_COMFY_URL = "http://127.0.0.1:8000"
+DEFAULT_COMFY_INPUT = Path.home() / "Documents" / "ComfyUI-Shared" / "input"
 ROOT = Path(__file__).resolve().parent.parent
 ATLAS = ROOT / "latent_atlas"
 BINS = ["0.0", "0.2", "0.4", "0.5", "0.6", "0.7", "0.8", "1.0"]
@@ -105,19 +129,19 @@ def workflow(img_a: str, img_b: str, prefix: str) -> dict:
     }
 
 
-def submit(graph: dict) -> str:
+def submit(graph: dict, comfy_url: str) -> str:
     req = urllib.request.Request(
-        COMFY_URL + "/prompt",
+        comfy_url + "/prompt",
         data=json.dumps({"prompt": graph}).encode(),
         headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req) as r:
         return json.loads(r.read())["prompt_id"]
 
 
-def wait(prompt_id: str, timeout: int = 600) -> None:
+def wait(prompt_id: str, comfy_url: str, timeout: int = 600) -> None:
     t0 = time.time()
     while time.time() - t0 < timeout:
-        with urllib.request.urlopen(COMFY_URL + f"/history/{prompt_id}") as r:
+        with urllib.request.urlopen(comfy_url + f"/history/{prompt_id}") as r:
             hist = json.loads(r.read())
         if prompt_id in hist:
             return
@@ -131,6 +155,10 @@ def main() -> None:
                     help="write the pairing plan without submitting jobs")
     ap.add_argument("--limit", type=int, default=0,
                     help="only bake the first N pairs (smoke test)")
+    ap.add_argument("--comfy-url", default=DEFAULT_COMFY_URL,
+                    help=f"ComfyUI server address (default {DEFAULT_COMFY_URL})")
+    ap.add_argument("--comfy-input", type=Path, default=DEFAULT_COMFY_INPUT,
+                    help="ComfyUI's input folder; LoadImage reads from here")
     args = ap.parse_args()
 
     rng = random.Random(SEED)
@@ -164,10 +192,10 @@ def main() -> None:
         # LoadImage reads from ComfyUI's input folder; copy with unique names
         ia = f"bake_{p['bridge']}_{p['src']}"
         ib = f"bake_{p['bridge']}_{p['dst']}"
-        shutil.copy(src, COMFY_INPUT / ia)
-        shutil.copy(dst, COMFY_INPUT / ib)
-        pid = submit(workflow(ia, ib, p["dir"] + "/frame"))
-        wait(pid)
+        shutil.copy(src, args.comfy_input / ia)
+        shutil.copy(dst, args.comfy_input / ib)
+        pid = submit(workflow(ia, ib, p["dir"] + "/frame"), args.comfy_url)
+        wait(pid, args.comfy_url)
         print(f"[{i}/{len(plan)}] {p['dir']}")
 
     print("done — sequences in ComfyUI output/transitions/")

@@ -2,7 +2,8 @@
 """Batch-generate latent-atlas candidate images along the c-value grid.
 
 For each c bin, generates N seeds with the bin's caption vocabulary (state +
-phase + density), saves images into training/atlas_candidates/c_X.X/ and
+phase + density), saves images into the output directory's c_X.X/ subfolders
+(default training/atlas_candidates_v7/, overridable with --out) and
 records every generation in manifest.jsonl (prompt, negative, seed, params).
 Curate by deleting unwanted images; the manifest stays as process evidence.
 
@@ -56,9 +57,10 @@ BINS = [
      # produced unstable backgrounds (empty gray fields, trays, fingerprint
      # rings). Rolled back toward the original curved-texture look, now
      # assembled from the v6 caption phrases themselves: the gray layers ARE
-     # ink washes spreading outward (user: 灰色部分是墨散开的层,不是水波).
-     # "single soft wash" variant was tried (less layering) and rolled back:
-     # the layered washes read better. This wording is final per user review.
+     # ink washes spreading outward, not ripples on the water — the artist's
+     # reading of the source photographs, and the distinction the wording has to
+     # protect. A "single soft wash" variant was tried (less layering) and rolled
+     # back: the layered washes read better. This wording is final.
      "morph": ("a solid opaque black ink blob with a bumpy lobed edge, "
                "surrounded by curved flowing soft gray ink washes spreading outward layer by layer, "
                "on a clean plain pale water surface, clear even background around the ink"),

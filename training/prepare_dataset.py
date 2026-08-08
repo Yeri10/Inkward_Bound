@@ -59,10 +59,16 @@ def trim_caption(caption: str) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--trim", action="store_true",
-                    help="drop phase phrases and style tags from captions (v4 experiment)")
-    ap.add_argument("--trim-style", action="store_true",
-                    help="v6: drop only the constant style tags, KEEP the phase phrases (temporal axis)")
+    # --trim and --trim-style pull in opposite directions on the phase axis: one
+    # removes the phase phrases, the other exists specifically to keep them. They
+    # used to be plain flags resolved by an if/elif, so passing both silently
+    # applied --trim and dropped the temporal axis while the caller believed they
+    # were building the v6 dataset. argparse now refuses the combination outright.
+    caption_mode = ap.add_mutually_exclusive_group()
+    caption_mode.add_argument("--trim", action="store_true",
+                              help="v4: drop BOTH the phase phrases and the style tags")
+    caption_mode.add_argument("--trim-style", action="store_true",
+                              help="v6: drop only the constant style tags, KEEP the phase phrases (temporal axis)")
     ap.add_argument("--v5", action="store_true",
                     help="v5: drop the shared basin phrase from 01 captions and duplicate the 01 category ×2")
     args = ap.parse_args()
