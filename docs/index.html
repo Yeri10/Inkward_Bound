@@ -210,8 +210,13 @@
   .frame{border:1px solid var(--rule)}
 
   /* A section number with no subtitle under it (01) takes the spacing the
-     subtitle would otherwise have supplied. */
-  h2.kicker:not(:has(+ .subtitle)):not(:has(+ .wrap)){margin-bottom:2.8rem}
+     subtitle would otherwise have supplied. Marked with a class rather than
+     detected with :has(+ .subtitle): every heading exists twice, once per
+     language, and the hidden one is still a sibling — so sibling matching
+     reads the other language's heading and misfires, differently in each
+     language. The markup knows which headings stand alone; the selector
+     cannot. */
+  h2.kicker.solo{margin-bottom:2.8rem}
 
   /* ── steps table ────────────────────────── */
   .steps{width:100%;border-collapse:collapse;font-size:.93rem}
@@ -274,6 +279,7 @@
     /* One per row on a phone: at two across these become unreadable smudges. */
     .sheets{grid-template-columns:1fr;gap:1.6rem}
     h2.kicker{margin-bottom:.7rem}
+    h2.kicker.solo{margin-bottom:2.2rem}
     .subtitle{margin-bottom:2.2rem}
     h2{margin-bottom:1.5rem}
     p{margin-bottom:1.35rem}
@@ -364,8 +370,9 @@
 
 <!-- ══ VIDEO ═════════════════════════════════ -->
 <section class="wide r" id="work">
-  <h2 class="mono kicker en"><span class="num">01</span>The work</h2>
-  <h2 class="mono kicker zh"><span class="num">01</span>作品</h2>
+  <!-- solo: no subtitle follows, so the heading carries that spacing itself. -->
+  <h2 class="mono kicker solo en"><span class="num">01</span>The work</h2>
+  <h2 class="mono kicker solo zh"><span class="num">01</span>作品</h2>
 
   <figure>
     <!--
