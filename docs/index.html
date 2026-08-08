@@ -152,10 +152,9 @@
        mobile browser chrome on browsers that support it. */
     min-height:100vh;min-height:100svh;
     display:flex;flex-direction:column;justify-content:space-between;
-    /* Enough head room that the top label row clears the fixed language
-       button, and enough at the foot that the bottom row is not sitting on
-       the edge of the screen. */
-    padding:4.4rem 0 4.4rem;position:relative;
+    /* Enough at the foot that the bottom label row is not sitting on the edge
+       of the screen. */
+    padding:4.4rem 0;position:relative;
   }
   .hero-img{position:absolute;inset:0;z-index:0;overflow:hidden}
   /* One layer only. object-fit:cover makes the portrait source crop to a band
@@ -190,8 +189,6 @@
   header>*{position:relative;z-index:1;padding:0 var(--gutter)}
   header>.hero-img{padding:0}
   .hero-top{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-  /* The year sits under the fixed language button otherwise. */
-  header>.hero-top:first-of-type{padding-right:calc(var(--gutter) + 5rem)}
   .hero-mid{margin:auto 0}
   /* Three lines, no punctuation — each phrase gets its own line so the breaks
      do the work the commas used to. */
@@ -284,7 +281,6 @@
     /* The hero's lower labels sat almost on top of the first paragraph; the
        cover needs room to end before the text begins. */
     header{padding:4rem 0 3.5rem}
-    header>.hero-top:first-of-type{padding-right:calc(var(--gutter) + 4rem)}
     .hero-top{flex-direction:column;gap:.5rem}
     .hero-sub{margin-top:1.75rem}
     h1{letter-spacing:-.035em}
@@ -341,12 +337,6 @@
            poster="images/2026-07-27-installation-still-cover.jpg">
       <source src="media/cover.mp4" type="video/mp4">
     </video>
-  </div>
-
-  <div class="hero-top">
-    <span class="mono en">Yerie — MA Computational Arts, Goldsmiths</span>
-    <span class="mono zh">Yerie — 伦敦大学金史密斯学院 计算艺术硕士</span>
-    <span class="mono">2026</span>
   </div>
 
   <div class="hero-mid">
