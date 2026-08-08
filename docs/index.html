@@ -311,10 +311,11 @@
 <!-- ══ HERO ══════════════════════════════════ -->
 <header class="wide">
   <div class="hero-img">
+    <!-- The source is chosen in script, not here: a <source media> attribute is
+         not reliably honoured for video, and phones need the smaller file. -->
     <video autoplay muted loop playsinline preload="auto"
-           poster="images/2026-07-27-installation-still-cover.jpg">
-      <source src="media/cover.mp4" type="video/mp4">
-    </video>
+           data-src-lg="media/cover.mp4" data-src-sm="media/cover-sm.mp4"
+           poster="images/2026-07-27-installation-still-cover.jpg"></video>
   </div>
 
 </header>
@@ -777,11 +778,19 @@
   });
 
   /* ── cover video ──────────────────────── */
-  /* Some browsers decline the autoplay attribute but allow a scripted play()
-     on a muted inline video; retried when the tab returns to the foreground.
-     If it is refused anyway, the poster and the still underneath remain. */
   var cover = document.querySelector('.hero-img video');
   if (cover) {
+    /* The full-size file is 2160 wide and encoded at H.264 level 5.1, which is
+       past what many phones will decode inline — they fall back to the poster
+       rather than refusing out loud. Small screens get a 1080-wide level 4.0
+       file, which is also a far lighter download on cellular. */
+    var wide = window.matchMedia('(min-width: 900px)').matches;
+    cover.src = cover.getAttribute(wide ? 'data-src-lg' : 'data-src-sm');
+
+    /* Set as a property as well as an attribute: some browsers check the
+       property when deciding whether a scripted play() is allowed. */
+    cover.muted = true;
+
     var start = function(){ var p = cover.play(); if (p) p.catch(function(){}); };
     start();
     document.addEventListener('visibilitychange', function(){
