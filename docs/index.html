@@ -163,20 +163,13 @@
     width:100%;height:100%;object-fit:cover;object-position:50% 40%;
     opacity:.72;filter:grayscale(1) contrast(1.04);
   }
-  /* The iframe is sized to cover the hero at 16:9 and centred, so whichever
-     axis is short overflows rather than letterboxing. The upload is 16:9 too,
-     so the frame is filled edge to edge with no bars.
-     Not interactive: it is wallpaper, so it takes no clicks and no focus. */
-  .hero-img iframe{
-    position:absolute;top:50%;left:50%;
-    /* Classic cover for a fixed-ratio frame: size to 16:9 off one axis, then
-       force at least full coverage on the other. Whichever constraint binds,
-       the frame overflows instead of leaving a bar. --cover-zoom crops in a
-       little further if the composition ever needs tightening. */
-    width:177.78vh;  min-width:100vw;
-    height:56.25vw;  min-height:100vh;
-    transform:translate(-50%,-50%) scale(var(--cover-zoom,1.02));
-    border:0;pointer-events:none;z-index:1;
+  /* Self-hosted again: object-fit does the covering natively, so the portrait
+     4K source crops to a band on a landscape screen and fills edge to edge on
+     a phone, with no wrapper arithmetic. */
+  .hero-img video{
+    position:absolute;inset:0;
+    width:100%;height:100%;object-fit:cover;object-position:50% 45%;
+    z-index:1;pointer-events:none;
     opacity:.72;filter:grayscale(1) contrast(1.04);
   }
   /* The cover is a high-key image — black ink on pale ground — so the scrim
@@ -345,10 +338,10 @@
 <!-- ══ HERO ══════════════════════════════════ -->
 <header class="wide">
   <div class="hero-img">
-    <iframe
-      src="https://www.youtube-nocookie.com/embed/qr9fU_eKTA0?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=qr9fU_eKTA0&amp;controls=0&amp;modestbranding=1&amp;playsinline=1&amp;rel=0&amp;disablekb=1&amp;iv_load_policy=3&amp;fs=0"
-      allow="autoplay; encrypted-media" title="" tabindex="-1" aria-hidden="true"
-      frameborder="0"></iframe>
+    <video autoplay muted loop playsinline preload="auto"
+           poster="images/2026-07-27-installation-still-cover.jpg">
+      <source src="media/cover.mp4" type="video/mp4">
+    </video>
     <img src="images/2026-07-27-installation-still-cover.jpg" alt="">
   </div>
 
@@ -819,6 +812,19 @@
     apply(next);
     try { localStorage.setItem(KEY, next); } catch(e){}
   });
+
+  /* ── cover video ──────────────────────── */
+  /* Some browsers decline the autoplay attribute but allow a scripted play()
+     on a muted inline video; retried when the tab returns to the foreground.
+     If it is refused anyway, the poster and the still underneath remain. */
+  var cover = document.querySelector('.hero-img video');
+  if (cover) {
+    var start = function(){ var p = cover.play(); if (p) p.catch(function(){}); };
+    start();
+    document.addEventListener('visibilitychange', function(){
+      if (!document.hidden) start();
+    });
+  }
 
   /* ── reveal on scroll ─────────────────── */
   var els = document.querySelectorAll('.r');
