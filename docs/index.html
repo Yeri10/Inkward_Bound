@@ -163,10 +163,9 @@
     width:100%;height:100%;object-fit:cover;object-position:50% 40%;
     opacity:.34;filter:grayscale(1) contrast(1.06) brightness(.84);
   }
-  /* YouTube always serves a 16:9 player, so the iframe is sized to cover the
-     hero at that ratio and centred — whichever axis is short overflows rather
-     than letterboxing. The upload is 2:3, so its own pillarbox sits inside
-     that frame; it reads as black against a near-black page.
+  /* The iframe is sized to cover the hero at 16:9 and centred, so whichever
+     axis is short overflows rather than letterboxing. The upload is 16:9 too,
+     so the frame is filled edge to edge with no bars.
      Not interactive: it is wallpaper, so it takes no clicks and no focus. */
   .hero-img iframe{
     position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
@@ -338,7 +337,7 @@
 <header class="wide">
   <div class="hero-img">
     <iframe
-      src="https://www.youtube-nocookie.com/embed/89MPvNDpwsc?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=89MPvNDpwsc&amp;controls=0&amp;modestbranding=1&amp;playsinline=1&amp;rel=0&amp;disablekb=1&amp;iv_load_policy=3&amp;fs=0"
+      src="https://www.youtube-nocookie.com/embed/qr9fU_eKTA0?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=qr9fU_eKTA0&amp;controls=0&amp;modestbranding=1&amp;playsinline=1&amp;rel=0&amp;disablekb=1&amp;iv_load_policy=3&amp;fs=0"
       allow="autoplay; encrypted-media" title="" tabindex="-1" aria-hidden="true"
       frameborder="0"></iframe>
     <img src="images/2026-07-27-installation-still-cover.jpg" alt="">
