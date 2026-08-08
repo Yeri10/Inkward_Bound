@@ -25,10 +25,14 @@
     /* Text runs the full width of the page, like the media. */
     --measure:100%;
     --gutter:4.5rem;   /* page edge inset; media goes full-bleed past it */
-    /* The page's only two type sizes: this one for headings, and the body size
-       (16px) for everything else. The work's title and the section numbers are
-       the same rank, so they take the same value from here. */
-    --display:clamp(1.6rem,4.4vw,3.1rem);
+    /* The page runs on two sizes — display for headings, body for everything
+       else — with the opening block held one step above both. It carries the
+       work's name and its one-line description, and is the only place on the
+       page that is not one section among several, so it is allowed to outrank
+       the sections rather than match them. */
+    --display:clamp(1.6rem,4.4vw,3.1rem);      /* section numbers */
+    --display-lg:clamp(2.2rem,5.6vw,4.2rem);   /* the work's title */
+    --lead:clamp(1.02rem,1.45vw,1.2rem);       /* its one-line description */
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -120,12 +124,11 @@
     color:var(--dimmer);
   }
   html[data-lang="zh"] .mono{letter-spacing:.11em}
-  /* The page runs on two sizes only. This is the display size, shared by the
-     work's title and by every section number below it — the same rank, so the
-     same size. Everything that is not a heading takes the body size, and the
-     hierarchy is carried by position and spacing rather than by scale. */
+  /* The work's title, one step above the section numbers. Below this block the
+     page holds to two sizes and lets position and spacing carry the hierarchy;
+     here it does not, because the opening is not one section among several. */
   h1{
-    font-size:var(--display);line-height:1.05;
+    font-size:var(--display-lg);line-height:1.05;
     font-weight:500;letter-spacing:-.02em;
     margin-bottom:1.5rem;
     /* Optical alignment: the side bearing inside a capital is invisible at body
@@ -138,13 +141,13 @@
      thin strokes inside the square instead of a few thick ones, so 500 that
      looks solid in Helvetica goes grey in Lantinghei at display size. */
   html[data-lang="zh"] h1{letter-spacing:-.01em;margin-left:-.03em;font-weight:600}
-  /* One sentence, at body size — a subtitle is not a second voice, it is the
-     same voice placed under the title. It was three hard-broken lines with no
+  /* One sentence, a step above body but well under the title — it describes the
+     work rather than announcing it. It was three hard-broken lines with no
      punctuation; the commas carry the phrasing now and the line wraps on its
      own where the screen requires it. */
   .tagline{
     margin-bottom:3rem;
-    font-size:inherit;line-height:1.62;letter-spacing:-.003em;
+    font-size:var(--lead);line-height:1.55;letter-spacing:-.006em;
   }
   html[data-lang="zh"] .tagline{line-height:1.85;letter-spacing:.005em}
   /* The section number and its label are the display heading, set at exactly
