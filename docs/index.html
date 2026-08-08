@@ -118,18 +118,6 @@
     color:var(--dimmer);
   }
   html[data-lang="zh"] .mono{letter-spacing:.11em}
-  /* Sans-serif needs tighter tracking as it scales up, or large settings
-     drift apart; serif did not. */
-  h1{
-    font-size:clamp(2.9rem,11.5vw,8rem);line-height:.9;
-    font-weight:500;letter-spacing:-.045em;
-    /* Optical alignment: the side bearing built into a capital is invisible at
-       body size but scales to several pixels at display size, so the title
-       would otherwise sit indented from the text beneath it. In em, so the
-       correction tracks the type as it scales. */
-    margin-left:-.055em;
-  }
-  html[data-lang="zh"] h1{letter-spacing:-.02em;margin-left:-.03em}
   /* The section number and its label are the display heading; the sentence
      that used to be the heading now sits beneath as a subtitle. */
   h2.kicker{
@@ -195,20 +183,11 @@
         var(--ink) 100%),
       radial-gradient(ellipse 72% 56% at 50% 46%, rgba(10,10,12,.38), transparent 72%);
   }
-  /* The cover image fills the viewport; only the type is inset. */
-  header>*{position:relative;z-index:1;padding:0 var(--gutter)}
-  header>.hero-img{padding:0}
-  .hero-top{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-  /* Anchored low rather than centred: with the author line gone there is
-     nothing at the top, and a title floating in the middle of a full-screen
-     video reads as a placeholder. The auto margin above takes all the slack,
-     so the block sits just clear of the label row at the foot. */
-  .hero-mid{margin-top:auto;margin-bottom:4.5rem}
-  /* Three lines, no punctuation — each phrase gets its own line so the breaks
-     do the work the commas used to. */
-  .hero-sub{margin-top:2rem;max-width:44rem}
-  .hero-sub span{display:block;line-height:1.4}
-  html[data-lang="zh"] .hero-sub span{line-height:1.55}
+  /* Present to assistive technology and to search engines, absent to the eye. */
+  .sr-only{
+    position:absolute;width:1px;height:1px;overflow:hidden;
+    clip-path:inset(50%);white-space:nowrap;
+  }
 
   /* ── figures ────────────────────────────── */
   figure{margin:0}
@@ -295,10 +274,6 @@
     /* The hero's lower labels sat almost on top of the first paragraph; the
        cover needs room to end before the text begins. */
     header{padding:4rem 0 3.5rem}
-    .hero-top{flex-direction:column;gap:.5rem}
-    .hero-mid{margin-bottom:3rem}
-    .hero-sub{margin-top:1.75rem}
-    h1{letter-spacing:-.035em}
 
     .grid4{grid-template-columns:1fr;gap:1.2rem}
     /* One per row on a phone: at two across these become unreadable smudges. */
@@ -326,12 +301,6 @@
     }
   }
 
-  /* Very small phones: the hero title is the only thing that still overflows. */
-  @media(max-width:360px){
-    h1{font-size:2.5rem}
-    .lead{font-size:1rem}
-  }
-
   /* ── reveal ─────────────────────────────── */
   .r{opacity:0;transform:translateY(18px);transition:opacity 1s ease,transform 1s ease}
   .r.in{opacity:1;transform:none}
@@ -354,26 +323,10 @@
     </video>
   </div>
 
-  <div class="hero-mid">
-    <h1>Inkward<br>Bound</h1>
-    <p class="lead hero-sub dim en">
-      <span>An interactive generative installation</span>
-      <span>working with ink</span>
-      <span>to examine the spatialisation of consciousness</span>
-    </p>
-    <p class="lead hero-sub dim zh">
-      <span>一件互动生成装置</span>
-      <span>以墨为材料</span>
-      <span>探讨意识的空间化</span>
-    </p>
-  </div>
-
-  <div class="hero-top">
-    <span class="mono en">Ink · LoRA · TouchDesigner · Latent space</span>
-    <span class="mono zh">墨 · LoRA · TouchDesigner · 潜空间</span>
-    <span class="mono en">Scroll ↓</span>
-    <span class="mono zh">向下 ↓</span>
-  </div>
+  <!-- The cover carries no visible type. The heading stays in the document
+       for screen readers and for search results, where a page with no h1 has
+       nothing to announce itself by. -->
+  <h1 class="sr-only">Inkward Bound</h1>
 </header>
 
 <!-- ══ STATEMENT ═════════════════════════════ -->
