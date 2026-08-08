@@ -158,17 +158,14 @@
     padding:4.4rem 0 4.4rem;position:relative;
   }
   .hero-img{position:absolute;inset:0;z-index:0;overflow:hidden}
-  .hero-img img{
-    position:absolute;inset:0;
-    width:100%;height:100%;object-fit:cover;object-position:50% 40%;
-    opacity:.72;filter:grayscale(1) contrast(1.04);
-  }
-  /* Self-hosted again: object-fit does the covering natively, so the portrait
-     4K source crops to a band on a landscape screen and fills edge to edge on
-     a phone, with no wrapper arithmetic. */
+  /* One layer only. object-fit:cover makes the portrait source crop to a band
+     on a landscape screen and fill a phone edge to edge; the poster attribute
+     covers the moment before playback and the case where it is refused, so
+     there is no second element underneath to show through. */
   .hero-img video{
     position:absolute;inset:0;
-    width:100%;height:100%;object-fit:cover;object-position:50% 45%;
+    width:100%;height:100%;
+    object-fit:cover;object-position:50% 45%;
     z-index:1;pointer-events:none;
     opacity:.72;filter:grayscale(1) contrast(1.04);
   }
@@ -248,7 +245,9 @@
     background:rgba(255,255,255,.015);
   }
   .video-slot .mono{color:var(--dimmer);text-align:center;padding:1rem}
-  video{width:100%;height:auto;display:block}
+  /* Scoped to figures so it cannot reach the cover, where the video has to
+     fill its box rather than size itself to its own aspect ratio. */
+  figure video{width:100%;height:auto;display:block}
 
   /* ── links ──────────────────────────────── */
   .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:0}
@@ -342,7 +341,6 @@
            poster="images/2026-07-27-installation-still-cover.jpg">
       <source src="media/cover.mp4" type="video/mp4">
     </video>
-    <img src="images/2026-07-27-installation-still-cover.jpg" alt="">
   </div>
 
   <div class="hero-top">
