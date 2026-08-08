@@ -69,15 +69,18 @@
     font-size:.78rem;letter-spacing:.14em;
     background:none;border:0;color:var(--paper);
     padding:.5rem .2rem;cursor:pointer;
-    border-bottom:1px solid rgba(242,242,240,.45);
-    transition:border-color .25s ease;
-    /* Padding keeps the touch target comfortable while the rule stays tight
-       to the word. */
+    /* The rule follows the text rather than the box: a border-bottom would sit
+       on the edge of the 38px tap target, well clear of the word. */
+    text-decoration:underline;
+    text-decoration-thickness:1px;
+    text-underline-offset:.32em;
+    text-decoration-color:rgba(242,242,240,.5);
+    transition:text-decoration-color .25s ease;
     min-height:38px;
     /* Legible over whatever frame of the video is behind it. */
     text-shadow:0 1px 6px rgba(10,10,12,.85);
   }
-  #lang:hover{border-bottom-color:var(--paper)}
+  #lang:hover{text-decoration-color:var(--paper)}
 
   /* ── layout ─────────────────────────────────
      Everything runs the full width of the viewport. Media goes edge to edge;
