@@ -130,10 +130,16 @@
     margin-left:-.055em;
   }
   html[data-lang="zh"] h1{letter-spacing:-.02em;margin-left:-.03em}
-  /* Three lines, no punctuation — the breaks do the work the commas did. */
-  .tagline{margin-bottom:3rem}
-  .tagline span{display:block;line-height:1.4}
-  html[data-lang="zh"] .tagline span{line-height:1.55}
+  /* One sentence, set smaller than the body lead it used to borrow from: under a
+     title this large the line reads as a caption to it, not as a second voice.
+     It was three hard-broken lines with no punctuation; the commas carry the
+     phrasing now and the line wraps on its own where the screen requires it. */
+  .tagline{
+    margin-bottom:3rem;
+    font-size:clamp(.95rem,1.35vw,1.08rem);
+    line-height:1.5;letter-spacing:-.008em;
+  }
+  html[data-lang="zh"] .tagline{line-height:1.75;letter-spacing:.01em}
   /* The section number and its label are the display heading; the sentence
      that used to be the heading now sits beneath as a subtitle. */
   h2.kicker{
@@ -335,16 +341,8 @@
 
   <h1>Inkward Bound</h1>
 
-  <p class="tagline lead dim en">
-    <span>An interactive generative installation</span>
-    <span>working with ink</span>
-    <span>to examine the spatialisation of consciousness</span>
-  </p>
-  <p class="tagline lead dim zh">
-    <span>一件互动生成装置</span>
-    <span>以墨为材料</span>
-    <span>探讨意识的空间化</span>
-  </p>
+  <p class="tagline dim en">An interactive generative installation working with ink to examine the spatialisation of consciousness</p>
+  <p class="tagline dim zh">一件互动生成装置,以墨为材料,探讨意识的空间化</p>
 
   <div class="en">
     <p class="lead">
@@ -617,42 +615,41 @@
   <div class="en">
     <p class="subtitle">Waiting is written into the formula, not asked of the visitor</p>
     <p>
-      Touch produces a single value, <em>c</em>, running from 0 to 1 — from ink
-      dispersed to ink condensed. It is not a readout of position but an integral
-      of the gesture over time: duration of contact carries seven tenths of the
-      weight, steadiness three tenths, and agitation subtracts. Eighteen seconds of
-      holding still are needed to reach the far end. There is no way to simply set
-      it.
+      Move a hand across the screen and the ink stays dispersed and disturbed —
+      searching unsettles what it moves through. Stop, without lifting, and it
+      condenses. Eighteen seconds of stillness gathers it completely; lift, and
+      it comes apart again.
     </p>
     <p>
-      Under pressure the value approaches its target smoothly without ever
-      arriving; on release it recedes at a constant rate. What appears depends on
-      the input that came before, not on the command of the moment.
+      Touch produces a single value, <em>c</em>, running from 0 to 1 — from ink
+      dispersed to ink condensed. It reads not where the hand is but how it has
+      behaved over time, so what appears depends on the input that came before,
+      never on the command of the moment. There is no way to simply set it.
     </p>
     <p class="dim">
-      That lag is the material realisation of the Husserlian layer — the slow onset
-      is protention, the slow recession is retention, and the present acquires
-      thickness instead of being a point. The fall is set far slower than the rise:
-      gathering takes more time than dispersing. It is the only part of the work
-      that is genuinely temporal.
+      That lag is the material realisation of the Husserlian layer — the slow
+      onset is protention, the receding is retention, and the present acquires
+      thickness instead of being a point. Gathering is laboured where dispersing
+      is easy: eighteen seconds against under two. It is the only part of the
+      work that is genuinely temporal.
     </p>
   </div>
 
   <div class="zh">
     <p class="subtitle">等待被写进了公式本身,而不是被要求于观众</p>
     <p>
-      触摸产生一个值 <em>c</em>,从 0 到 1——从墨的弥散到墨的凝结。它不是位置的
-      读数,而是手势在时间中的积分:按压时长占七成权重,稳定度占三成,躁动则是
-      减分项。要抵达另一端,需要按住不动整整十八秒。没有办法直接把它设定成某个值。
+      把手放在屏幕上移动,墨便保持弥散与扰动——搜寻会扰动它所穿过的东西。
+      停下来,但不抬手,墨开始凝结。静止十八秒,它完全聚拢;抬手,它重新散开。
     </p>
     <p>
-      按压时,这个值向目标平滑逼近却永不到达;松开后,它以恒定速率缓缓退回。
-      当前画面取决于此前的输入,而非此刻的指令。
+      触摸产生一个值 <em>c</em>,从 0 到 1——从墨的弥散到墨的凝结。它读的不是手
+      在哪里,而是手在时间中如何行动;因此画面取决于此前的输入,而非此刻的指令。
+      没有办法直接把它设定成某个值。
     </p>
     <p class="dim">
-      那段迟滞是胡塞尔那一层的物质实现——慢启动是前摄,缓慢退回是持存,
-      当下由此有了厚度,而不再是一个点。回落被设定得远慢于上升:
-      聚拢比消散更需要时间。它是整件作品里唯一真正具有时间性的部分。
+      那段迟滞是胡塞尔那一层的物质实现——慢启动是前摄,退去是持存,当下由此有了
+      厚度,而不再是一个点。聚拢是费力的,消散是轻易的:十八秒对不到两秒。
+      它是整件作品里唯一真正具有时间性的部分。
     </p>
   </div>
 </section>
