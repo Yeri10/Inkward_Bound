@@ -199,7 +199,11 @@
   header>*{position:relative;z-index:1;padding:0 var(--gutter)}
   header>.hero-img{padding:0}
   .hero-top{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-  .hero-mid{margin:auto 0}
+  /* Anchored low rather than centred: with the author line gone there is
+     nothing at the top, and a title floating in the middle of a full-screen
+     video reads as a placeholder. The auto margin above takes all the slack,
+     so the block sits just clear of the label row at the foot. */
+  .hero-mid{margin-top:auto;margin-bottom:4.5rem}
   /* Three lines, no punctuation — each phrase gets its own line so the breaks
      do the work the commas used to. */
   .hero-sub{margin-top:2rem;max-width:44rem}
@@ -292,6 +296,7 @@
        cover needs room to end before the text begins. */
     header{padding:4rem 0 3.5rem}
     .hero-top{flex-direction:column;gap:.5rem}
+    .hero-mid{margin-bottom:3rem}
     .hero-sub{margin-top:1.75rem}
     h1{letter-spacing:-.035em}
 
