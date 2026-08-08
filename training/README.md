@@ -13,7 +13,7 @@ Trains the `inkwb` LoRA on the [ink dataset](../ink_dataset/README.md), reusing 
 | `train_text_to_image_lora.py` | Official diffusers LoRA training script; the notebook re-downloads the version matching the installed diffusers, this copy is the offline fallback |
 | `measure_ink_coverage.py` | Measures each image's dark-pixel ratio and writes the five-level density phrase into its caption |
 | `generate_atlas.py` | Batch-generates latent-atlas candidates along the c-value grid (6 bins × N seeds) into `atlas_candidates/`, with a `manifest.jsonl` recording every prompt/seed |
-| `bake_transitions.py` | Drives ComfyUI's API to bake interpolated transitions between curated atlas stills, from a seeded, manifest-recorded plan |
+| `bake_transitions.py` | **Not the production route — kept as process evidence.** Drives ComfyUI's API to bake a per-bridge transition library between curated atlas stills. One of three candidate forms considered on 15 July; the full-axis video won, so this was never run — `latent_atlas/transitions_manifest.json` does not exist and nothing downstream reads it |
 | `comfyui_workflows/` | Exported ComfyUI graphs for the atlas→video stage (see the note below on `full_axis_v1.json`) |
 | `dataset/` | Generated training data, not committed to git (re-run `prepare_dataset.py` after caption changes) |
 | `runs/` | Training outputs (weights, checkpoints, logs) |
@@ -34,7 +34,15 @@ conda activate ml-art
    python3 training/prepare_dataset.py --trim-style --v5
    ```
 
-   `--trim` drops phase phrases and style tags (v4); `--v5` drops the shared basin phrase from the 01 captions and duplicates the 01 category ×2 (decoupling the top-down pooled-blob look from the container words).
+   The command above is the one that produced the v6 and v7 datasets. Three caption flags exist and they are not interchangeable — two of them pull in opposite directions on the phase axis:
+
+   | Flag | Introduced for | Effect |
+   |---|---|---|
+   | `--trim` | v4 | Drops **both** the phase phrases and the style tags. This removed the temporal axis, and the retrain showed it was the wrong lever — kept only so the v4 result stays reproducible |
+   | `--trim-style` | v6 | Drops **only** the constant style tags and **keeps** the phase phrases, restoring the temporal axis that `--trim` had removed |
+   | `--v5` | v5 | Drops the shared basin phrase from the 01 captions and duplicates the 01 category ×2, decoupling the top-down pooled-blob look from the container words |
+
+   So `--trim` and `--trim-style` are opposites where the phase phrases are concerned; do not substitute one for the other.
 
 2. Launch training from the repository root:
 
@@ -68,9 +76,11 @@ Seven retrains, each triggered by a specific diagnosed failure rather than routi
 | v2 | v1's container leakage | Bound container features to explicit caption words (`inside a shallow pale basin` / `inside a clear water tank`) and added a negative prompt | Container features became promptable and excludable, but the four phase words still produced near-identical images at a fixed seed — the phase axis was flat |
 | v3 | Flat, unanchored phase axis | Wrote `measure_ink_coverage.py`: measures each image's dark-pixel ratio and auto-inserts one of five density phrases | Phase axis mildly improved, but at some seeds the four states collapsed into near-identical images. The working hypothesis at the time was that the long shared photographic suffix was diluting the state phrase — v4 was trained to test it, and the real cause turned out to lie elsewhere (see the v4 row) |
 | v4 | Seed-dependent state collapse | Trimmed captions (`--trim`): dropped phase phrases and style tags from training data, cutting the longest caption from ~70 to ~61 CLIP tokens | v4 was adopted and the atlas script switched onto its weights, but at a fixed seed the matrices are nearly indistinguishable from v3 (see the evidence images below) — deleting words from captions proved a weak lever. The collapse it was meant to cure was later traced to the generation side rather than the weights: every bin had been sampling from the same initial noise, and giving each bin its own seed range recovered the axis without another retrain (9 July entries) |
-| v5 | Not the leftover from v4 — that one turned out not to need a retrain. A different ceiling: top-down (c 0.0) diffusion could not be recalled without also summoning literal basins, bowls and drains, and no combination of already-trained vocabulary got past it, so the fix had to move down to the data level | Dropped the shared basin phrase from all 01 captions and weighted the 01 category ×2 (`--v5`) | `top-down view` recalled the pale-field pooled-blob look without any container word in the prompt for the first time — but only on a minority of seeds; the atlas c 0.0 batch still returned bowls, glass rings and graphic collages on most, so the bin stayed dependent on curation |
+| v5 | Top-down (c 0.0) diffusion couldn't be recalled without also summoning literal basins, bowls and drains | Dropped the shared basin phrase from all 01 captions and weighted the 01 category ×2 (`--v5`) | `top-down view` recalled the pale-field pooled-blob look without any container word in the prompt for the first time — but only on a minority of seeds; the atlas c 0.0 batch still returned bowls, glass rings and graphic collages on most, so the bin stayed dependent on curation |
 | v6 | c 0.0 still not fully natural; c 0.6 couldn't recall fine granular particles | Purged `marbled` from 01 captions, explicitly named the solid opaque blob, added granular-particle wording to seven 03 frames, restored phase phrases | The four states held cleanly, but neither target was fully reached. c 0.0 still needed a further generation-side prompt rewrite after retraining — composition has to be assembled from trained phrases one by one, not conjured by retraining alone. And c 0.6 kept rendering its particles too coarse, missing the fine mist of the source photographs: the granular phrase had been added to only seven 03 frames while the other seventeen still carried the same generic action words, so there was nothing in the vocabulary for the model to separate them by. That is what v7 set out to fix |
 | v7 | Every category used generic, shared action words (e.g. all 24 `disturbed_ink` frames said "turbulent, murky, churned") — a model can't separate frames whose captions don't differ | Rewrote all 101 captions around the literal physical process each category documents, stage by stage (e.g. 03: strands torn apart → dissolving into particles → hazy grain fog → uniform murk) | The fine-grain mist became reliably generatable at c 0.6 for the first time. This is the production LoRA: 192 candidates were curated down to the final 66-image latent atlas |
+
+One thing the table cannot show: **v5 is not v4's unfinished business.** v4's target — seed-dependent state collapse — turned out not to need a retrain at all; it was fixed on the generation side by giving each bin its own seed range. v5 was aimed at a different ceiling entirely, one that no combination of already-trained vocabulary could get past, which is why the fix had to move down to the data level.
 
 **Evidence, one image per turning point:**
 
@@ -134,15 +144,17 @@ Shared across all four categories:
 - Do `early → final phase` prompts move along a plausible temporal axis?
 - Do `top-down view` / `side view` switch the camera angle?
 
-Once these hold, batch-generate the pre-baked latent atlas along the c-value grid and replace the placeholder images in the TouchDesigner atlas folders.
+These are the gates each retrain was measured against. Once all four held — which they did at v7 — the pre-baked latent atlas was batch-generated along the c-value grid and carried into the ComfyUI stage below.
 
 ## From atlas to video (ComfyUI)
 
 The curated atlas is a set of stills at fixed coordinates. Turning it into something the c-value can scrub continuously happens in ComfyUI, in one chain:
 
-**11 keyframes** drawn from the curated atlas → **img2img repaint** through SD 1.5 + the v7 LoRA (denoise 0.24, seed fixed at 42 — a light repaint unifies texture across keyframes without flicker) → **RealESRGAN ×2** upscale with light sharpen → **RIFE ×32** interpolation (`fast_mode` off, `ensemble` on) → **film grain** applied *after* interpolation, so the grain sits per-frame instead of being smeared along the motion → **24 fps H.264**.
+**Keyframes** drawn from the curated atlas → **img2img repaint** through SD 1.5 + the v7 LoRA (denoise 0.24, seed fixed at 42 — a light repaint unifies texture across keyframes without flicker) → **RealESRGAN ×2** upscale with light sharpen → **RIFE ×32** interpolation (`fast_mode` off, `ensemble` on) → **film grain** applied *after* interpolation, so the grain sits per-frame instead of being smeared along the motion → **24 fps H.264**.
 
-Repaint-before-interpolate was chosen over the reverse for cost (11 sampler runs rather than 400) and for zero flicker risk. Keyframe density is doubled in the early bins, because interpolation connects states but cannot invent process: the unfolding of diffusion has visual content that no morph supplies. Full reasoning is in the 14–15 July entries of [`docs/PROCESS_LOG.md`](../docs/PROCESS_LOG.md).
+The first test ran this chain once over 11 keyframes to validate the recipe. Production runs it five times in one graph, one chain per axis video, over 95 keyframes in total — roughly 19 per axis, with density doubled in the early bins, because interpolation connects states but cannot invent process: the unfolding of diffusion has visual content that no morph supplies.
+
+Repaint-before-interpolate was chosen over the reverse for cost and for zero flicker risk: repainting the keyframes is 95 sampler runs, repainting after interpolation would be tens of thousands. Full reasoning is in the 14–15 July entries of [`docs/PROCESS_LOG.md`](../docs/PROCESS_LOG.md).
 
 The output is five continuous axis videos, each re-encoded to HAP Q for random-access scrubbing in TouchDesigner — H.264 is inter-frame coded, so scrubbing to an arbitrary frame forces a decode walk back to the nearest keyframe (23 July entry).
 
