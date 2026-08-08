@@ -119,6 +119,23 @@
     color:var(--dimmer);
   }
   html[data-lang="zh"] .mono{letter-spacing:.11em}
+  /* Smaller than it was on the cover: it now opens a block of text rather than
+     a full screen, and has to stay clearly above the section numbers without
+     overpowering the paragraph it introduces. */
+  h1{
+    font-size:clamp(2.6rem,6.5vw,5rem);line-height:.95;
+    font-weight:500;letter-spacing:-.04em;
+    margin-bottom:1.5rem;
+    /* Optical alignment: the side bearing inside a capital is invisible at body
+       size and several pixels at display size, so the title would otherwise sit
+       indented from the text beneath it. In em, so it tracks the type. */
+    margin-left:-.055em;
+  }
+  html[data-lang="zh"] h1{letter-spacing:-.02em;margin-left:-.03em}
+  /* Three lines, no punctuation — the breaks do the work the commas did. */
+  .tagline{margin-bottom:3rem}
+  .tagline span{display:block;line-height:1.4}
+  html[data-lang="zh"] .tagline span{line-height:1.55}
   /* The section number and its label are the display heading; the sentence
      that used to be the heading now sits beneath as a subtitle. */
   h2.kicker{
@@ -183,11 +200,6 @@
         rgba(10,10,12,.52) 60%,
         var(--ink) 100%),
       radial-gradient(ellipse 72% 56% at 50% 46%, rgba(10,10,12,.38), transparent 72%);
-  }
-  /* Present to assistive technology and to search engines, absent to the eye. */
-  .sr-only{
-    position:absolute;width:1px;height:1px;overflow:hidden;
-    clip-path:inset(50%);white-space:nowrap;
   }
 
   /* ── figures ────────────────────────────── */
@@ -318,10 +330,6 @@
     </video>
   </div>
 
-  <!-- The cover carries no visible type. The heading stays in the document
-       for screen readers and for search results, where a page with no h1 has
-       nothing to announce itself by. -->
-  <h1 class="sr-only">Inkward Bound</h1>
 </header>
 
 <!-- ══ STATEMENT ═════════════════════════════ -->
@@ -329,6 +337,19 @@
   <div class="lang-row">
     <button id="lang" type="button" aria-label="Switch language">中文</button>
   </div>
+
+  <h1>Inkward Bound</h1>
+
+  <p class="tagline lead dim en">
+    <span>An interactive generative installation</span>
+    <span>working with ink</span>
+    <span>to examine the spatialisation of consciousness</span>
+  </p>
+  <p class="tagline lead dim zh">
+    <span>一件互动生成装置</span>
+    <span>以墨为材料</span>
+    <span>探讨意识的空间化</span>
+  </p>
 
   <div class="en">
     <p class="lead">
