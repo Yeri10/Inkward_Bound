@@ -2,7 +2,13 @@
 const SEND_FPS  = 30;
 const N_PART    = 130;   // fewer than the old dot field: each particle is now a wide glow
 const HUD_H     = 36;
-const SPEED_MAX = 600;
+// Halved from 600 when the speed measurement below was corrected. rawSpeed used
+// to come out at exactly twice the real value, and 600 had been tuned by hand
+// against that inflated figure — so 300 against the true reading reproduces the
+// previous feel exactly, and the `speed` field sent to TouchDesigner is
+// numerically unchanged. The difference is that the threshold now means what it
+// says: 300 px/s is the movement rate that counts as fully agitated.
+const SPEED_MAX = 300;
 
 // ── FOG LOOK (tuning block) ──────────────────────────────────────
 // Everything visual is gathered here so the look can be tuned without
@@ -66,7 +72,6 @@ function sendTouchData(eventName) {
 // ── TOUCH STATE ───────────────────────────────────────────────────
 let isTouching    = false;
 let touchX        = 0.5, touchY = 0.5;
-let prevX         = 0.5, prevY  = 0.5;
 let duration      = 0;
 let rawSpeed      = 0;
 let stability     = 0;
@@ -361,7 +366,6 @@ function touchEnded() {
 function startTouch(nx, ny) {
   isTouching    = true;
   touchX = nx;  touchY = ny;
-  prevX  = nx;  prevY  = ny;
   touchStartT   = millis();
   rawSpeed      = 0;
   const now     = Date.now();
@@ -376,12 +380,18 @@ function moveTouch(nx, ny) {
   if (!isTouching) return;
   const dt = (millis() - lastMoveTime) / 1000;
   if (dt > 0) {
-    const dx = (nx - prevX) * width;
-    const dy = (ny - prevY) * height;
+    // Measured against touchX/touchY, which still hold the previous position at
+    // this point in the function. A separate prevX/prevY pair used to carry it,
+    // but it was assigned from touchX *before* touchX was updated, so it lagged
+    // by two events while dt spanned one — every reading after the first came
+    // out at exactly twice the real speed. That inflated stability toward zero,
+    // inflated agitation, and tripped the disturbance state at half the
+    // intended movement rate.
+    const dx = (nx - touchX) * width;
+    const dy = (ny - touchY) * height;
     rawSpeed = sqrt(dx * dx + dy * dy) / dt;
   }
-  prevX = touchX; prevY = touchY;
-  touchX = nx;    touchY = ny;
+  touchX = nx;  touchY = ny;
   lastMoveTime = millis();
   sendTouchData('move');
 }
