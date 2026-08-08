@@ -10,7 +10,10 @@
 <meta property="og:image" content="images/2026-07-27-installation-still-cover.jpg">
 <style>
   :root{
-    --ink:#0a0a0c;
+    /* Pure black, matching the black the footage was rendered on: the video
+       meets the page with nothing between them, so no gradient is needed to
+       disguise the join. */
+    --ink:#000;
     --paper:#f2f2f0;
     /* One text value throughout. There were three tiers — body, secondary and
        label — which made captions and section numbers read as faded next to
@@ -184,19 +187,6 @@
     width:100%;height:100%;
     object-fit:cover;object-position:50% 45%;
     z-index:1;pointer-events:none;
-  }
-  /* A fade at each edge rather than a scrim over the whole frame: the footage
-     keeps its contrast in the middle, and the bottom dissolves into the page
-     colour so the cover ends by giving way to the text instead of stopping at
-     a hard line. */
-  .hero-img::after{
-    content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
-    background:linear-gradient(to bottom,
-      rgba(10,10,12,.55) 0%,
-      rgba(10,10,12,0)   22%,
-      rgba(10,10,12,0)   58%,
-      rgba(10,10,12,.72) 88%,
-      var(--ink)         100%);
   }
 
   /* ── figures ────────────────────────────── */
