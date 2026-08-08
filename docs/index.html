@@ -93,17 +93,12 @@
   .wrap{max-width:none;margin:0;padding-left:var(--gutter);padding-right:var(--gutter)}
   .wrap > *{max-width:var(--measure)}
 
-  /* .wide is a full-bleed container: it carries no padding at all, so media
-     inside it meets the screen edges by default. Text is what gets inset,
-     rather than media having to cancel a gutter it never wanted. */
-  .wide{max-width:none;margin:0;padding-left:0;padding-right:0}
-  .wide > .kicker,
-  .wide > h2,
-  .wide > h3,
-  .wide > p,
-  .wide > .wrap,
-  .wide > .links,
-  figcaption{padding-left:var(--gutter);padding-right:var(--gutter)}
+  /* Images sit on the same gutter as the text rather than running to the screen
+     edges, so every left edge on the page lines up. The cover is the exception
+     and stays full-bleed: its video is positioned against the padding box, so
+     the inset does not reach it. */
+  .wide{max-width:none;margin:0;padding-left:var(--gutter);padding-right:var(--gutter)}
+  .wide .wrap{padding-left:0;padding-right:0}
   .wide > h2,
   .wide > h3,
   .wide > p:not(.kicker){max-width:100%}
