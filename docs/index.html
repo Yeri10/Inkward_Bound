@@ -25,6 +25,10 @@
     /* Text runs the full width of the page, like the media. */
     --measure:100%;
     --gutter:4.5rem;   /* page edge inset; media goes full-bleed past it */
+    /* The page's only two type sizes: this one for headings, and the body size
+       (16px) for everything else. The work's title and the section numbers are
+       the same rank, so they take the same value from here. */
+    --display:clamp(1.6rem,4.4vw,3.1rem);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -62,7 +66,6 @@
                 "Lantinghei SC","Lantinghei TC",
                 "PingFang SC","Noto Sans CJK SC",monospace;
   }
-  html[data-lang="zh"] .lead{line-height:1.72}
 
   /* Sits at the right of the first block of text rather than floating over the
      cover, so the opening screen is only the footage. */
@@ -117,51 +120,58 @@
     color:var(--dimmer);
   }
   html[data-lang="zh"] .mono{letter-spacing:.11em}
-  /* Smaller than it was on the cover: it now opens a block of text rather than
-     a full screen, and has to stay clearly above the section numbers without
-     overpowering the paragraph it introduces. */
+  /* The page runs on two sizes only. This is the display size, shared by the
+     work's title and by every section number below it — the same rank, so the
+     same size. Everything that is not a heading takes the body size, and the
+     hierarchy is carried by position and spacing rather than by scale. */
   h1{
-    font-size:clamp(2.6rem,6.5vw,5rem);line-height:.95;
-    font-weight:500;letter-spacing:-.04em;
+    font-size:var(--display);line-height:1.05;
+    font-weight:500;letter-spacing:-.02em;
     margin-bottom:1.5rem;
     /* Optical alignment: the side bearing inside a capital is invisible at body
        size and several pixels at display size, so the title would otherwise sit
        indented from the text beneath it. In em, so it tracks the type. */
     margin-left:-.055em;
   }
-  html[data-lang="zh"] h1{letter-spacing:-.02em;margin-left:-.03em}
-  /* One sentence, set smaller than the body lead it used to borrow from: under a
-     title this large the line reads as a caption to it, not as a second voice.
-     It was three hard-broken lines with no punctuation; the commas carry the
-     phrasing now and the line wraps on its own where the screen requires it. */
+  /* Chinese headings are set bolder than the Latin ones. At the same weight a
+     Han character reads lighter than a capital: it spends its ink over many
+     thin strokes inside the square instead of a few thick ones, so 500 that
+     looks solid in Helvetica goes grey in Lantinghei at display size. */
+  html[data-lang="zh"] h1{letter-spacing:-.01em;margin-left:-.03em;font-weight:700}
+  /* One sentence, at body size — a subtitle is not a second voice, it is the
+     same voice placed under the title. It was three hard-broken lines with no
+     punctuation; the commas carry the phrasing now and the line wraps on its
+     own where the screen requires it. */
   .tagline{
     margin-bottom:3rem;
-    font-size:clamp(.95rem,1.35vw,1.08rem);
-    line-height:1.5;letter-spacing:-.008em;
+    font-size:inherit;line-height:1.62;letter-spacing:-.003em;
   }
-  html[data-lang="zh"] .tagline{line-height:1.75;letter-spacing:.01em}
-  /* The section number and its label are the display heading; the sentence
-     that used to be the heading now sits beneath as a subtitle. */
+  html[data-lang="zh"] .tagline{line-height:1.85;letter-spacing:.005em}
+  /* The section number and its label are the display heading, set at exactly
+     the size of the work's own title above. */
   h2.kicker{
-    font-size:clamp(1.6rem,4.4vw,3.1rem);line-height:1.1;
+    font-size:var(--display);line-height:1.1;
     font-weight:500;letter-spacing:.02em;text-transform:none;
     margin-bottom:.9rem;padding-bottom:0;border-bottom:0;
   }
-  html[data-lang="zh"] h2.kicker{letter-spacing:.04em;font-weight:500}
+  html[data-lang="zh"] h2.kicker{letter-spacing:.04em;font-weight:700}
   /* The dash is gone; the gap does its work. Set in em so it scales with the
      heading rather than drifting at small sizes. */
   .num{margin-right:.85em}
+  /* Body size, like the tagline it mirrors at the top of the page. */
   .subtitle{
-    font-size:clamp(1.05rem,1.9vw,1.32rem);line-height:1.45;
-    letter-spacing:-.012em;color:var(--dim);
+    font-size:inherit;line-height:1.62;
+    letter-spacing:-.003em;color:var(--dim);
     margin-bottom:2.8rem;
   }
-  html[data-lang="zh"] .subtitle{letter-spacing:0;line-height:1.6}
-  h3{font-size:1.02rem;font-weight:600;letter-spacing:-.008em;margin-bottom:.5rem}
+  html[data-lang="zh"] .subtitle{letter-spacing:.005em;line-height:1.85}
+  h3{font-size:inherit;font-weight:600;letter-spacing:-.008em;margin-bottom:.5rem}
   p{margin-bottom:1.2rem}
   p:last-child{margin-bottom:0}
-  .lead{font-size:clamp(1.1rem,2vw,1.34rem);line-height:1.5;letter-spacing:-.012em}
-  html[data-lang="zh"] .lead{letter-spacing:0}
+  /* The opening statement is body text like every other paragraph; it was set
+     larger, which made the top of the page a different document from the rest. */
+  .lead{font-size:inherit;line-height:1.62;letter-spacing:-.003em}
+  html[data-lang="zh"] .lead{letter-spacing:.005em;line-height:1.85}
   .dim{color:var(--dim)}
   em{font-style:italic}
   strong{font-weight:600}
@@ -287,7 +297,7 @@
     h2.kicker{margin-bottom:.7rem}
     h2.kicker.solo{margin-bottom:2.2rem}
     .subtitle{margin-bottom:2.2rem}
-    h2{margin-bottom:1.5rem}
+    h1{margin-bottom:1.5rem}
     p{margin-bottom:1.35rem}
     .bleed{margin:3.4rem 0}
 
