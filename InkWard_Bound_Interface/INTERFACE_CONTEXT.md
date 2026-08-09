@@ -156,6 +156,9 @@ if (isTouching && millis() - lastMoveTime > 60) rawSpeed *= 0.90;
 | `RING_A_LOW` / `HIGH` | 70 / 130 | 圆环描边不透明度 |
 | `RING_OUTER` | 1.9 | 外圈相对内圈的倍数 |
 | `TIP_SIZE` | 16 | "HOLD TO SEARCH" 字号 |
+| `IDLE_PERIOD` | 210 | 待机圆环的呼吸周期,帧(60fps 下约 3.5 秒) |
+| `IDLE_R_LOW` / `HIGH` | 34 / 62 | 呼吸时的半径范围,上限等于触摸圆环张开的宽度 |
+| `IDLE_A` / `IDLE_TXT_A` | 90 / 78 | 待机圆环描边、提示文字的峰值不透明度 |
 
 ### 3.2 粒子物理(`Particle.update()`)
 
@@ -225,7 +228,10 @@ return_:     '#141e1e'   rediffusion: '#0e0e14'
 
 - **鼠标和触摸都支持**,两套事件走同样的 `startTouch` / `moveTouch` / `endTouch`
 - **按 `F` 进出全屏**(`keyPressed()`)
-- **闲置提示**:未触摸且 `c < 0.1` 时,画面中央闪烁显示 "HOLD TO SEARCH"
+- **闲置提示**:未触摸且 `c < 0.1` 时,画面中央出现一组呼吸的圆环,下方是 "HOLD TO SEARCH"。
+  圆环和文字共用同一条余弦包络,一起明灭——圆环预示触摸会长成什么样子,文字说明要做什么,
+  两者应当同时抵达。文字位置按半径上限固定,不随呼吸移动。原先是 `frameCount % 120 < 60`
+  的硬开关,在切换帧上是 0 到 1 的跳变,看起来是闪的
 - 所有事件处理函数都 `return false`,用于阻止移动端的默认滚动/缩放行为
 - **速度测量**:`moveTouch()` 用当前点与 `touchX/touchY`(此刻仍是上一个位置)之差除以 `dt`。
   不要引入额外的 `prevX/prevY` 变量——之前那版正是因为赋值顺序错了,把速度算成了两倍。

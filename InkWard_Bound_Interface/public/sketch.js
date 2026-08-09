@@ -37,6 +37,12 @@ const RING_A_LOW   = 70;           // stroke alpha at c = 0  (0..255)
 const RING_A_HIGH  = 130;          // stroke alpha at c = 1
 const RING_OUTER   = 1.9;          // second ring, as a multiple of the first
 const TIP_SIZE     = 16;           // "HOLD TO SEARCH" type size
+// Idle beacon, shown before the first touch — same rings, breathing.
+const IDLE_PERIOD  = 210;          // frames per breath (~3.5s at 60fps)
+const IDLE_R_LOW   = 34;           // ring radius at the bottom of the breath
+const IDLE_R_HIGH  = 62;           // at the top — the same width a touch opens at
+const IDLE_A       = 90;           // peak stroke alpha
+const IDLE_TXT_A   = 78;           // peak text alpha
 
 let glowTex = null;   // p5.Graphics: white radial falloff, re-tinted each frame
 
@@ -344,15 +350,36 @@ function draw() {
     noStroke();
   }
 
-  if (!isTouching && cValue < 0.1 && frameCount % 120 < 60) {
-    fill(200, 200, 200, 40);
+  // Idle beacon: the same pair of rings, breathing at the centre before anyone
+  // has touched anything, with the instruction under them. Rings and text share
+  // one envelope, so they brighten and fade as a single thing rather than as a
+  // label next to a graphic — the rings show what a touch will look like, the
+  // words say what to do, and they should arrive together.
+  if (!isTouching && cValue < 0.1) {
+    // Cosine rather than the old frameCount % 120 < 60, which switched the text
+    // on and off between two frames and read as a blink.
+    const env = 0.5 - 0.5 * cos((frameCount % IDLE_PERIOD) / IDLE_PERIOD * TWO_PI);
+    const cx  = width / 2;
+    const cy  = height / 2;
+    const r   = lerp(IDLE_R_LOW, IDLE_R_HIGH, env);
+
+    noFill();
+    strokeWeight(1);
+    stroke(242, 242, 242, IDLE_A * env);
+    circle(cx, cy, r * 2);
+    stroke(242, 242, 242, IDLE_A * env * 0.34);
+    circle(cx, cy, r * 2 * RING_OUTER);
     noStroke();
+
+    fill(200, 200, 200, IDLE_TXT_A * env);
     textSize(TIP_SIZE);
     textAlign(CENTER, CENTER);
     // Tracking suits an instruction that has to read as the system's voice
     // rather than as a caption. Ignored by browsers that don't support it.
     drawingContext.letterSpacing = '0.2em';
-    text('HOLD TO SEARCH', width / 2, height / 2 + 40);
+    // Held at the widest the rings ever reach, so the words stay put while the
+    // rings breathe past them rather than being pushed around each frame.
+    text('HOLD TO SEARCH', cx, cy + IDLE_R_HIGH * RING_OUTER + 30);
     drawingContext.letterSpacing = '0px';
   }
 
