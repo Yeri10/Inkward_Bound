@@ -169,8 +169,8 @@ const ANISO_SPD    = 0.0016;       // noise step per frame — very slow
 // it read as an instrument's readout rather than as part of the material. The
 // mark is now the same frayed sprite the field is built from, so its edge is
 // already irregular — a brief bright patch instead of a measured radius.
-const MARK_R_LOW   = 52;           // patch radius at c = 0  (open, searching)
-const MARK_R_HIGH  = 21;           // at c = 1 (closed in)
+const MARK_R_LOW   = 40;           // patch radius at c = 0  (open, searching)
+const MARK_R_HIGH  = 16;           // at c = 1 (closed in)
 const MARK_A_LOW   = 60;           // patch alpha at c = 0  (0..255)
 const MARK_A_HIGH  = 120;          // at c = 1
 const MARK_LOBES   = 3;            // overlapping offset copies — one sprite is
@@ -178,19 +178,12 @@ const MARK_LOBES   = 3;            // overlapping offset copies — one sprite i
                                    // give the patch a lopsided outline
 const MARK_SPREAD  = 0.30;         // how far the lobes sit off centre, as a
                                    // fraction of the radius
-// The rings sit outside the patch, not in place of it. Two marks doing two
-// jobs: the frayed patch is material and says how much has gathered, the ring
-// is the one drawn line on the screen and says where the hand is. Keeping them
-// concentric but separated in radius lets the ring stay geometric — which is
-// what makes it read as the system's mark rather than the ink's — without it
-// having to double as the touch feedback itself.
-const RING_MUL     = 1.12;         // inner ring radius, as a multiple of the patch.
-                                   // Near the floor: below about 1.05 the ring
-                                   // crosses into the glow and the two marks stop
-                                   // reading as separate things
-const RING_OUTER   = 1.6;          // outer ring, as a multiple of the inner
-const RING_A_LOW   = 58;           // stroke alpha at c = 0  (0..255)
-const RING_A_HIGH  = 112;          // at c = 1
+// Rings, used by the idle beacon only. Once a hand is down there is no drawn
+// line anywhere on the screen — the whole image is accumulated light, and the
+// touch mark is the frayed patch above. The ring is what the work shows while
+// it is waiting to be touched, and it goes as soon as it is answered.
+const RING_MUL     = 1.02;         // ring radius, as a multiple of the beacon patch
+const RING_OUTER   = 1.45;         // outer ring, as a multiple of the inner
 // Scintillation. A hand held still makes the patch twinkle — each lobe on its
 // own noise lane and at its own rate, so the mark flickers unevenly the way a
 // point of light does seen through air, rather than pulsing as one piece.
@@ -203,8 +196,8 @@ const TWINKLE_SPD  = 0.035;        // noise step per frame — reads as scintill
 const TIP_SIZE     = 11;           // "HOLD TO SEARCH" type size
 // Idle beacon, shown before the first touch — the same mark, breathing.
 const IDLE_PERIOD  = 210;          // frames per breath (~3.5s at 60fps)
-const IDLE_R_LOW   = 28;           // patch radius at the bottom of the breath
-const IDLE_R_HIGH  = 52;           // at the top — the width a touch opens at
+const IDLE_R_LOW   = 22;           // patch radius at the bottom of the breath
+const IDLE_R_HIGH  = 40;           // at the top — the width a touch opens at
 const IDLE_A       = 78;           // peak patch alpha
 const IDLE_TXT_A   = 78;           // peak text alpha
 
@@ -732,11 +725,11 @@ function draw() {
   blendMode(BLEND);
   drawingContext.globalAlpha = 1;
 
-  if (isTouching) {
-    drawRings(touchX * width, touchY * height,
-              lerp(MARK_R_LOW, MARK_R_HIGH, cValue) * RING_MUL,
-              lerp(RING_A_LOW, RING_A_HIGH, cValue));
-  } else if (idle) {
+  // Rings belong to the idle screen only. Once a hand is down the image is all
+  // accumulated light and nothing else — no drawn line anywhere on it. The ring
+  // is what the work shows when it is waiting, and it goes the moment it is
+  // answered.
+  if (idle) {
     drawRings(width / 2, height / 2,
               lerp(IDLE_R_LOW, IDLE_R_HIGH, env) * RING_MUL,
               IDLE_A * env);
