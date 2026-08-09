@@ -25,14 +25,15 @@
     /* Text runs the full width of the page, like the media. */
     --measure:100%;
     --gutter:4.5rem;   /* page edge inset; media goes full-bleed past it */
-    /* The page runs on two sizes — display for headings, body for everything
-       else — with the opening block held one step above both. It carries the
-       work's name and its one-line description, and is the only place on the
-       page that is not one section among several, so it is allowed to outrank
-       the sections rather than match them. */
+    /* Every type size on the page comes from these four, so the intervals
+       between tiers can be judged and adjusted together rather than drifting
+       apart one rule at a time. The opening block takes the larger of each
+       pair — it carries the work's name and its one-line description, and is
+       the only place on the page that is not one section among several. */
     --display:clamp(1.6rem,4.4vw,3.1rem);      /* section numbers */
     --display-lg:clamp(2.2rem,5.6vw,4.2rem);   /* the work's title */
-    --lead:clamp(1.02rem,1.45vw,1.2rem);       /* its one-line description */
+    --lead:clamp(1.3rem,1.85vw,1.6rem);        /* its one-line description */
+    --sub:clamp(1.15rem,1.6vw,1.4rem);         /* section subtitles */
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -44,7 +45,7 @@
     font-family:"Helvetica Neue",Helvetica,Inter,system-ui,-apple-system,
                 "Segoe UI","PingFang SC","Hiragino Sans GB",
                 "Noto Sans CJK SC","Microsoft YaHei",Arial,sans-serif;
-    font-size:16px;line-height:1.62;letter-spacing:-.003em;
+    font-size:18px;line-height:1.62;letter-spacing:-.003em;
     -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
     overflow-x:hidden;
   }
@@ -124,9 +125,7 @@
     color:var(--dimmer);
   }
   html[data-lang="zh"] .mono{letter-spacing:.11em}
-  /* The work's title, one step above the section numbers. Below this block the
-     page holds to two sizes and lets position and spacing carry the hierarchy;
-     here it does not, because the opening is not one section among several. */
+  /* The work's title, one step above the section numbers below it. */
   h1{
     font-size:var(--display-lg);line-height:1.05;
     font-weight:500;letter-spacing:-.02em;
@@ -163,8 +162,8 @@
   .num{margin-right:.85em}
   /* Body size, like the tagline it mirrors at the top of the page. */
   .subtitle{
-    font-size:inherit;line-height:1.62;
-    letter-spacing:-.003em;color:var(--dim);
+    font-size:var(--sub);line-height:1.55;
+    letter-spacing:-.006em;color:var(--dim);
     margin-bottom:2.8rem;
   }
   html[data-lang="zh"] .subtitle{letter-spacing:.005em;line-height:1.85}
@@ -206,7 +205,7 @@
   /* ── figures ────────────────────────────── */
   figure{margin:0}
   figcaption{
-    margin-top:.85rem;font-size:.82rem;line-height:1.55;color:var(--dim);
+    margin-top:.85rem;font-size:.95rem;line-height:1.55;color:var(--dim);
     max-width:100%;
   }
   /* Media is already full-bleed inside .wide, so this only sets rhythm. */
@@ -285,7 +284,7 @@
 
   @media(max-width:640px){
     :root{--gutter:2.1rem}
-    body{font-size:15px}
+    body{font-size:16px}
     section{padding:7.5rem 0 4rem}
 
     /* Header rows stop being justified pairs and stack, so nothing has to
