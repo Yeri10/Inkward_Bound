@@ -29,6 +29,15 @@ const TRAIL_GAIN   = 1.18;         // residue sits ~18% brighter than the base f
 const TRAIL_MAX    = 220;          // pool cap
 const TRAIL_MIN_D  = 6;            // min px travelled before dropping a new residue
 
+// ── TOUCH RINGS + PROMPT ─────────────────────────────────────────
+// The one drawn line in an image otherwise made entirely of accumulated light.
+const RING_R_LOW   = 62;           // ring radius at c = 0  (wide, searching)
+const RING_R_HIGH  = 24;           // ring radius at c = 1  (closed in)
+const RING_A_LOW   = 70;           // stroke alpha at c = 0  (0..255)
+const RING_A_HIGH  = 130;          // stroke alpha at c = 1
+const RING_OUTER   = 1.9;          // second ring, as a multiple of the first
+const TIP_SIZE     = 16;           // "HOLD TO SEARCH" type size
+
 let glowTex = null;   // p5.Graphics: white radial falloff, re-tinted each frame
 
 // ── WEBSOCKET ─────────────────────────────────────────────────────
@@ -303,8 +312,7 @@ function draw() {
     pt.draw(cValue);
   }
 
-  // Touch point, as a soft core rather than a drawn ring — the fog language
-  // has no lines in it.
+  // Soft core under the fingertip — still part of the fog, drawn additively.
   if (isTouching) {
     const mx = touchX * width;
     const my = touchY * height;
@@ -319,12 +327,33 @@ function draw() {
   blendMode(BLEND);
   drawingContext.globalAlpha = 1;
 
-  if (!isTouching && cValue < 0.1 && frameCount % 120 < 60) {
-    fill(200, 200, 200, 26);
+  // Touch rings. The fog says how much has gathered; the rings say where the
+  // hand is, and those are different statements, so they get different marks —
+  // the glow has no edge, the rings are drawn line. They contract as c rises,
+  // so the ring closes in on the point as the ink closes in on itself.
+  if (isTouching) {
+    const mx = touchX * width;
+    const my = touchY * height;
+    const r  = lerp(RING_R_LOW, RING_R_HIGH, cValue);
+    noFill();
+    strokeWeight(1);
+    stroke(242, 242, 242, lerp(RING_A_LOW, RING_A_HIGH, cValue));
+    circle(mx, my, r * 2);
+    stroke(242, 242, 242, lerp(RING_A_LOW, RING_A_HIGH, cValue) * 0.34);
+    circle(mx, my, r * 2 * RING_OUTER);
     noStroke();
-    textSize(11);
+  }
+
+  if (!isTouching && cValue < 0.1 && frameCount % 120 < 60) {
+    fill(200, 200, 200, 40);
+    noStroke();
+    textSize(TIP_SIZE);
     textAlign(CENTER, CENTER);
-    text('HOLD TO SEARCH', width / 2, height / 2 + 28);
+    // Tracking suits an instruction that has to read as the system's voice
+    // rather than as a caption. Ignored by browsers that don't support it.
+    drawingContext.letterSpacing = '0.2em';
+    text('HOLD TO SEARCH', width / 2, height / 2 + 40);
+    drawingContext.letterSpacing = '0px';
   }
 
   updateState();

@@ -119,8 +119,11 @@ if (isTouching && millis() - lastMoveTime > 60) rawSpeed *= 0.90;
 4. drawResidue(c)     触摸残留层
 5. 粒子层 update + draw
 6. 触摸点柔光核
-7. blendMode(BLEND)   切回普通混合，画有边缘的东西（文字）
+7. blendMode(BLEND)   切回普通混合，画有边缘的东西
+8. 触摸圆环（唯一的描边）+ 闲置提示文字
 ```
+
+**为什么圆环单独放在最后、且不在 ADD 之下:** 整幅画面由累积的光构成,没有任何轮廓;圆环是其中唯一一条被"画"出来的线。雾说明聚拢了多少,圆环说明手在哪里——两句不同的话,所以用两种不同的记号。圆环半径随 c 收缩,手越稳,圈越收拢,和墨的动作同向。
 
 **为什么擦除必须在 BLEND 下做:** 加法混合里画黑色等于什么都没画。如果把擦除放进 ADD,
 拖影就永远不会消退,画面会一路累积到全白。
@@ -149,6 +152,10 @@ if (isTouching && millis() - lastMoveTime > 60) rawSpeed *= 0.90;
 | `TRAIL_MAX` | 220 | 残留池上限 |
 | `TRAIL_MIN_D` | 6 | 移动多少像素才落下一个新残留 |
 | `N_PART` | 130 | 粒子数。比旧的点阵版少,因为每个粒子现在是一团宽辉光 |
+| `RING_R_LOW` / `HIGH` | 62 / 24 | 触摸圆环半径,c=0 → c=1(张开搜寻 → 收拢) |
+| `RING_A_LOW` / `HIGH` | 70 / 130 | 圆环描边不透明度 |
+| `RING_OUTER` | 1.9 | 外圈相对内圈的倍数 |
+| `TIP_SIZE` | 16 | "HOLD TO SEARCH" 字号 |
 
 ### 3.2 粒子物理(`Particle.update()`)
 
