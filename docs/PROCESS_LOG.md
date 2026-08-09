@@ -1435,6 +1435,160 @@ The coordinate bug is the more instructive find. It had survived every session b
 
 ---
 
+### 2026-08-07 — A project website, and a cover video that fought every step of the way
+
+**Intention / question**
+
+The work existed as a repository and an installation, with nothing a reader could open and understand from. The aim was a single page — portfolio-facing, bilingual, visual-first — that carries the work, the idea and the process together, published from `/docs` on GitHub Pages.
+
+**Work completed**
+
+- Built `docs/index.html` as one self-contained page: no build step, no webfont, a Chinese/English toggle that swaps `data-lang` on `<html>`, and six numbered sections.
+- Split the written statement into `docs/PROJECT_TEXT.md` / `.zh-CN.md`, correcting two Paglen citations that pointed at the 2026 book for an argument made in the 2016 essay.
+- Recorded a TouchDesigner render for the cover, then spent most of the session getting it to play. In order: self-hosted → YouTube embed → self-hosted again from a 4K re-record; a scrim that darkened only the poster because `.hero-img{z-index:0}` created a stacking context and the `::after` at `z-index:auto` painted *below* a `z-index:1` video; and a generic `video{height:auto}` rule written for figures that silently defeated `object-fit:cover` on the hero.
+- Encoded two cover files after phones showed only the poster: the desktop version is 2160×2430 at H.264 **Level 5.1**, past what phones will decode inline, so `cover-sm.mp4` was cut at 1080×1216 / Level 4.0 / Main.
+- Fixed eight documentation links that resolved outside the published `/docs` and 404'd — invisible in source review, found only by fetching the live page.
+
+**Decision and reason**
+
+Self-hosting beat the YouTube embed. The embed played reliably but arrived wrapped in chrome the page could not remove, and the cover is the first thing the work says; an iframe with a watermark says something else. The cost is that the file has to be encoded twice and the phone case has to be handled explicitly, which is the trade taken here.
+
+The phone file is the one written into the markup as a `<source>`, with wide screens upgraded in script. The environment with the strictest autoplay rules gets the shortest path to a playable source; on a desktop a script failure costs sharpness rather than playback.
+
+**Evidence**
+
+- Live: [yeri10.github.io/Inkward_Bound](https://yeri10.github.io/Inkward_Bound/)
+- Commits: [`4795206`](https://github.com/Yeri10/Inkward_Bound/commit/4795206) site, [`f3a7581`](https://github.com/Yeri10/Inkward_Bound/commit/f3a7581) project text, [`9a7acec`](https://github.com/Yeri10/Inkward_Bound/commit/9a7acec) layout, [`8339e5d`](https://github.com/Yeri10/Inkward_Bound/commit/8339e5d) phone encode, [`b043ae2`](https://github.com/Yeri10/Inkward_Bound/commit/b043ae2) links
+- `docs/media/cover.mp4` (2160×2430, 16MB) and `docs/media/cover-sm.mp4` (1080×1216, 8.1MB)
+
+**Reflection / next step**
+
+Three of the day's bugs — the scrim, the `object-fit` override, and later a section-spacing failure traced to `.wrap{padding:0 var(--gutter)}` zeroing vertical padding while outranking `section` on specificity — were all cases of a rule written for one element quietly reaching another. None were visible in the file being edited. The habit that caught them was fetching the live page rather than re-reading the source. Section 01 still shows a placeholder where the installation recording belongs; that needs footage before it can be closed.
+
+---
+
+### 2026-08-08 — Documentation accuracy pass, and a touch-speed reading that had been doubled since the beginning
+
+**Intention / question**
+
+A review of all six README files for logical clarity, followed by a review of the interface and training code for the same. The question in both cases was not "is this well written" but "would a reader who believed this be wrong".
+
+**Work completed**
+
+- **READMEs.** The directory tree listed `Backup/` and the numbered `.toe` that `.gitignore` excludes, while omitting `docs/index.html`, `docs/media/`, `PROJECT_TEXT`, `comfyui_workflows/` and `bake_transitions.py`. Neither README linked the website. The five interaction states were listed by name with no mapping onto the `state` strings in the JSON sample and no trigger conditions — now a table, alongside the `c` formula. `training/README` explained `--trim` while the command above it ran `--trim-style`; these are opposite operations on the phase axis. The ComfyUI section described the pipeline as 11 keyframes, which is the single-chain validation test — production runs 95 across five chains, verified against the graph JSON.
+- **A doubled speed reading.** `moveTouch()` assigned `prevX` from `touchX` *before* `touchX` was updated, so it lagged by two events while `dt` spanned one. A simulation of a constant-velocity drag returned exactly 2.00× from the second move event onward. Every consequence ran downstream: `stability` pushed toward zero, `agitation` inflated, and the `disturbance` state tripping at half the intended movement rate. Fixed by measuring against `touchX/touchY` and halving `SPEED_MAX` 600 → 300, which reproduces the previous feel exactly and leaves the `speed` field sent to TouchDesigner numerically unchanged.
+- **Repository hygiene.** 608 `node_modules` files, 2.2MB, had been committed before `.gitignore` gained its rule — and an ignore rule has no effect on tracked files. Untracked. Deleted `p5.sound.min.js` (never referenced) and `public/package.json` (did nothing, was being served publicly).
+- **`bake_transitions.py` labelled.** It reads as live pipeline code but implements the per-bridge transition library, one of three candidate forms weighed on 15 July; the full-axis video won. `latent_atlas/transitions_manifest.json` does not exist, so the script never ran to completion. Kept as process evidence, now says so in its docstring and in both README file tables.
+- **`prepare_dataset.py` guarded.** `--trim` and `--trim-style` were resolved by an `if/elif`, so passing both silently applied `--trim` and dropped the temporal axis while the caller believed they were building the v6 dataset. Now an `argparse` mutually exclusive group.
+
+**Decision and reason**
+
+`SPEED_MAX` was halved in the same commit as the speed fix rather than left alone. 600 had been tuned by hand against the inflated figure, so correcting the measurement without correcting the threshold would have made the interface half as sensitive overnight. Fixing both keeps the behaviour identical and leaves a constant that now means what it says: 300 px/s is the movement rate that counts as fully agitated.
+
+The rejected transition script was labelled rather than deleted. A design that was tried and set aside is part of the record of how the final one was chosen; what it could not stay is undeclared.
+
+**Evidence**
+
+- Commits: [`a01868e`](https://github.com/Yeri10/Inkward_Bound/commit/a01868e) READMEs, [`26dbfc8`](https://github.com/Yeri10/Inkward_Bound/commit/26dbfc8) speed fix, [`6731a3e`](https://github.com/Yeri10/Inkward_Bound/commit/6731a3e) node_modules, [`91aeeb3`](https://github.com/Yeri10/Inkward_Bound/commit/91aeeb3) training scripts
+- `InkWard_Bound_Interface/public/sketch.js` — `moveTouch()`, `SPEED_MAX`
+- `training/prepare_dataset.py` — `add_mutually_exclusive_group()`
+
+**Reflection / next step**
+
+Two findings arrived by accident and are worth keeping.
+
+The Chinese `training/README` had drifted four rows behind the English version: v3 still stated the diluted-suffix hypothesis as confirmed fact, v4 omitted the seed-range discovery, v5 omitted that only a minority of seeds succeeded, and v6 omitted the c 0.6 explanation that is the entire reason v7 exists. A Chinese reader was seeing a broken causal chain. The mirrored-file practice guarantees both files exist, not that both are current.
+
+Second, **`measure_ink_coverage.py` is not idempotent**, despite a docstring saying it is safe to re-run. Its first density phrase, `sparse ink traces, mostly clear water`, contains a comma; the script splits captions on `", "`, so that phrase arrives as two fragments while de-duplication compares against the whole string. The old phrase is never removed and a new copy is inserted. Exactly the ten lowest-coverage captions duplicate. Left unfixed by decision — the committed captions are clean and v7 was trained on them — but it will fire on anyone who re-runs the script.
+
+Note for anyone matching old commit references: seven commits were re-authored and force-pushed on this date to correct an author identity, so hashes before `a527244` differ from any earlier citation.
+
+---
+
+### 2026-08-09 — The density field stops moving (part one)
+
+**Intention / question**
+
+The browser field was read by a visitor as "swimming sperm" — a bright head pulling a streak. The question was whether the flow-field metaphor could be kept and tuned, or whether the moving-particle premise was itself the problem.
+
+**Work completed**
+
+- Diagnosed the streak as a ratio rather than a matter of taste. When a particle's per-frame travel is the same order as its own glow radius, the previous frame has not finished fading before the glow has moved off it, and the fading copy reads as a tail. At the old settings that ratio was **0.165**.
+- First attempt kept the flow and slowed it: speed 2.8 → 0.50 px/frame, wider and dimmer glows, larger noise structures, faster wipe. Ratio fell to 0.017 and the tails went.
+- Then replaced the premise entirely, at the artist's direction and against a reference density map: the field is now **fixed** — 85 large soft kernels scattered around 5 cluster centres by gaussian offset, nothing translating at all, full clear each frame.
+- `c` gathers the field without moving any of it, through a rank weight — 0 at a cluster's heart, 1 at its edge. At c=0 the weighting is nearly flat and the field is an even haze; at c=1 it falls off sharply and only the hearts carry light. Node radius 150 → 250px over the same range, so the hearts merge.
+- Touch stopped pushing and started warming: kernels within `HEAT_R` brighten and widen, then cool. The residue trail was deleted — it drew a literal line, which the density language does not have.
+- Added shape variety after an external spec review: four falloff profiles instead of one shared sprite, and per-kernel ellipticity and orientation drifting on low-frequency noise. Stretching and turning are not translation, so the tail ratio stays at zero.
+- Brought back the touch rings, which the density rewrite had replaced with a glow, and gave the idle screen the same pair breathing at the centre with `HOLD TO SEARCH` on them, both on one cosine envelope. The old prompt used `frameCount % 120 < 60` — a jump from full to zero between two frames, a blink rather than a fade.
+
+**Decision and reason**
+
+A generated specification proposed six changes. Three were adopted, three refused, and the reasoning matters more than the count.
+
+Adopted: anisotropy and falloff variety, because they improve the image without moving anything. Edge noise was accepted in principle but only as pre-baked sprite variants — perturbing alpha per pixel per frame across 85 kernels of that size is 2.6 G pixels/second, and heavy overlap dilutes single-kernel edge detail by a factor of 7 to 20 anyway.
+
+Refused: rebuilding a two-layer trajectory, which reintroduces the line just deleted; removing the touch rings, which the spec called debug graphics and which are in fact the one drawn mark in an image otherwise made of accumulated light; and state-driven positional convergence. The last is technically safe — 18 seconds across 400px is a ratio of 0.0025, and even the 1.4-second dispersal only reaches 0.032 — but it reintroduces motion against an explicit decision, so it is a choice, not a fix.
+
+Worth naming: the spec and the reference image pull in opposite directions. The reference is smooth, isotropic and mathematical; the spec argues for anisotropy, capillary edges and avoiding the "mathematically perfect circle". Both cannot be maximised, and the two adopted items were chosen because they are the only ones that improve either reading.
+
+**Evidence**
+
+- Commits: [`5eb330a`](https://github.com/Yeri10/Inkward_Bound/commit/5eb330a) rings, [`8a3df54`](https://github.com/Yeri10/Inkward_Bound/commit/8a3df54) idle beacon; the still-field rewrite is uncommitted pending on-device review
+- `InkWard_Bound_Interface/public/sketch.js` — `buildField()`, `drawField()`, the `DENSITY FIELD` and `SHAPE VARIETY` constant blocks
+- Tail ratio: 0.165 (moving particles) → 0.017 (slowed flow) → 0 (static field)
+
+**Reflection / next step**
+
+The useful outcome is not the look but the criterion. "Does it streak" is now a number that can be checked before writing the code — per-frame travel over glow radius, safe below about 0.05 — which is what let the state-driven convergence proposal be answered with 0.0025 rather than an opinion. That test is recorded in the handover document so it survives the next rewrite.
+
+Still open: the field has only been seen on a laptop. Additive light behaves very differently on a bright tablet panel, and `NODE_A_LOW` / `NODE_A_HIGH` should be set on the iPad at exhibition brightness rather than at the desk. Cluster centres are also re-randomised on every page load; if a particular arrangement is wanted for the exhibition it needs a fixed seed.
+
+The three refused proposals did not stay refused — see part two, later the same day.
+
+---
+
+### 2026-08-09 — Part two: the rest of the specification, and two amplitudes that were quietly a fraction of what they claimed
+
+**Intention / question**
+
+Having refused three of the six proposals in the generated specification on the grounds that they contradicted decisions already made, the artist asked for all of them. This entry records what implementing them actually required, which was mostly not what the specification described.
+
+**Work completed**
+
+- **Sum-of-gaussians sprites.** The specification asked for the field to be built from several kernels rather than one; it already was, from eighty-five. The real gap was that each *individual* blob was a single radial gradient — monotonic, so however many overlapped, every blob was internally smooth. Each sprite is now 4–8 offset sub-kernels of differing size and weight, composited additively. Baked into the texture: drawing six sub-kernels per node live is 510 `image()` calls a frame and, at c = 1 where the field overlaps twenty deep, 3.7 G pixels a second.
+- **Peak normalisation.** Normalising the sub-kernels by their weight sum left each sprite peaking between 0.53 and 0.75, because offset kernels never all contribute at one point — a third darker than the single gradient they replaced, and unevenly so between variants. Rescaled on the measured maximum instead.
+- **Frayed edges.** Perturbing alpha per pixel per frame across eighty-five kernels of that size is 2.6 G pixels a second. Built once as six cached alpha masks and applied with a single `destination-in` composite per re-tint.
+- **Motion, reintroduced deliberately.** Slow drift while searching, convergence toward an attractor as c rises, growth and fade on release. Every one was checked against the streak ratio before it was written: 0.0017 condensing, 0.0004 drifting, 0.037 dispersing.
+- **Two-layer trail.** Head at 34px / alpha 105; residue dropped at 44px / 62 and ending its 1.6s life at 200px / alpha 2. Growth and exponential decay are given separately so that what is disappearing looks like it is spreading and thinning rather than merely being turned down.
+- **Touch mark.** The rings were removed for an irregular patch of three offset frayed sprites, then — at the artist's request — restored *outside* it at 1.55× its radius, so the two marks divide the work: the patch is material and says how much has gathered, the ring is the one drawn line on the screen and says where the hand is.
+- **Per-node opacity.** Every node had shared one base alpha, so the only fixed thing varying between them was width; the field read as one substance cut to different sizes. Size and opacity are now independent axes, spread from 1.3× to 19×.
+
+**Decision and reason**
+
+Three things had to be baked rather than computed — the composite sprites, the edge masks, and the tint itself, which is now quantised to 32 steps of c and so rebuilds 31 times across an 18-second hold instead of 1080. The pattern is worth naming: **anything that varies per-pixel but not per-frame belongs in a texture**. Every one of these proposals was affordable only once that was recognised, and each would have been rejected as too expensive if implemented the way it was described.
+
+The dispersal case is the one where the specification had to be contradicted to be honoured. It asks for the field to approach zero within 1.5s. Flying the positions home in that time gives a ratio of 0.149 — the streak returns immediately. Assigning the fast part to radius and opacity while positions ease home at their usual rate produces the same read at 0.037, because the alpha has gone before anyone can see the positions still travelling.
+
+**Evidence**
+
+- `InkWard_Bound_Interface/public/sketch.js` — `buildTexSpecs()`, `buildEdgeMasks()`, `paintGlowTex()`, `drawField()`, `drawTrail()`, `drawMark()`, `drawRings()`
+- `InkWard_Bound_Interface/INTERFACE_CONTEXT.md` — §3.0 rewritten around the ratio test, §3.3b-2 to -4 added
+- Ratios: condensing 0.0017 · drifting 0.0004 · dispersing 0.037 · (dispersal by flight, rejected: 0.149)
+
+**Reflection / next step**
+
+Two amplitudes turned out to be a fraction of what their constants claimed, and both were only found by asking why something invisible was invisible.
+
+The first is arithmetic that applies to any layered field. **N overlapping layers each wavering by ±A sum to a wobble of only ±A/√N.** A per-node twinkle of ±15% is ±3% once the field is twenty deep — which is why the first attempt at making the field flicker produced no visible change at all. Correlated variation is not diluted this way, so the flicker was moved up a level: nodes of the same cluster now share a lane, and whole hot spots brighten and dim together. The same reasoning explains, in retrospect, why the frayed edges are barely visible in the interior of the field and only read at its outer boundary — the identical dilution, noticed a day earlier as an aside and not connected to anything until it explained a bug.
+
+The second is narrower but worth writing down: **p5's `noise()` stacks four octaves and almost never reaches 0 or 1**, sitting around 0.3–0.7 in practice. A raw `(noise - 0.5) * 2` therefore delivers about 40% of the amplitude the constant appears to name. Every noise-driven amplitude in the file is now stretched and clamped so the constants mean what they say.
+
+Both belong to the same class of mistake: a number that is correct in the expression and wrong on the screen, where nothing errors and the only symptom is that a feature seems not to have been implemented. Worth checking amplitude empirically rather than trusting the coefficient, particularly where several things multiply.
+
+Still open, unchanged from part one: the field has only been seen on a laptop, and the cluster centres re-randomise on every load.
+
+---
+
 ## Current verification checklist
 
 The repository confirms the code and version history. The full-system test has now been carried out and every item below is verified:
