@@ -32,6 +32,10 @@ The work does not decide whether gathering means repair, or whether dispersal me
 
 **Entry point | The phenomenon: consciousness leaking outward** — when the temporal becoming of consciousness is taken over by AI.
 
+Consciousness comes into being in time — it has succession, it unfolds, its moments interpenetrate and cannot be counted off one by one. When that coming-into-being is taken over by AI it is spatialised: interpenetration becomes mutual externality. **Things can be counted only because they lie outside one another.** Bergson's diagnosis holds here, but his remedy has no counterpart, because this spatialisation is carried out by a technical system outside consciousness and cannot be undone by reflection. The operation performing it is datafication — a continuous flow cut into elements that can be stored, recombined and retrieved. This is not a first occurrence: writing, print, machinery, recording and the digital are the same operation at different depths. What is particular to AI is that **what it takes is protention, not memory** — it completes what comes next on the visitor's behalf, and the present loses its thickness. This is neither damage nor liberation: datafication is what makes new becoming possible and what thins the present, and those are one event. After the flattening, experience falls into latent space — the computational space that exists inside the model and cannot be seen from outside, where it becomes vectors that lie outside one another: coordinates, positions, addresses at which things can be found. One thing does not fall in: a knowing that holds only while an action is being performed, which has no form in which it could be stored. That is why the work has to be made by a body, and it is not a claim that the body is the remedy.
+
+*The above is the whole chain compressed; the sections below take it apart. The premise — that no outcome is assumed — frames the chain and is listed last without taking a place in its order.*
+
 ### 3.1 What consciousness is to begin with
 
 Consciousness comes into being in time — duration, retention, protention.
