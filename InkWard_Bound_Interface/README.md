@@ -94,9 +94,3 @@ InkWard_Bound_Interface/
 
 `p5.js` is vendored rather than loaded from a CDN because the exhibition
 machine runs offline.
-
-## Related documents
-
-- [Project README](../README.md) — what the whole work is about
-- [`docs/PROJECT_TEXT.md`](../docs/PROJECT_TEXT.md) — the written statement
-- [`docs/PROCESS_LOG.md`](../docs/PROCESS_LOG.md) — dated development log

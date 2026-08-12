@@ -89,9 +89,3 @@ InkWard_Bound_Interface/
 ```
 
 `p5.js` 直接放在仓库里而非从 CDN 加载,因为展览现场不联网。
-
-## 相关文档
-
-- [项目主 README](../README.zh-CN.md) —— 整件作品在说什么
-- [`docs/PROJECT_TEXT.zh-CN.md`](../docs/PROJECT_TEXT.zh-CN.md) —— 书面陈述
-- [`docs/PROCESS_LOG.zh-CN.md`](../docs/PROCESS_LOG.zh-CN.md) —— 按日期的开发日志
