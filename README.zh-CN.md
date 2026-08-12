@@ -7,14 +7,12 @@
 对应物,因为这次空间化由技术系统在意识之外执行,不能靠反省取消。执行它的操作是数据化;
 而模型的特殊之处不在于它拿走记忆,在于它落在**前摄**一端——它替你完成"接下来是什么",
 当下因此变薄。有一样东西没有被摊平:一种只在行动正在发生时成立的知,它没有可存放的形式。
-这解释了作品为何必须被身体做出来,而不主张身体是解药。完整论证见
-[docs/PROJECT_TEXT.zh-CN.md](docs/PROJECT_TEXT.zh-CN.md)。
+这解释了作品为何必须被身体做出来,而不主张身体是解药。
 
 Inkward Bound 是一个将浏览器触摸界面与 TouchDesigner 连接起来的交互装置,触摸驱动的是一套经过训练的墨水扩散视觉系统。浏览器将触摸和指针行为转换为一个收敛值(`c` 值),Node.js WebSocket 中继服务器再将其发送至 TouchDesigner,由其实时播放一段潜扩散视频——由一个在 101 张真实墨水入水照片上训练出的 LoRA 生成——在离散与凝结两种状态之间移动。
 
 - [项目网站](https://yeri10.github.io/Inkward_Bound/) —— 作品、理念与过程的完整呈现
 - [在线浏览器界面](https://inkward-bound.onrender.com) —— 触摸界面本身
-- [项目文本](docs/PROJECT_TEXT.zh-CN.md) —— 书面陈述
 - [开发流程日志](docs/PROCESS_LOG.zh-CN.md) —— 按日期把决策与提交关联起来
 - [Dataset 拍摄与制作日志](ink_dataset/DATASET_CAPTURE_LOG.zh-CN.md)
 - [LoRA 训练管线与版本迭代记录](training/README.zh-CN.md)
@@ -175,7 +173,6 @@ Inkward_Bound/
     ├── index.html                  # 发布于 yeri10.github.io/Inkward_Bound
     ├── media/                      # 网页尺寸的视频
     ├── images/                     # 过程草图、模型与截图
-    ├── PROJECT_TEXT.zh-CN.md
     └── PROCESS_LOG.zh-CN.md
 ```
 
