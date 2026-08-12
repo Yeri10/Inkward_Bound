@@ -80,9 +80,6 @@ While a hand is down there is no drawn line anywhere on the screen. The rings
 belong to the idle state — what the work shows while it waits to be touched,
 gone the moment it is answered.
 
-Full parameter reference and the reasoning behind each choice:
-[`InkWard_Bound_Interface/INTERFACE_CONTEXT.md`](InkWard_Bound_Interface/INTERFACE_CONTEXT.md).
-
 ## How to run
 
 The system has two parts: the browser touch interface (input) and the TouchDesigner file (visual output), connected through a WebSocket relay. There are two ways to run it.
@@ -152,7 +149,7 @@ The interface sends JSON messages at interaction events and approximately 30 fra
 }
 ```
 
-The field names are a contract with the TouchDesigner patch — renaming one silently breaks the installation. See [`InkWard_Bound_Interface/INTERFACE_CONTEXT.md`](InkWard_Bound_Interface/INTERFACE_CONTEXT.md) for what else is safe to change.
+The field names are a contract with the TouchDesigner patch — renaming one silently breaks the installation.
 
 ## LoRA training
 
@@ -169,9 +166,8 @@ Inkward_Bound/
 ├── InWard Bound System/
 │   └── InWard Bound System.toe     # Current TouchDesigner file
 │                                   # (numbered incremental saves are gitignored)
-├── InkWard_Bound_Interface/
+├── InkWard_Bound_Interface/         # (see its README)
 │   ├── app.js                      # Express server and WebSocket relay
-│   ├── INTERFACE_CONTEXT.md        # What is safe to rewrite, what breaks the installation
 │   ├── package.json
 │   └── public/
 │       ├── index.html

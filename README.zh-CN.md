@@ -66,9 +66,6 @@ p5 的 `noise()` 叠了四个倍频、数值大多落在 0.3–0.7,直接写 `(n
 手按下之后,画面上不存在任何画出来的线。**圆环属于待机状态**——那是作品在等待被触碰时
 显示的东西,一被回应就消失。
 
-完整参数表和每个选择背后的理由:
-[`InkWard_Bound_Interface/INTERFACE_CONTEXT.md`](InkWard_Bound_Interface/INTERFACE_CONTEXT.md)。
-
 ## 如何运行
 
 系统由两部分组成:浏览器触摸界面(输入)和 TouchDesigner 文件(视觉输出),二者通过 WebSocket 中继连接。有两种运行方式。
@@ -138,7 +135,7 @@ HTTP 服务和 WebSocket 中继共用同一个端口,所以界面和 TouchDesign
 }
 ```
 
-这些字段名是与 TouchDesigner 工程之间的契约,改掉任何一个都会让装置无声地失效。哪些部分可以放心重写、哪些不能,见 [`InkWard_Bound_Interface/INTERFACE_CONTEXT.md`](InkWard_Bound_Interface/INTERFACE_CONTEXT.md)。
+这些字段名是与 TouchDesigner 工程之间的契约,改掉任何一个都会让装置无声地失效。
 
 ## LoRA 训练
 
@@ -155,9 +152,8 @@ Inkward_Bound/
 ├── InWard Bound System/
 │   └── InWard Bound System.toe     # 当前 TouchDesigner 文件
 │                                   #（编号递增的存档已被 gitignore）
-├── InkWard_Bound_Interface/
+├── InkWard_Bound_Interface/         # （见其 README）
 │   ├── app.js                      # Express 服务与 WebSocket 中继
-│   ├── INTERFACE_CONTEXT.md        # 哪些部分可以重写，哪些会让装置失效
 │   ├── package.json
 │   └── public/
 │       ├── index.html
