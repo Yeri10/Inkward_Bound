@@ -9,9 +9,7 @@ LoRA-generated ink-diffusion video between dispersed and condensed states.
 
 The canvas is not a controller with a readout on it. It runs the same
 dispersed-to-condensed process the projection does, in its own material — a
-density field of large, soft, unevenly bright nodes. See ["The browser
-canvas"](../README.md#the-browser-canvas) in the project README for the
-concept and its argument.
+density field of large, soft, unevenly bright nodes.
 
 ## Architecture
 
