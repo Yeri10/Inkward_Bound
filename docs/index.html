@@ -611,16 +611,16 @@
     <tr><td>1</td><td>Filming → frames</td><td>The flow is cut into single frames</td></tr>
     <tr><td>2</td><td>Grouping and captioning</td><td>States are named as categories</td></tr>
     <tr><td>3</td><td>LoRA training</td><td>Ink becomes a distribution of features</td></tr>
-    <tr><td>4</td><td>Latent-space mapping</td><td>Each state acquires a coordinate</td></tr>
-    <tr><td>5</td><td>Multi-seed generation + interpolation</td><td>Retrievable; continuity stitched back on</td></tr>
+    <tr><td>4</td><td>Latent-space mapping (the c axis)</td><td>Each state acquires a coordinate</td></tr>
+    <tr><td>5</td><td>Multi-seed generation + interpolation (along the c axis)</td><td>Retrievable; continuity stitched back on</td></tr>
   </table>
   <table class="steps zh">
     <tr><th></th><th>操作</th><th>墨发生了什么</th></tr>
     <tr><td>1</td><td>拍摄 → 切帧</td><td>流动被切成一格一格</td></tr>
     <tr><td>2</td><td>分组与标注</td><td>状态被命名为类别</td></tr>
     <tr><td>3</td><td>LoRA 训练</td><td>墨成为特征分布</td></tr>
-    <tr><td>4</td><td>潜空间映射</td><td>每个状态有了坐标</td></tr>
-    <tr><td>5</td><td>多 seed 生成 + 插帧</td><td>可检索;连续性被缝回</td></tr>
+    <tr><td>4</td><td>潜空间映射(c 轴)</td><td>每个状态有了坐标</td></tr>
+    <tr><td>5</td><td>多 seed 生成 + 插帧(沿 c 轴)</td><td>可检索;连续性被缝回</td></tr>
   </table>
 
   <div class="en" style="margin-top:2.2rem">
@@ -655,19 +655,18 @@
       named bins, each with its own caption, and the video interpolates between
       them.</p>
     <table class="steps en">
-      <tr><th>c</th><th>Bin</th><th>What appears</th></tr>
-      <tr><td>0.0</td><td>Autonomous diffusion</td><td>A solid opaque black ink blob with a lobed edge, curved gray washes spreading outward layer by layer — seen from above</td></tr>
-      <tr><td>0.2</td><td>Settling</td><td>A dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers</td></tr>
-      <tr><td>0.4</td><td>Human disturbance</td><td>Dense gray fog of churned ink filling the frame, forms dissolving into soft mist</td></tr>
-      <tr><td>0.5</td><td>Fog deepening</td><td>Thicker, darker fog covering most of the frame, only small pale openings remaining</td></tr>
-      <tr><td>0.6</td><td>Latent search</td><td>Broken strands dissolved into countless tiny particles — a hazy grain fog everywhere</td></tr>
-      <tr><td>0.7</td><td>Fog receding</td><td>The fog thinning and clearing, dark strands emerging, beginning to gather toward the centre</td></tr>
-      <tr><td>0.8</td><td>Convergence</td><td>Delicate looping ink threads spiralling inward, drawn into a solid dark mass</td></tr>
-      <tr><td>1.0</td><td>Temporary return</td><td>A dense settled black mound at the bottom, a single twisting tendril column above it, clear water around</td></tr>
+      <tr><th>c</th><th>label</th><th>viewpoint</th><th>What appears</th></tr>
+      <tr><td>0.0</td><td><code>autonomous_diffusion</code></td><td>top-down</td><td>A solid opaque black ink blob with a lobed edge, curved gray washes spreading outward layer by layer</td></tr>
+      <tr><td>0.2</td><td><code>early_search</code></td><td>side</td><td>A dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers</td></tr>
+      <tr><td>0.4</td><td><code>human_disturbance</code></td><td>side</td><td>Dense gray fog of churned ink filling the frame, forms dissolving into soft mist</td></tr>
+      <tr><td>0.5</td><td><code>fog_deepening</code></td><td>side</td><td>Thicker, darker fog covering most of the frame, only small pale openings remaining</td></tr>
+      <tr><td>0.6</td><td><code>latent_search</code></td><td>side</td><td>Broken strands dissolved into countless tiny particles — a hazy grain fog everywhere</td></tr>
+      <tr><td>0.7</td><td><code>fog_receding</code></td><td>side</td><td>The fog thinning and clearing, dark strands emerging, beginning to gather toward the centre</td></tr>
+      <tr><td>0.8</td><td><code>convergence</code></td><td>side</td><td>Delicate looping ink threads spiralling inward, drawn into a solid dark mass</td></tr>
+      <tr><td>1.0</td><td><code>temporary_return</code></td><td>side</td><td>A dense settled black mound at the bottom, a single twisting tendril column above it, clear water around</td></tr>
     </table>
-    <p class="dim">Only c = 0 is top-down; the other seven are side view.
-      c = 0.6 is the granular-fog stage — the same one the LoRA was retrained
-      seven times to reach.</p>
+    <p class="dim">c = 0.6 is the granular-fog stage — the same one the LoRA
+      was retrained seven times to reach.</p>
   </div>
 
   <div class="zh" style="margin-top:3rem">
@@ -675,18 +674,17 @@
       0 到 1 之间的 c 值。这条轴不是一根穿过任意形状的滑杆,而是被预先构造成
       八个带各自 caption 的分箱,视频在它们之间插帧。</p>
     <table class="steps zh">
-      <tr><th>c</th><th>分箱</th><th>画面</th></tr>
-      <tr><td>0.0</td><td>自主扩散</td><td>一团带凹凸边缘的实心黑墨,四周是弯曲流动的灰墨晕层层向外铺开——俯拍</td></tr>
-      <tr><td>0.2</td><td>沉降</td><td>水面一层致密墨盖挂着液滴边,半透明墨帘和悬丝分层下沉</td></tr>
-      <tr><td>0.4</td><td>人为扰动</td><td>搅动而起的浓灰色墨雾占满画面,形被溶进雾里</td></tr>
-      <tr><td>0.5</td><td>雾层加深</td><td>更厚更黑的墨雾覆盖大部分画面,只留少数明亮空隙</td></tr>
-      <tr><td>0.6</td><td>潜空间搜索</td><td>墨丝被打散成无数细颗粒——均匀的雾中细粒纹理充满全帧</td></tr>
-      <tr><td>0.7</td><td>雾层消退</td><td>灰雾变薄消退,黑墨丝从消散的雾中显现,开始朝中心聚拢</td></tr>
-      <tr><td>0.8</td><td>汇聚</td><td>细腻环绕的墨丝盘旋着向内,被拉入一个实心暗块</td></tr>
-      <tr><td>1.0</td><td>暂时回归</td><td>底部一堆致密沉降的黑墨,上方一根扭曲的柱状拖丝,四周清水</td></tr>
+      <tr><th>c</th><th>label</th><th>视角</th><th>画面</th></tr>
+      <tr><td>0.0</td><td><code>autonomous_diffusion</code></td><td>俯拍</td><td>一团带凹凸边缘的实心黑墨,四周是弯曲流动的灰墨晕层层向外铺开</td></tr>
+      <tr><td>0.2</td><td><code>early_search</code></td><td>侧视</td><td>水面一层致密墨盖挂着液滴边,半透明墨帘和悬丝分层下沉</td></tr>
+      <tr><td>0.4</td><td><code>human_disturbance</code></td><td>侧视</td><td>搅动而起的浓灰色墨雾占满画面,形被溶进雾里</td></tr>
+      <tr><td>0.5</td><td><code>fog_deepening</code></td><td>侧视</td><td>更厚更黑的墨雾覆盖大部分画面,只留少数明亮空隙</td></tr>
+      <tr><td>0.6</td><td><code>latent_search</code></td><td>侧视</td><td>墨丝被打散成无数细颗粒——均匀的雾中细粒纹理充满全帧</td></tr>
+      <tr><td>0.7</td><td><code>fog_receding</code></td><td>侧视</td><td>灰雾变薄消退,黑墨丝从消散的雾中显现,开始朝中心聚拢</td></tr>
+      <tr><td>0.8</td><td><code>convergence</code></td><td>侧视</td><td>细腻环绕的墨丝盘旋着向内,被拉入一个实心暗块</td></tr>
+      <tr><td>1.0</td><td><code>temporary_return</code></td><td>侧视</td><td>底部一堆致密沉降的黑墨,上方一根扭曲的柱状拖丝,四周清水</td></tr>
     </table>
-    <p class="dim">只有 c = 0 是俯拍,其余七档都是侧视。c = 0.6 是"细颗粒雾"那一档
-      ——LoRA 前后重训七次要到达的正是它。</p>
+    <p class="dim">c = 0.6 是"细颗粒雾"那一档——LoRA 前后重训七次要到达的正是它。</p>
   </div>
 </section>
 
