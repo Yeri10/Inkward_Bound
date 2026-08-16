@@ -647,6 +647,47 @@
       作品反而自相矛盾。
     </p>
   </div>
+
+  <div class="en" style="margin-top:3rem">
+    <p><strong>The eight c bins the video is scrubbed between.</strong> Each
+      moment the visitor sees corresponds to a c value between 0 and 1. The axis
+      is not a slider through arbitrary shapes — it was pre-composed as eight
+      named bins, each with its own caption, and the video interpolates between
+      them.</p>
+    <table class="steps en">
+      <tr><th>c</th><th>Bin</th><th>What appears</th></tr>
+      <tr><td>0.0</td><td>Autonomous diffusion</td><td>A solid opaque black ink blob with a lobed edge, curved gray washes spreading outward layer by layer — seen from above</td></tr>
+      <tr><td>0.2</td><td>Settling</td><td>A dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers</td></tr>
+      <tr><td>0.4</td><td>Human disturbance</td><td>Dense gray fog of churned ink filling the frame, forms dissolving into soft mist</td></tr>
+      <tr><td>0.5</td><td>Fog deepening</td><td>Thicker, darker fog covering most of the frame, only small pale openings remaining</td></tr>
+      <tr><td>0.6</td><td>Latent search</td><td>Broken strands dissolved into countless tiny particles — a hazy grain fog everywhere</td></tr>
+      <tr><td>0.7</td><td>Fog receding</td><td>The fog thinning and clearing, dark strands emerging, beginning to gather toward the centre</td></tr>
+      <tr><td>0.8</td><td>Convergence</td><td>Delicate looping ink threads spiralling inward, drawn into a solid dark mass</td></tr>
+      <tr><td>1.0</td><td>Temporary return</td><td>A dense settled black mound at the bottom, a single twisting tendril column above it, clear water around</td></tr>
+    </table>
+    <p class="dim">Only c = 0 is top-down; the other seven are side view.
+      c = 0.6 is the granular-fog stage — the same one the LoRA was retrained
+      seven times to reach.</p>
+  </div>
+
+  <div class="zh" style="margin-top:3rem">
+    <p><strong>视频在其间擦动的八档 c 值。</strong>观众看到的每一刻都对应一个
+      0 到 1 之间的 c 值。这条轴不是一根穿过任意形状的滑杆,而是被预先构造成
+      八个带各自 caption 的分箱,视频在它们之间插帧。</p>
+    <table class="steps zh">
+      <tr><th>c</th><th>分箱</th><th>画面</th></tr>
+      <tr><td>0.0</td><td>自主扩散</td><td>一团带凹凸边缘的实心黑墨,四周是弯曲流动的灰墨晕层层向外铺开——俯拍</td></tr>
+      <tr><td>0.2</td><td>沉降</td><td>水面一层致密墨盖挂着液滴边,半透明墨帘和悬丝分层下沉</td></tr>
+      <tr><td>0.4</td><td>人为扰动</td><td>搅动而起的浓灰色墨雾占满画面,形被溶进雾里</td></tr>
+      <tr><td>0.5</td><td>雾层加深</td><td>更厚更黑的墨雾覆盖大部分画面,只留少数明亮空隙</td></tr>
+      <tr><td>0.6</td><td>潜空间搜索</td><td>墨丝被打散成无数细颗粒——均匀的雾中细粒纹理充满全帧</td></tr>
+      <tr><td>0.7</td><td>雾层消退</td><td>灰雾变薄消退,黑墨丝从消散的雾中显现,开始朝中心聚拢</td></tr>
+      <tr><td>0.8</td><td>汇聚</td><td>细腻环绕的墨丝盘旋着向内,被拉入一个实心暗块</td></tr>
+      <tr><td>1.0</td><td>暂时回归</td><td>底部一堆致密沉降的黑墨,上方一根扭曲的柱状拖丝,四周清水</td></tr>
+    </table>
+    <p class="dim">只有 c = 0 是俯拍,其余七档都是侧视。c = 0.6 是"细颗粒雾"那一档
+      ——LoRA 前后重训七次要到达的正是它。</p>
+  </div>
 </section>
 
 <section class="wide r">
