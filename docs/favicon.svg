@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <!-- The ink adapts to the browser tab's colour scheme: warm off-white on
        dark tabs, near-black on light ones. Colours match the site palette
-       (--ink #000, --paper #f2f2f0). -->
+       (ink #000, paper #f2f2f0). -->
   <style>
     .ink { fill: #0a0a0a }
     @media (prefers-color-scheme: dark) { .ink { fill: #f2f2f0 } }
