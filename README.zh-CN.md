@@ -68,7 +68,7 @@ p5 的 `noise()` 叠了四个倍频、数值大多落在 0.3–0.7,直接写 `(n
 界面无需任何安装。
 
 1. 打开在线浏览器界面:[https://inkward-bound.onrender.com](https://inkward-bound.onrender.com),按 `F` 进入全屏。(Render 免费实例闲置时会休眠,首次加载可能需要约一分钟。)
-2. 下载或克隆本仓库,用 TouchDesigner 打开 `InWard Bound System/InWard Bound System.toe`。
+2. 下载或克隆本仓库,用 TouchDesigner 打开 `InWard Bound System/InWard Bound System.toe`。五段轴向视频不在仓库里,而是作为 [release 资源](https://github.com/Yeri10/Inkward_Bound/releases/latest)分发——打开工程前先把 `axis-videos.zip` 解压到 `InWard Bound System/Movie/`。(其中一段已作为样例提交进仓库,所以工程无论如何都能打开;另外四段在压缩包就位后才会解析到。)
 3. 在 TouchDesigner 的 WebSocket DAT(`ws_touch_input`)中,Network Address 设为 `inkward-bound.onrender.com`,Network Port 设为 `443`,并启用 TLS/安全连接。
 4. 在浏览器画布上按住并移动,`touch_store` 中的数值应实时更新。
 

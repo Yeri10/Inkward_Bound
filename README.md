@@ -77,7 +77,7 @@ The system has two parts: the browser touch interface (input) and the TouchDesig
 No installation needed for the interface.
 
 1. Open the live browser interface: [https://inkward-bound.onrender.com](https://inkward-bound.onrender.com). Press `F` for fullscreen. (The free Render instance sleeps when idle; the first load may take up to a minute.)
-2. Download or clone this repository, then open `InWard Bound System/InWard Bound System.toe` in TouchDesigner.
+2. Download or clone this repository, then open `InWard Bound System/InWard Bound System.toe` in TouchDesigner. The five axis videos are a [release asset](https://github.com/Yeri10/Inkward_Bound/releases/latest) rather than repository files — unzip `axis-videos.zip` into `InWard Bound System/Movie/` before opening the project. (One of the five is committed as a sample, so the patch opens either way; the other four resolve once the archive is in place.)
 3. In the TouchDesigner WebSocket DAT (`ws_touch_input`), set network address `inkward-bound.onrender.com`, port `443`, and enable TLS/secure connection.
 4. Touch and hold on the browser canvas; the values in `touch_store` should update in real time.
 
