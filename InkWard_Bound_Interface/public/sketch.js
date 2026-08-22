@@ -193,7 +193,7 @@ const RING_OUTER   = 1.45;         // outer ring, as a multiple of the inner
 // can be said.
 const TWINKLE_AMT  = 0.75;         // depth at full stillness (0 = off)
 const TWINKLE_SPD  = 0.035;        // noise step per frame — reads as scintillation
-const TIP_SIZE     = 11;           // "HOLD TO SEARCH" type size
+const TIP_SIZE     = 15;           // "MOVE OR HOLD TO EXPLORE" type size
 // Idle beacon, shown before the first touch — the same mark, breathing.
 const IDLE_PERIOD  = 210;          // frames per breath (~3.5s at 60fps)
 const IDLE_R_LOW   = 22;           // patch radius at the bottom of the breath
@@ -743,7 +743,7 @@ function draw() {
     // Tracking suits an instruction that has to read as the system's voice
     // rather than as a caption. Ignored by browsers that don't support it.
     drawingContext.letterSpacing = '0.2em';
-    text('HOLD TO SEARCH', width / 2, height / 2);
+    text('MOVE OR HOLD TO EXPLORE', width / 2, height / 2);
     drawingContext.letterSpacing = '0px';
   }
 
