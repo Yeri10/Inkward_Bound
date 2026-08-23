@@ -39,34 +39,38 @@ Press `F` to enter or leave fullscreen mode.
 
 ## The browser canvas
 
-The canvas is not a controller with a readout on it. It runs the same
-dispersed-to-condensed process the projection does, in its own material: a
-**density field** of large, soft, unevenly bright nodes clustered into a few
-hot spots, drawn additively so that brightness comes from how much overlaps
-where, never from a drawn shape. `c` gathers it by weighting the cluster
-hearts up and their edges out, while the nodes themselves drift, converge and
-disperse far more slowly than they appear to.
+The browser canvas is not a controller that displays numerical feedback.
+Instead, it follows the same visual logic as the projection, moving between
+**diffused, disturbed, and condensed states**.
 
-One number governs everything that moves on it. **A glow that travels close to
-its own radius in a frame drags a fading copy of itself behind it, and that
-copy reads as a tail** — the earlier flow-field version measured 0.165 on that
-ratio and was described by a visitor as swimming sperm. Every motion is now
-checked against it before being written: 0.0017 condensing, 0.0004 drifting,
-0.037 dispersing, against a limit of about 0.05. It is also why release is
-carried by growth and fading rather than by flight; sending the nodes home in
-1.4 seconds measures 0.149 and brings the tail straight back.
+The image is made from large, soft nodes with different levels of brightness.
+These nodes overlap to form brighter areas, and the brightness depends on how
+much they overlap. As the state changes, the nodes slowly drift, gather, or
+spread, creating a movement that is closer to the natural diffusion and
+condensation of ink.
 
-Two amplitudes behaved as a fraction of what their coefficients said, and both
-are the sort that produce no error and no symptom except a feature seeming not
-to have been implemented. **N overlapping layers each wavering by ±A sum to a
-wobble of only ±A/√N**, so a per-node flicker of ±15% is ±3% once the field is
-twenty deep — flicker is therefore correlated per cluster, which is not diluted
-that way. And p5's `noise()` stacks four octaves and sits around 0.3–0.7, so a
-raw `(noise − 0.5) × 2` delivers about 40% of the amplitude it appears to name.
+Different movement ratios are used to control the speed of each state:
 
-While a hand is down there is no drawn line anywhere on the screen. The rings
-belong to the idle state — what the work shows while it waits to be touched,
-gone the moment it is answered.
+| State | Ratio |
+|---|---|
+| Condensed | 0.0017 |
+| Drift | 0.0004 |
+| Diffused | 0.037 |
+| Maximum | about 0.05 |
+
+In early tests, the movement was faster and created strong trails, which made
+the nodes look like objects swimming across the screen. In the final version,
+the movement was slowed down. The nodes now change mainly through **growing,
+fading, gathering, and spreading**, rather than quickly moving from one
+position to another.
+
+The brightness of the nodes also changes slightly over time. Nodes within the
+same cluster change together, helping the image remain soft and stable while
+still creating a sense of slow movement.
+
+The canvas does not show touch lines or numerical information. When there is no
+touch, a circular ring shows that the system is waiting for interaction. Once a
+touch is received, the ring disappears.
 
 ## How to run
 
