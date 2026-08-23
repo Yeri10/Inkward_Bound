@@ -226,6 +226,10 @@
      narrower centred measure and reads as a plate rather than a banner. */
   .portrait{max-width:33rem;margin-left:auto;margin-right:auto}
   .portrait figcaption{margin-left:auto;margin-right:auto}
+  /* A tall frame beside a wide one. The wide column gets the larger share
+     because it carries a node graph whose labels have to stay readable, and
+     the two are centred against each other since their heights cannot match. */
+  .pair-uneven{display:grid;grid-template-columns:1fr 1.55fr;gap:2.2rem;align-items:center}
   .frame{border:1px solid var(--rule)}
 
   /* A section number with no subtitle under it (01) takes the spacing the
@@ -319,6 +323,7 @@
     /* Below this the chain would be a column of two-word lines, so it goes
        under the render instead. */
     .beside{grid-template-columns:1fr;gap:2rem}
+    .pair-uneven{grid-template-columns:1fr;gap:2.4rem}
     .sheets{grid-template-columns:repeat(2,1fr);gap:1.2rem}
     section{padding:9.5rem 0 5rem}
   }
@@ -718,11 +723,21 @@
     <figcaption class="zh">召回测试用于检验 caption 中描述的视觉特征,是否能够通过生成过程被稳定地重新调用。</figcaption>
   </figure>
 
-  <figure class="bleed portrait">
-    <img loading="lazy" src="media/particle-layer.jpg" alt="Ink with a fine particle layer composited over it in TouchDesigner">
-    <figcaption class="en">A particle layer is added in TouchDesigner, allowing the ink to disperse and gather again as fine particles.</figcaption>
-    <figcaption class="zh">在 TouchDesigner 中加入粒子层,使墨以细小颗粒的形式再次扩散与聚集。</figcaption>
-  </figure>
+  <!-- The result and the network that produces it, side by side. The portrait
+       frame is narrow and the node graph is wide, so the columns are uneven and
+       the two are centred against each other rather than aligned at the top. -->
+  <div class="bleed pair-uneven">
+    <figure>
+      <img loading="lazy" src="media/particle-layer.jpg" alt="Ink with a fine particle layer composited over it in TouchDesigner">
+      <figcaption class="en">A particle layer is added in TouchDesigner, allowing the ink to disperse and gather again as fine particles.</figcaption>
+      <figcaption class="zh">在 TouchDesigner 中加入粒子层,使墨以细小颗粒的形式再次扩散与聚集。</figcaption>
+    </figure>
+    <figure>
+      <img class="frame" loading="lazy" src="images/2026-08-23-td-network-particle-layer.jpg" alt="The TouchDesigner network: the WebSocket touch chain on the left, the axis video and particle stage in the middle, and the composite output on the right">
+      <figcaption class="en">The network that produces it. Touch arrives over WebSocket at the left, sets the playback position of the axis video, and the particle stage and compositing follow to the right.</figcaption>
+      <figcaption class="zh">生成它的工程。触摸数据经 WebSocket 从左侧进入,决定轴向视频的播放位置,粒子与合成部分依次向右展开。</figcaption>
+    </figure>
+  </div>
 </section>
 
 <!-- ══ INTERACTION ═══════════════════════════ -->
