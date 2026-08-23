@@ -747,28 +747,31 @@
   </div>
 </section>
 
-<section class="wrap r">
-  <h3 class="en">Two screens, neither annotating the other</h3>
-  <h3 class="zh">两块屏幕,谁也不是谁的注解</h3>
-  <p class="dim en">
-    The projection carries the ink changing state, seen frontally: you are inside
-    it. A second screen carries machine-vision readouts, coordinates and
-    parameters, seen from above: you are over it. One is qualitative multiplicity,
-    the other quantitative. They are present at once and equal in standing — if
-    one had to be read before the other, the second would become an instruction
-    manual, and would imply that the data side is the more real one. Every shift
-    of the eyes performs an act of spatialisation in person.
-  </p>
-  <p class="dim zh">
-    投影承载墨的状态变化,正面观看:你在里面。副屏承载机器视觉的读数、坐标与
-    参数,俯视观看:你在上方。一边是质的多样性,另一边是量的多样性。两者同时
-    在场、地位平等——若必须先读其一再读其二,副屏就成了说明书,并暗示数据
-    那一边更真实。观众每一次移开视线,都在亲身做一次空间化。
-  </p>
-</section>
-
+<!-- The render belongs to the paragraph above it, so both are in one section:
+     across a section boundary the two paddings sum to 18rem and the image
+     stops reading as this text's illustration. -->
 <section class="wide r">
-  <figure>
+  <div class="wrap">
+    <h3 class="en">Two screens, neither annotating the other</h3>
+    <h3 class="zh">两块屏幕,谁也不是谁的注解</h3>
+    <p class="dim en">
+      The projection carries the ink changing state, seen frontally: you are inside
+      it. A second screen carries machine-vision readouts, coordinates and
+      parameters, seen from above: you are over it. One is qualitative multiplicity,
+      the other quantitative. They are present at once and equal in standing — if
+      one had to be read before the other, the second would become an instruction
+      manual, and would imply that the data side is the more real one. Every shift
+      of the eyes performs an act of spatialisation in person.
+    </p>
+    <p class="dim zh">
+      投影承载墨的状态变化,正面观看:你在里面。副屏承载机器视觉的读数、坐标与
+      参数,俯视观看:你在上方。一边是质的多样性,另一边是量的多样性。两者同时
+      在场、地位平等——若必须先读其一再读其二,副屏就成了说明书,并暗示数据
+      那一边更真实。观众每一次移开视线,都在亲身做一次空间化。
+    </p>
+  </div>
+
+  <figure class="bleed">
     <img loading="lazy" src="images/2026-08-23-installation-arrangement-render.jpg" alt="Render of the installation: a person reaching toward a tank carrying the projection, with a second screen mounted at its side">
     <figcaption class="en">
       The arrangement as built: the tank carries the ink at standing height, with
