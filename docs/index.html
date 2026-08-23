@@ -530,39 +530,36 @@
     </div>
   </div>
 
-  <div class="bleed grid2 evenpair">
-    <figure><img class="frame" loading="lazy" src="images/dataset_record/2026-06-22-capture-setup-01.jpg" alt="Camera on a tripod facing a water tank lit by phone lights"></figure>
-    <figure><img class="frame" loading="lazy" src="images/dataset_record/2026-06-29-capture-setup-01.jpg" alt="Phone on a tripod filming a water tank by a window"></figure>
-  </div>
-
-  <div class="wrap">
-    <p class="dim en">
-      Three sessions at home across June 2026 produced 54 clips, of which 26 were
-      selected. Four distinct phases were screenshotted from each, retouched to
-      remove air bubbles and tank reflections, and cropped to a monochrome square:
-      101 training images in four categories — pure diffusion, layered ink,
-      disturbed ink, gathering ink.
-    </p>
-    <p class="dim zh">
-      2026 年 6 月在家中的三场拍摄共录制 54 段视频,从中精选 26 段。
-      每段截取四个清晰且有区别的阶段,在 Photoshop 中修去气泡与水缸反光,
-      裁切为单色方图——最终得到四个类别、共 101 张训练图:自然扩散、
-      层叠、扰动、聚拢。
-    </p>
-  </div>
+  <!-- The two setup photographs and their caption are one figure, so the text
+       sits at caption distance from the images instead of a section's worth of
+       space below them. -->
+  <figure class="bleed">
+    <div class="grid2 evenpair">
+      <img class="frame" loading="lazy" src="images/dataset_record/2026-06-22-capture-setup-01.jpg" alt="Camera on a tripod facing a water tank lit by phone lights">
+      <img class="frame" loading="lazy" src="images/dataset_record/2026-06-29-capture-setup-01.jpg" alt="Phone on a tripod filming a water tank by a window">
+    </div>
+    <figcaption class="en">
+      Three filming sessions in June 2026 produced 54 clips, with 26 selected for
+      the dataset. These were further extracted into 101 monochrome training
+      images, organised into four states: pure diffusion, layered, disturbed, and
+      condensed.
+    </figcaption>
+    <figcaption class="zh">
+      2026 年 6 月进行了三次拍摄,共记录 54 段影像,其中 26 段被选入数据集,
+      并进一步提取为 101 张黑白训练图像,分为纯扩散、层叠、扰动与凝聚四种状态。
+    </figcaption>
+  </figure>
 
   <figure class="bleed">
     <video controls playsinline preload="none" poster="media/video-poster.jpg">
       <source src="media/inkward-bound-documentation.mp4" type="video/mp4">
     </video>
     <figcaption class="en">
-      The capture experiments, 6′37″ — each run labelled with its equipment,
-      lighting, materials and method. Salt, hand soap, chopsticks, a small stick
-      and a pipette, filmed against two lighting environments on two devices.
+      Capture experiment record, 6′37″ — testing changes in ink under different
+      materials, tools, lighting conditions, and recording devices.
     </figcaption>
     <figcaption class="zh">
-      拍摄实验全过程,6 分 37 秒——每一次实验都标注了设备、灯光、材料与方法。
-      盐、洗手液、筷子、小棍子与滴管,在两种灯光环境、两种设备下逐一拍摄。
+      拍摄实验记录,6 分 37 秒——测试不同材料、工具、灯光与设备下的墨水变化。
     </figcaption>
   </figure>
 
@@ -576,27 +573,27 @@
 
 <!-- ══ PIPELINE ══════════════════════════════ -->
 <section class="wrap r" id="pipeline">
-  <h2 class="mono kicker en"><span class="num">04</span>How the ink is flattened</h2>
-  <h2 class="mono kicker zh"><span class="num">04</span>墨如何被摊平</h2>
+  <h2 class="mono kicker en"><span class="num">04</span>How the ink is spatialised</h2>
+  <h2 class="mono kicker zh"><span class="num">04</span>墨如何被空间化</h2>
 
-  <p class="subtitle en">The pipeline performs what the work describes</p>
-  <p class="subtitle zh">管线执行了作品所描述的事</p>
+  <p class="subtitle en">The technical pipeline turns a continuous ink process into a spatial structure that can be classified, located and retrieved</p>
+  <p class="subtitle zh">技术流程将连续的墨水过程转化为可被分类、定位与检索的空间结构</p>
 
   <table class="steps en">
-    <tr><th></th><th>Operation</th><th>What happens to the ink</th></tr>
-    <tr><td>1</td><td>Filming → frames</td><td>The flow is cut into single frames</td></tr>
-    <tr><td>2</td><td>Grouping and captioning</td><td>States are named as categories</td></tr>
-    <tr><td>3</td><td>LoRA training</td><td>Ink becomes a distribution of features</td></tr>
-    <tr><td>4</td><td>Latent-space mapping (the c axis)</td><td>Each state acquires a coordinate</td></tr>
-    <tr><td>5</td><td>Multi-seed generation + interpolation (along the c axis)</td><td>Retrievable; continuity stitched back on</td></tr>
+    <tr><th>Step</th><th>Process</th><th>Description</th></tr>
+    <tr><td>1</td><td>Filming → frames</td><td>Continuous ink movement is divided into individual images</td></tr>
+    <tr><td>2</td><td>Grouping and labelling</td><td>Different ink states are separated and organised into categories</td></tr>
+    <tr><td>3</td><td>LoRA training</td><td>The visual qualities of the ink are learned as a set of features</td></tr>
+    <tr><td>4</td><td>Latent-space mapping</td><td>Each state is assigned a position along the c axis, making it locatable and retrievable</td></tr>
+    <tr><td>5</td><td>Generation and interpolation</td><td>The system generates and interpolates between these positions to rebuild visual continuity</td></tr>
   </table>
   <table class="steps zh">
-    <tr><th></th><th>操作</th><th>墨发生了什么</th></tr>
-    <tr><td>1</td><td>拍摄 → 切帧</td><td>流动被切成一格一格</td></tr>
-    <tr><td>2</td><td>分组与标注</td><td>状态被命名为类别</td></tr>
-    <tr><td>3</td><td>LoRA 训练</td><td>墨成为特征分布</td></tr>
-    <tr><td>4</td><td>潜空间映射(c 轴)</td><td>每个状态有了坐标</td></tr>
-    <tr><td>5</td><td>多 seed 生成 + 插帧(沿 c 轴)</td><td>可检索;连续性被缝回</td></tr>
+    <tr><th>步骤</th><th>过程</th><th>说明</th></tr>
+    <tr><td>1</td><td>拍摄 → 单帧</td><td>连续的墨水运动被切分为独立图像</td></tr>
+    <tr><td>2</td><td>分组与标注</td><td>不同的墨水状态被区分并整理为不同类别</td></tr>
+    <tr><td>3</td><td>LoRA 训练</td><td>墨水的视觉特征被模型学习并转化为一组特征</td></tr>
+    <tr><td>4</td><td>潜空间映射</td><td>每种状态被分配到 c 轴上的一个位置,使其可以被定位和检索</td></tr>
+    <tr><td>5</td><td>生成与插值</td><td>系统在这些位置之间生成并插值,重新构建视觉上的连续变化</td></tr>
   </table>
 
   <div class="en" style="margin-top:2.2rem">
@@ -625,40 +622,38 @@
   </div>
 
   <div class="en" style="margin-top:3rem">
-    <p><strong>The eight c bins the video is scrubbed between.</strong> Each
-      moment the visitor sees corresponds to a c value between 0 and 1. The axis
-      is not a slider through arbitrary shapes — it was pre-composed as eight
-      named bins, each with its own caption, and the video interpolates between
-      them.</p>
+    <h3>The c axis</h3>
+    <p>The c axis organises eight predefined visual states from 0 to 1.
+      Interaction moves between these states and interpolates the transitions.</p>
     <table class="steps en">
-      <tr><th>c</th><th>label</th><th>viewpoint</th><th>What appears</th></tr>
-      <tr><td>0.0</td><td><code>autonomous_diffusion</code></td><td>top-down</td><td>A solid opaque black ink blob with a lobed edge, curved gray washes spreading outward layer by layer</td></tr>
-      <tr><td>0.2</td><td><code>early_search</code></td><td>side</td><td>A dense ink canopy at the surface with droplet fringes, translucent veils and tendrils sinking in distinct layers</td></tr>
-      <tr><td>0.4</td><td><code>human_disturbance</code></td><td>side</td><td>Dense gray fog of churned ink filling the frame, forms dissolving into soft mist</td></tr>
-      <tr><td>0.5</td><td><code>fog_deepening</code></td><td>side</td><td>Thicker, darker fog covering most of the frame, only small pale openings remaining</td></tr>
-      <tr><td>0.6</td><td><code>latent_search</code></td><td>side</td><td>Broken strands dissolved into countless tiny particles — a hazy grain fog everywhere</td></tr>
-      <tr><td>0.7</td><td><code>fog_receding</code></td><td>side</td><td>The fog thinning and clearing, dark strands emerging, beginning to gather toward the centre</td></tr>
-      <tr><td>0.8</td><td><code>convergence</code></td><td>side</td><td>Delicate looping ink threads spiralling inward, drawn into a solid dark mass</td></tr>
-      <tr><td>1.0</td><td><code>temporary_return</code></td><td>side</td><td>A dense settled black mound at the bottom, a single twisting tendril column above it, clear water around</td></tr>
+      <tr><th>c</th><th>State</th><th>Description</th></tr>
+      <tr><td>0.0</td><td>Pure diffusion</td><td>Ink spreads outward freely</td></tr>
+      <tr><td>0.2</td><td>Layered ink</td><td>Layers and fine strands begin to appear</td></tr>
+      <tr><td>0.4</td><td>Disturbed ink</td><td>The structure breaks apart and becomes unstable</td></tr>
+      <tr><td>0.5</td><td>Dense disturbance</td><td>The image becomes darker and more concentrated</td></tr>
+      <tr><td>0.6</td><td>Particle state</td><td>Forms dissolve into fine particles</td></tr>
+      <tr><td>0.7</td><td>Early gathering</td><td>Dark strands begin to move inward</td></tr>
+      <tr><td>0.8</td><td>Condensing</td><td>Ink threads gather towards the centre</td></tr>
+      <tr><td>1.0</td><td>Condensed</td><td>The form becomes dense and temporarily stable</td></tr>
     </table>
     <p class="dim">c = 0.6 is the granular-fog stage — the same one the LoRA
       was retrained seven times to reach.</p>
   </div>
 
   <div class="zh" style="margin-top:3rem">
-    <p><strong>视频在其间擦动的八档 c 值。</strong>观众看到的每一刻都对应一个
-      0 到 1 之间的 c 值。这条轴不是一根穿过任意形状的滑杆,而是被预先构造成
-      八个带各自 caption 的分箱,视频在它们之间插帧。</p>
+    <h3>c 轴</h3>
+    <p>c 轴由 0 到 1 组织八个预设视觉状态。交互会在这些状态之间移动,
+      并通过插值形成连续过渡。</p>
     <table class="steps zh">
-      <tr><th>c</th><th>label</th><th>视角</th><th>画面</th></tr>
-      <tr><td>0.0</td><td><code>autonomous_diffusion</code></td><td>俯拍</td><td>一团带凹凸边缘的实心黑墨,四周是弯曲流动的灰墨晕层层向外铺开</td></tr>
-      <tr><td>0.2</td><td><code>early_search</code></td><td>侧视</td><td>水面一层致密墨盖挂着液滴边,半透明墨帘和悬丝分层下沉</td></tr>
-      <tr><td>0.4</td><td><code>human_disturbance</code></td><td>侧视</td><td>搅动而起的浓灰色墨雾占满画面,形被溶进雾里</td></tr>
-      <tr><td>0.5</td><td><code>fog_deepening</code></td><td>侧视</td><td>更厚更黑的墨雾覆盖大部分画面,只留少数明亮空隙</td></tr>
-      <tr><td>0.6</td><td><code>latent_search</code></td><td>侧视</td><td>墨丝被打散成无数细颗粒——均匀的雾中细粒纹理充满全帧</td></tr>
-      <tr><td>0.7</td><td><code>fog_receding</code></td><td>侧视</td><td>灰雾变薄消退,黑墨丝从消散的雾中显现,开始朝中心聚拢</td></tr>
-      <tr><td>0.8</td><td><code>convergence</code></td><td>侧视</td><td>细腻环绕的墨丝盘旋着向内,被拉入一个实心暗块</td></tr>
-      <tr><td>1.0</td><td><code>temporary_return</code></td><td>侧视</td><td>底部一堆致密沉降的黑墨,上方一根扭曲的柱状拖丝,四周清水</td></tr>
+      <tr><th>c</th><th>状态</th><th>说明</th></tr>
+      <tr><td>0.0</td><td>纯扩散</td><td>墨水自由向外扩散</td></tr>
+      <tr><td>0.2</td><td>层叠墨迹</td><td>墨迹开始形成层次与细丝结构</td></tr>
+      <tr><td>0.4</td><td>扰动墨迹</td><td>原有结构被打散,状态开始变得不稳定</td></tr>
+      <tr><td>0.5</td><td>密集扰动</td><td>画面进一步变暗、变得更加集中</td></tr>
+      <tr><td>0.6</td><td>颗粒状态</td><td>形态逐渐分解为细小颗粒</td></tr>
+      <tr><td>0.7</td><td>初步凝聚</td><td>深色墨丝开始向内部移动</td></tr>
+      <tr><td>0.8</td><td>凝聚中</td><td>墨丝逐渐向中心聚拢</td></tr>
+      <tr><td>1.0</td><td>凝聚</td><td>形态变得密集,并进入暂时稳定的状态</td></tr>
     </table>
     <p class="dim">c = 0.6 是"细颗粒雾"那一档——LoRA 前后重训七次要到达的正是它。</p>
   </div>
@@ -668,26 +663,25 @@
   <figure>
     <img loading="lazy" src="images/2026-07-13-latent-atlas-final-66.jpg" alt="The final 66-image latent atlas, curated from v7">
     <figcaption class="en">
-      The final latent atlas: 66 images curated from 192 candidates, after seven
-      retrainings of the LoRA. Each was generated at a fixed coordinate on the
-      c-axis, then interpolated into five continuous videos.
+      The final latent atlas contains 66 images selected from 192 candidates
+      after seven rounds of LoRA retraining.
     </figcaption>
     <figcaption class="zh">
-      最终的 latent atlas:经过七次重训后,从 192 张候选图中精选出的 66 张。
-      每一张都生成于 c 轴上的一个固定坐标,再经插帧连成五段连续视频。
+      最终的潜空间图集由 66 张图像组成,从 192 张候选图像中筛选而来,
+      并经过 7 轮 LoRA 重新训练。
     </figcaption>
   </figure>
 
   <figure class="bleed">
     <img class="frame" loading="lazy" src="images/2026-07-28-v7-recall-tests-round2.png" alt="Four generated images testing whether the trained vocabulary can be recalled">
-    <figcaption class="en">Recall tests — whether the phrases written into the captions can be summoned back one by one.</figcaption>
-    <figcaption class="zh">召回测试——写进 caption 的短语能否被逐个唤回。</figcaption>
+    <figcaption class="en">Recall tests examine whether the visual qualities described in the captions can be retrieved consistently through generation.</figcaption>
+    <figcaption class="zh">召回测试用于检验 caption 中描述的视觉特征,是否能够通过生成过程被稳定地重新调用。</figcaption>
   </figure>
 
   <figure class="bleed portrait">
     <img loading="lazy" src="media/particle-layer.jpg" alt="Ink with a fine particle layer composited over it in TouchDesigner">
-    <figcaption class="en">A particle layer composited over the interpolated video in TouchDesigner — the ink sheds and regathers grain, so the material grows a second skin closer to the work's language than fluid footage alone.</figcaption>
-    <figcaption class="zh">在 TouchDesigner 中叠加于插帧视频之上的粒子层——墨会散出颗粒、又重新聚回,让材料长出第二层皮肤,比单纯的流体影像更接近作品本身的语言。</figcaption>
+    <figcaption class="en">A particle layer is added in TouchDesigner, allowing the ink to disperse and gather again as fine particles.</figcaption>
+    <figcaption class="zh">在 TouchDesigner 中加入粒子层,使墨以细小颗粒的形式再次扩散与聚集。</figcaption>
   </figure>
 </section>
 
