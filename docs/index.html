@@ -259,21 +259,27 @@
     content:"";position:absolute;left:-1.5rem;top:.62em;
     width:.75rem;height:1px;background:var(--rule);
   }
-  /* The interaction chain: the same sequence the paragraphs above give in
-     prose, compressed to one line per step. Set beside the render because the
-     two describe one event from different sides — the image spatially, the
-     chain in order — and the eye reads across rather than down. */
-  .chain{list-style:none;margin:0;padding-left:1.5rem;border-left:1px solid var(--rule)}
-  .chain li{position:relative;margin-bottom:1.4rem;line-height:1.55;font-size:.93rem}
-  .chain li:last-child{margin-bottom:0}
-  .chain li::before{
-    content:"";position:absolute;left:-1.5rem;top:.62em;
-    width:.75rem;height:1px;background:var(--rule);
+  /* The interaction flow: the same sequence the paragraphs above give in prose,
+     one short line per step, grouped under the surface each step happens on.
+     Centred and arrowed rather than set as body text, so it reads as a diagram
+     — which is what it is — and beside the render, because the two describe one
+     event from different sides: the image spatially, the flow in order. */
+  .flow{text-align:center;font-size:.9rem;line-height:1.5}
+  .flow > *{margin:0}
+  /* One rule draws every arrow: each step points at the next, and the last one
+     points nowhere because nothing follows it. */
+  .flow > *:not(:last-child)::after{
+    content:"↓";display:block;margin:.62rem 0;
+    color:var(--rule);font-size:1.05rem;line-height:1;
   }
-  .chain .turn{color:var(--dim)}
-  /* The question the chain arrives at and does not answer: set apart, no tick. */
-  .chain li.end{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--rule)}
-  .chain li.end::before{display:none}
+  .flow-head{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--dimmer);
+  }
+  html[data-lang="zh"] .flow-head{letter-spacing:.1em;font-weight:600}
+  /* The head of a group needs air above it, but not the first one. */
+  .flow > .flow-head:not(:first-child){margin-top:.5rem}
   .beside{display:grid;grid-template-columns:1.35fr 1fr;gap:2.6rem;align-items:center}
 
   /* ── video ──────────────────────────────── */
@@ -864,23 +870,27 @@
       </figcaption>
     </figure>
 
-    <ul class="chain en">
-      <li>A finger taps, slides or holds on the interaction screen — recorded as position, duration and touch state.</li>
-      <li>The touch changes the <em>c</em> value, which determines the visual state being addressed.</li>
-      <li><span class="turn">The system does not follow at once.</span> Held, <em>c</em> moves slowly towards its target; released, it returns more slowly still.</li>
-      <li>The projected ink does not switch between states — it spreads, gathers and fades.</li>
-      <li>Earlier touches remain briefly, so the present state carries the ones before it.</li>
-      <li class="end">Whether consciousness can be sensed is left to the body.</li>
-    </ul>
+    <div class="flow en">
+      <p class="flow-head">Interaction screen</p>
+      <p>A finger touches — sliding, holding</p>
+      <p>The touch changes the <em>c</em> value in the latent space</p>
+      <p>The system responds gradually, not at once</p>
+      <p class="flow-head">Main screen</p>
+      <p>Ink shifts between diffused, disturbed and condensed</p>
+      <p>Through the experience, time gains thickness</p>
+      <p>Whether consciousness can be sensed is left to the body</p>
+    </div>
 
-    <ul class="chain zh">
-      <li>手指在交互屏上点击、滑动或停留——被记录为位置、持续时间与触摸状态。</li>
-      <li>触摸改变 <em>c</em> 值,<em>c</em> 值决定当前被调用的视觉状态。</li>
-      <li><span class="turn">系统不立即跟随。</span>按住时,<em>c</em> 缓慢接近目标;松开后,以更慢的速度返回。</li>
-      <li>投影中的墨不会突然切换,而是持续地扩散、聚集或消退。</li>
-      <li>之前的触摸会短暂保留,当下的状态因而带着先前的那些。</li>
-      <li class="end">意识能否被感知,交还给身体。</li>
-    </ul>
+    <div class="flow zh">
+      <p class="flow-head">交互屏</p>
+      <p>手指触摸(滑动、停留)</p>
+      <p>触摸改变潜空间中的 <em>c</em> 值</p>
+      <p>系统逐渐响应,而不是立即切换</p>
+      <p class="flow-head">主屏</p>
+      <p>墨水在弥散、扰动、凝聚之间变化</p>
+      <p>在体验的过程中,形成时间厚度</p>
+      <p>意识能否被感知,最终交还给身体</p>
+    </div>
   </div>
 </section>
 
