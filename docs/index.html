@@ -259,6 +259,22 @@
     content:"";position:absolute;left:-1.5rem;top:.62em;
     width:.75rem;height:1px;background:var(--rule);
   }
+  /* The interaction chain: the same sequence the paragraphs above give in
+     prose, compressed to one line per step. Set beside the render because the
+     two describe one event from different sides — the image spatially, the
+     chain in order — and the eye reads across rather than down. */
+  .chain{list-style:none;margin:0;padding-left:1.5rem;border-left:1px solid var(--rule)}
+  .chain li{position:relative;margin-bottom:1.4rem;line-height:1.55;font-size:.93rem}
+  .chain li:last-child{margin-bottom:0}
+  .chain li::before{
+    content:"";position:absolute;left:-1.5rem;top:.62em;
+    width:.75rem;height:1px;background:var(--rule);
+  }
+  .chain .turn{color:var(--dim)}
+  /* The question the chain arrives at and does not answer: set apart, no tick. */
+  .chain li.end{margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--rule)}
+  .chain li.end::before{display:none}
+  .beside{display:grid;grid-template-columns:1.35fr 1fr;gap:2.6rem;align-items:center}
 
   /* ── video ──────────────────────────────── */
   .video-slot{
@@ -292,6 +308,9 @@
   @media(max-width:900px){
     :root{--gutter:3.2rem}
     .grid2{grid-template-columns:1fr;gap:1.6rem}
+    /* Below this the chain would be a column of two-word lines, so it goes
+       under the render instead. */
+    .beside{grid-template-columns:1fr;gap:2rem}
     .sheets{grid-template-columns:repeat(2,1fr);gap:1.2rem}
     section{padding:9.5rem 0 5rem}
   }
@@ -831,18 +850,38 @@
     </div>
   </div>
 
-  <figure class="bleed">
-    <img loading="lazy" src="images/2026-08-23-installation-arrangement-render.jpg" alt="Render of the installation: a layered projection frame at standing height, a separate plinth carrying the information screen, and a person reaching toward it">
-    <figcaption class="en">
-      The arrangement as built: the layered projection at standing height, the
-      information screen on its own plinth at the hand — both in view at once,
-      neither read first.
-    </figcaption>
-    <figcaption class="zh">
-      装置的实际布置:多层投影立于站立高度,信息屏在手边、置于独立基座上——
-      两者同时进入视野,谁也不必先被读。
-    </figcaption>
-  </figure>
+  <div class="bleed beside">
+    <figure>
+      <img loading="lazy" src="images/2026-08-23-installation-arrangement-render.jpg" alt="Render of the installation: a layered projection frame at standing height, a separate plinth carrying the information screen, and a person reaching toward it">
+      <figcaption class="en">
+        The arrangement as built: the layered projection at standing height, the
+        information screen on its own plinth at the hand — both in view at once,
+        neither read first.
+      </figcaption>
+      <figcaption class="zh">
+        装置的实际布置:多层投影立于站立高度,信息屏在手边、置于独立基座上——
+        两者同时进入视野,谁也不必先被读。
+      </figcaption>
+    </figure>
+
+    <ul class="chain en">
+      <li>A finger taps, slides or holds on the interaction screen — recorded as position, duration and touch state.</li>
+      <li>The touch changes the <em>c</em> value, which determines the visual state being addressed.</li>
+      <li><span class="turn">The system does not follow at once.</span> Held, <em>c</em> moves slowly towards its target; released, it returns more slowly still.</li>
+      <li>The projected ink does not switch between states — it spreads, gathers and fades.</li>
+      <li>Earlier touches remain briefly, so the present state carries the ones before it.</li>
+      <li class="end">Whether consciousness can be sensed is left to the body.</li>
+    </ul>
+
+    <ul class="chain zh">
+      <li>手指在交互屏上点击、滑动或停留——被记录为位置、持续时间与触摸状态。</li>
+      <li>触摸改变 <em>c</em> 值,<em>c</em> 值决定当前被调用的视觉状态。</li>
+      <li><span class="turn">系统不立即跟随。</span>按住时,<em>c</em> 缓慢接近目标;松开后,以更慢的速度返回。</li>
+      <li>投影中的墨不会突然切换,而是持续地扩散、聚集或消退。</li>
+      <li>之前的触摸会短暂保留,当下的状态因而带着先前的那些。</li>
+      <li class="end">意识能否被感知,交还给身体。</li>
+    </ul>
+  </div>
 </section>
 
 <!-- ══ PROCESS ═══════════════════════════════ -->
