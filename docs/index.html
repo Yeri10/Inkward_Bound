@@ -614,24 +614,24 @@
   <h2 class="mono kicker en"><span class="num">04</span>How the ink is spatialised</h2>
   <h2 class="mono kicker zh"><span class="num">04</span>墨如何被空间化</h2>
 
-  <p class="subtitle en">The technical pipeline turns a continuous ink process into a spatial structure that can be classified, located and retrieved</p>
-  <p class="subtitle zh">技术流程将连续的墨水过程转化为可被分类、定位与检索的空间结构</p>
+  <p class="subtitle en">The technical process transforms continuous ink movement into a latent space structure that can be classified, located, and retrieved</p>
+  <p class="subtitle zh">技术流程将连续的墨水变化转化为可分类、定位和检索的潜空间结构</p>
 
   <table class="steps en">
     <tr><th>Step</th><th>Process</th><th>Description</th></tr>
-    <tr><td>1</td><td>Filming → frames</td><td>Continuous ink movement is divided into individual images</td></tr>
-    <tr><td>2</td><td>Grouping and labelling</td><td>Different ink states are separated and organised into categories</td></tr>
-    <tr><td>3</td><td>LoRA training</td><td>The visual qualities of the ink are learned as a set of features</td></tr>
-    <tr><td>4</td><td>Latent-space mapping</td><td>Each state is assigned a position along the c axis, making it locatable and retrievable</td></tr>
-    <tr><td>5</td><td>Generation and interpolation</td><td>The system generates and interpolates between these positions to rebuild visual continuity</td></tr>
+    <tr><td>1</td><td>Filming &amp; frame extraction</td><td>The continuous movement of ink in water is divided into individual frames</td></tr>
+    <tr><td>2</td><td>Classification &amp; labelling</td><td>Different ink states are labelled as <strong>diffused</strong> / <strong>disturbed</strong> / <strong>condensed</strong></td></tr>
+    <tr><td>3</td><td>LoRA training</td><td>The model learns the visual features of different ink states</td></tr>
+    <tr><td>4</td><td>Latent space mapping</td><td>Different states are mapped to continuous positions in latent space through a custom <strong>c axis</strong></td></tr>
+    <tr><td>5</td><td>Frame generation &amp; interpolation</td><td>Multiple seeds and RIFE interpolation are used to create smooth transitions between states</td></tr>
   </table>
   <table class="steps zh">
     <tr><th>步骤</th><th>过程</th><th>说明</th></tr>
-    <tr><td>1</td><td>拍摄 → 单帧</td><td>连续的墨水运动被切分为独立图像</td></tr>
-    <tr><td>2</td><td>分组与标注</td><td>不同的墨水状态被区分并整理为不同类别</td></tr>
-    <tr><td>3</td><td>LoRA 训练</td><td>墨水的视觉特征被模型学习并转化为一组特征</td></tr>
-    <tr><td>4</td><td>潜空间映射</td><td>每种状态被分配到 c 轴上的一个位置,使其可以被定位和检索</td></tr>
-    <tr><td>5</td><td>生成与插值</td><td>系统在这些位置之间生成并插值,重新构建视觉上的连续变化</td></tr>
+    <tr><td>1</td><td>拍摄与切帧</td><td>将墨水在水中的连续变化拆分为独立图像</td></tr>
+    <tr><td>2</td><td>分类与标注</td><td>按照<strong>弥散</strong> / <strong>扰动</strong> / <strong>凝聚</strong>标记不同的墨水状态</td></tr>
+    <tr><td>3</td><td>LoRA 训练</td><td>让模型学习不同墨水状态的视觉特征</td></tr>
+    <tr><td>4</td><td>潜空间映射</td><td>将不同状态映射到潜空间中的连续位置,并建立自定义 <strong>c 轴</strong></td></tr>
+    <tr><td>5</td><td>帧生成与插值</td><td>通过多 seed 生成与 RIFE 插值,在不同状态之间建立连续过渡</td></tr>
   </table>
 
   <div class="en" style="margin-top:2.2rem">
