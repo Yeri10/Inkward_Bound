@@ -748,7 +748,11 @@
 </section>
 
 <!-- ══ INTERACTION ═══════════════════════════ -->
-<section class="wrap r" id="interaction">
+<!-- One section, not four. Each boundary costs 6rem below plus 12rem above,
+     so the strips and the logic diagram were floating 18rem from the text they
+     belong to. Inside a section the media carries its own 4.5rem. -->
+<section class="wide r" id="interaction">
+  <div class="wrap">
   <h2 class="mono kicker en"><span class="num">05</span>The interaction</h2>
   <h2 class="mono kicker zh"><span class="num">05</span>交互</h2>
 
@@ -813,10 +817,9 @@
       <span class="dim">(Merleau-Ponty;Varela、Thompson &amp; Rosch;王阳明)</span>
     </p>
   </div>
-</section>
+  </div>
 
-<section class="wide r">
-  <div class="pair-fit">
+  <div class="bleed pair-fit">
     <figure>
       <img class="frame" loading="lazy" src="images/2026-07-24-axis-video-library.jpg" alt="The library of five axis videos in TouchDesigner">
       <figcaption class="en">Each touch randomly plays one of five axial videos, so even the same person may see a different ink response each time.</figcaption>
@@ -828,12 +831,7 @@
       <figcaption class="zh">每段视频记录了墨水从弥散到凝聚的变化过程。系统根据实时的 <em>c</em> 值选择并播放对应的画面。</figcaption>
     </figure>
   </div>
-</section>
 
-<!-- The render belongs to the paragraph above it, so both are in one section:
-     across a section boundary the two paddings sum to 18rem and the image
-     stops reading as this text's illustration. -->
-<section class="wide r">
   <div class="wrap">
     <h3 class="en">Interaction logic</h3>
     <h3 class="zh">交互逻辑</h3>
