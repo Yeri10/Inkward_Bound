@@ -230,6 +230,12 @@
      because it carries a node graph whose labels have to stay readable, and
      the two are centred against each other since their heights cannot match. */
   .pair-uneven{display:grid;grid-template-columns:1fr 1.55fr;gap:2.2rem;align-items:center}
+  /* Two strips of different proportion, rendered to the same height so their
+     captions start on one line. Giving each column a share proportional to its
+     image's aspect ratio makes the heights identical — width/ratio is then the
+     same for both — which aligns them without cropping either. The images are
+     5.00:1 and 3.33:1. */
+  .pair-fit{display:grid;grid-template-columns:5fr 3.333fr;gap:2.2rem}
   .frame{border:1px solid var(--rule)}
 
   /* A section number with no subtitle under it (01) takes the spacing the
@@ -324,6 +330,7 @@
        under the render instead. */
     .beside{grid-template-columns:1fr;gap:2rem}
     .pair-uneven{grid-template-columns:1fr;gap:2.4rem}
+    .pair-fit{grid-template-columns:1fr;gap:2.4rem}
     .sheets{grid-template-columns:repeat(2,1fr);gap:1.2rem}
     section{padding:9.5rem 0 5rem}
   }
@@ -809,7 +816,7 @@
 </section>
 
 <section class="wide r">
-  <div class="grid2">
+  <div class="pair-fit">
     <figure>
       <img class="frame" loading="lazy" src="images/2026-07-24-axis-video-library.jpg" alt="The library of five axis videos in TouchDesigner">
       <figcaption class="en">Each touch randomly plays one of five axial videos, so even the same person may see a different ink response each time.</figcaption>
