@@ -262,6 +262,11 @@
   /* The open question the chain arrives at: no rule tick, set apart above. */
   .chain li.end{margin-top:2.2rem;padding-top:1.6rem;border-top:1px solid var(--rule)}
   .chain li.end::before{display:none}
+  /* The render and the chain describe the same event, one spatially and one in
+     sequence, so they are set side by side and read across rather than down.
+     The image takes the larger share; the chain is text and needs less. */
+  .beside{display:grid;grid-template-columns:1.35fr 1fr;gap:2.6rem;align-items:center}
+  .beside .chain{margin-top:0}
 
   /* ── video ──────────────────────────────── */
   .video-slot{
@@ -295,6 +300,9 @@
   @media(max-width:900px){
     :root{--gutter:3.2rem}
     .grid2{grid-template-columns:1fr;gap:1.6rem}
+    /* Below this the chain would be a column of two-word lines, so it goes
+       under the render instead. */
+    .beside{grid-template-columns:1fr;gap:2rem}
     .sheets{grid-template-columns:repeat(2,1fr);gap:1.2rem}
     section{padding:9.5rem 0 5rem}
   }
@@ -726,15 +734,6 @@
       structure again through time.
       <span class="dim">(Merleau-Ponty; Varela, Thompson &amp; Rosch; Wang Yangming)</span>
     </p>
-
-    <ul class="chain">
-      <li>A finger touches the interaction screen — sliding, tapping, pausing.</li>
-      <li>The touch moves along the c axis of the latent space, changing which state is addressed.</li>
-      <li><span class="turn">The system does not obey at once.</span> While the hand is held, c approaches its target smoothly without arriving; on release it returns at a constant rate.</li>
-      <li>On the projection, the ink moves between dispersal and condensation.</li>
-      <li>In that lag, time regains its thickness — the only part of the work that is genuinely temporal.</li>
-      <li class="end">Whether consciousness can be sensed is left to the body.</li>
-    </ul>
   </div>
 
   <div class="zh">
@@ -753,15 +752,6 @@
       而是在时间中重新经验一个已经被空间化的结构。
       <span class="dim">(Merleau-Ponty;Varela、Thompson &amp; Rosch;王阳明)</span>
     </p>
-
-    <ul class="chain">
-      <li>手指触碰交互屏——滑动、点击、暂停。</li>
-      <li>触摸在潜空间的 c 轴上移动,改变被调用的状态。</li>
-      <li><span class="turn">系统不立即服从。</span>按住时,c 值向目标平滑逼近而不到达;松开后,以恒定速率退回。</li>
-      <li>投影上,墨在弥散与凝聚之间变化。</li>
-      <li>在那段迟滞里,时间重新有了厚度——这是整件作品里唯一具有时间性的部分。</li>
-      <li class="end">意识能否被感知,交还给身体。</li>
-    </ul>
   </div>
 </section>
 
@@ -816,18 +806,38 @@
     </p>
   </div>
 
-  <figure class="bleed">
-    <img loading="lazy" src="images/2026-08-23-installation-arrangement-render.jpg" alt="Render of the installation: a person reaching toward a tank carrying the projection, with a second screen mounted at its side">
-    <figcaption class="en">
-      The arrangement as built: the tank carries the ink at standing height, with
-      the touch surface at the hand and the second screen angled at the side, so
-      both are in view without either being read first.
-    </figcaption>
-    <figcaption class="zh">
-      装置的实际布置:水缸承载墨,置于站立高度,触摸面在手边,副屏则以一定角度
-      装在侧面——两者同时进入视野,谁也不必先被读。
-    </figcaption>
-  </figure>
+  <div class="bleed beside">
+    <figure>
+      <img loading="lazy" src="images/2026-08-23-installation-arrangement-render.jpg" alt="Render of the installation: a person reaching toward a tank carrying the projection, with a second screen mounted at its side">
+      <figcaption class="en">
+        The arrangement as built: the tank carries the ink at standing height,
+        with the touch surface at the hand and the second screen angled at the
+        side, so both are in view without either being read first.
+      </figcaption>
+      <figcaption class="zh">
+        装置的实际布置:水缸承载墨,置于站立高度,触摸面在手边,副屏则以一定角度
+        装在侧面——两者同时进入视野,谁也不必先被读。
+      </figcaption>
+    </figure>
+
+    <ul class="chain en">
+      <li>A finger touches the interaction screen — sliding, tapping, pausing.</li>
+      <li>The touch moves along the c axis of the latent space, changing which state is addressed.</li>
+      <li><span class="turn">The system does not obey at once.</span> While the hand is held, c approaches its target smoothly without arriving; on release it returns at a constant rate.</li>
+      <li>On the projection, the ink moves between dispersal and condensation.</li>
+      <li>In that lag, time regains its thickness — the only part of the work that is genuinely temporal.</li>
+      <li class="end">Whether consciousness can be sensed is left to the body.</li>
+    </ul>
+
+    <ul class="chain zh">
+      <li>手指触碰交互屏——滑动、点击、暂停。</li>
+      <li>触摸在潜空间的 c 轴上移动,改变被调用的状态。</li>
+      <li><span class="turn">系统不立即服从。</span>按住时,c 值向目标平滑逼近而不到达;松开后,以恒定速率退回。</li>
+      <li>投影上,墨在弥散与凝聚之间变化。</li>
+      <li>在那段迟滞里,时间重新有了厚度——这是整件作品里唯一具有时间性的部分。</li>
+      <li class="end">意识能否被感知,交还给身体。</li>
+    </ul>
+  </div>
 </section>
 
 <!-- ══ PROCESS ═══════════════════════════════ -->
