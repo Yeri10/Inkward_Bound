@@ -247,26 +247,18 @@
   .steps td:first-child{color:var(--dimmer);width:2.4rem}
   .steps td:last-child{color:var(--dim)}
 
-  /* The interaction chain. A table would put these in rows to be compared, but
-     each link causes the next one, so they are set as a single descending
-     sequence with a rule down the left holding them together. The last link is
-     the one the work will not answer, and is marked rather than numbered. */
-  .chain{list-style:none;margin:2rem 0 0;padding-left:1.5rem;border-left:1px solid var(--rule)}
-  .chain li{position:relative;margin-bottom:1.5rem;line-height:1.55}
-  .chain li:last-child{margin-bottom:0}
-  .chain li::before{
+  /* The three parts of the installation. Each entry opens on the part's name,
+     so the rule tick sits at the left edge and the name carries the eye rather
+     than a bullet. Entries vary in length — the projection needs a paragraph,
+     the interaction screen a line — so they are spaced generously enough that
+     the uneven blocks still read as one list. */
+  .parts{list-style:none;margin:1.4rem 0 2.2rem;padding-left:1.5rem;border-left:1px solid var(--rule)}
+  .parts li{position:relative;margin-bottom:1.4rem;line-height:1.55}
+  .parts li:last-child{margin-bottom:0}
+  .parts li::before{
     content:"";position:absolute;left:-1.5rem;top:.62em;
     width:.75rem;height:1px;background:var(--rule);
   }
-  .chain .turn{color:var(--dim)}
-  /* The open question the chain arrives at: no rule tick, set apart above. */
-  .chain li.end{margin-top:2.2rem;padding-top:1.6rem;border-top:1px solid var(--rule)}
-  .chain li.end::before{display:none}
-  /* The render and the chain describe the same event, one spatially and one in
-     sequence, so they are set side by side and read across rather than down.
-     The image takes the larger share; the chain is text and needs less. */
-  .beside{display:grid;grid-template-columns:1.35fr 1fr;gap:2.6rem;align-items:center}
-  .beside .chain{margin-top:0}
 
   /* ── video ──────────────────────────────── */
   .video-slot{
@@ -300,9 +292,6 @@
   @media(max-width:900px){
     :root{--gutter:3.2rem}
     .grid2{grid-template-columns:1fr;gap:1.6rem}
-    /* Below this the chain would be a column of two-word lines, so it goes
-       under the render instead. */
-    .beside{grid-template-columns:1fr;gap:2rem}
     .sheets{grid-template-columns:repeat(2,1fr);gap:1.2rem}
     section{padding:9.5rem 0 5rem}
   }
@@ -717,21 +706,34 @@
   <div class="en">
     <p class="subtitle">Movement and stillness become ways of exploring the retrievable space</p>
     <p>
-      The visitor interacts through two simple gestures: moving and holding.
-      Continuous movement keeps the ink in more diffused and disturbed states,
-      while holding allows it to move towards condensation.
+      The audience enters the system through the touch screen. They can tap,
+      slide, and hold their fingers on the screen. These actions are recorded as
+      position, duration, and touch state, and then sent into the system.
     </p>
     <p>
-      Touch behaviour is translated into a continuous value, <em>c</em>, shaped by
-      movement, stillness, stability and duration. This value determines the
-      system's position along the pre-generated visual axis.
+      Touch changes the <em>c</em> value in the latent space. The <em>c</em> value
+      determines the current visual state, so the audience's movement affects the
+      projected ink as it shifts between diffused, disturbed, and condensed
+      states.
+    </p>
+    <p>
+      The system does not fully follow the audience immediately. When a finger is
+      held on the screen, the <em>c</em> value slowly moves towards the target
+      position. When the finger is released, it returns at a slower speed.
+      Because of this, the projected ink does not suddenly switch between states.
+      Instead, it gradually spreads, gathers, and fades.
+    </p>
+    <p>
+      This delay is an important part of the interaction. The audience can see
+      that their actions affect the image, but the system does not respond to
+      every input immediately. Previous touches also remain in the system for a
+      short time, so the current state can still be influenced by earlier
+      interactions.
     </p>
     <p>
       The interaction is also where the body re-enters the work. Some forms of
       knowing only emerge through the interaction between the body and the world,
-      and cannot be fully datafied or spatialised. By moving and holding, the
-      visitor does not simply control an image, but experiences a spatialised
-      structure again through time.
+      and cannot be fully datafied or spatialised.
       <span class="dim">(Merleau-Ponty; Varela, Thompson &amp; Rosch; Wang Yangming)</span>
     </p>
   </div>
@@ -739,17 +741,26 @@
   <div class="zh">
     <p class="subtitle">移动与停留成为探索可检索空间的方式</p>
     <p>
-      观众通过两种简单的动作进行交互:移动与停留。持续移动时,墨保持在较为扩散和
-      扰动的状态;停留时,墨逐渐向凝聚状态移动。
+      观众通过触摸屏进入系统。手指可以进行点击、滑动和停留,这些动作会被记录为
+      位置、持续时间和触摸状态,并传入系统。
     </p>
     <p>
-      触摸行为被转换为连续数值 <em>c</em>,并由移动、停留、稳定程度与持续时间共同
-      决定。这个数值控制系统在预生成视觉轴上的位置。
+      触摸会改变潜空间中的 <em>c</em> 值。<em>c</em> 值决定当前调用的视觉状态,
+      因此观众的动作会影响投影中的墨水,使其在弥散、扰动和凝聚之间变化。
+    </p>
+    <p>
+      系统不会立即完全跟随观众的输入。按住屏幕时,<em>c</em> 值会逐渐接近目标位置;
+      松开后,它会以较慢的速度返回。因此,投影中的墨水不会突然切换,而是持续地
+      扩散、聚集或消退。
+    </p>
+    <p>
+      这种延迟是作品交互中的重要部分。观众能够看到自己的动作产生影响,但画面不会
+      立即响应全部输入。之前的触摸也会短暂保留在系统中,使当前状态受到先前互动的
+      影响。
     </p>
     <p>
       交互也是身体重新进入作品的位置。有些"知"只在身体与世界的互动中发生,
-      无法被完全数据化或空间化。通过移动与停留,观众并不只是控制画面,
-      而是在时间中重新经验一个已经被空间化的结构。
+      无法被完全数据化或空间化。
       <span class="dim">(Merleau-Ponty;Varela、Thompson &amp; Rosch;王阳明)</span>
     </p>
   </div>
@@ -775,79 +786,63 @@
      stops reading as this text's illustration. -->
 <section class="wide r">
   <div class="wrap">
-    <h3 class="en">Four surfaces, none annotating the other</h3>
-    <h3 class="zh">四个面,谁也不是谁的注解</h3>
-    <p class="dim en">
-      The installation spatialises latent space across four surfaces. The
-      <strong>interaction screen</strong> is where the body enters the system. The
-      <strong>projection</strong> carries the ink changing state, seen frontally:
-      you are inside it — the layered fabric becomes the latent field, ink states
-      indexed along the c axis and moved through by touch, dispersing and
-      interpenetrating without boundary, impossible to count out. The
-      <strong>readout screen</strong> carries machine-vision values, coordinates
-      and parameters, seen from above: you are over it, the system reading the
-      body as data. One is qualitative multiplicity, the other quantitative — the
-      same thing in two modes of being, present at once and equal in standing.
-      <span class="dim">(Bergson; Paglen; Parikka)</span>
-    </p>
-    <p class="dim en">
-      Along one edge, three <strong>dataset screens</strong> play the source
-      footage: the ink as it was actually filmed, before any of this was done to
-      it. The material and the model's version of it are in the room together,
-      and neither is offered as the key to the other. If one had to be read
-      before the others, it would become an instruction manual and would imply
-      that its side is the more real one. Every shift of the eyes performs an act
-      of spatialisation in person.
-    </p>
-    <p class="dim zh">
-      装置通过四个面把潜空间空间化。<strong>交互屏</strong>是身体进入系统的入口。
-      <strong>投影</strong>承载墨的状态变化,正面观看:你在里面——层叠的投影布成为
-      潜空间的场域,墨的状态沿 c 轴被索引,由触摸穿行其间,弥散、相互渗透、没有
-      边界,数不出来。<strong>读数屏</strong>承载机器视觉的数值、坐标与参数,俯视
-      观看:你在上方,系统正把身体读作数据。一边是质的多样性,另一边是量的
-      多样性——同一件事的两种存在方式,同时在场、地位平等。
-      <span class="dim">(柏格森;Paglen;Parikka)</span>
-    </p>
-    <p class="dim zh">
-      侧边还有三块<strong>数据集屏</strong>,播放的是拍摄原片:墨被真正拍下来时的
-      样子,在这一切被施加于它之前。材料本身,和模型给出的版本,同处一室,
-      谁也不作为谁的钥匙被提供。若必须先读其中之一,它就成了说明书,并暗示
-      它那一边更真实。观众每一次移开视线,都在亲身做一次空间化。
-    </p>
+    <h3 class="en">Three parts, none explaining the other</h3>
+    <h3 class="zh">三个部分,谁也不是谁的说明</h3>
+
+    <div class="en">
+      <p class="dim">The installation presents three main parts at the same time:</p>
+      <ul class="parts">
+        <li><strong>Interaction screen</strong> — the point where the audience enters the system through touch.</li>
+        <li><strong>Information screen</strong> — displays touch coordinates, system parameters, and the original recorded ink dataset on the same screen.</li>
+        <li><strong>Layered projection space</strong> — images are projected from both the front and back onto several layers of semi-transparent fabric. The visuals pass through and overlap across these layers, creating a sense of depth rather than a single flat image. This layered space represents the work's latent space: an invisible computational space that is transformed into a physical environment the audience can enter, view, and sense.</li>
+      </ul>
+      <p class="dim">
+        These displays are not explanations of each other. Instead, they present
+        different parts of the same system. Bodily movement, data, original
+        footage, and generated visuals exist together in the same space, allowing
+        the audience to experience one interaction from different perspectives.
+      </p>
+      <p class="dim">
+        Through gradual change, visual transparency, and delayed response, the
+        interaction is not simply an immediate input-output process. The latent
+        space becomes spatial and perceptible, while time gains a sense of
+        thickness again.
+        <span class="dim">(Bergson; Paglen; Parikka)</span>
+      </p>
+    </div>
+
+    <div class="zh">
+      <p class="dim">装置同时呈现三个主要部分:</p>
+      <ul class="parts">
+        <li><strong>交互屏</strong>——观众通过触摸进入系统的入口。</li>
+        <li><strong>信息屏</strong>——同时显示触摸坐标、系统参数,以及原始拍摄的墨水数据集。</li>
+        <li><strong>多层投影空间</strong>——影像从正面与背面投射到多层半透明幕布上,并穿透、叠加在不同层之间。墨水因此不再只是一个平面的画面,而形成具有前后关系和空间深度的视觉场域。这里的多层空间也对应作品中的潜空间:一个原本不可见的计算空间,被转化为观众可以进入、观看和感知的物理空间。</li>
+      </ul>
+      <p class="dim">
+        这些画面并不是互相解释的说明,而是同一个系统的不同部分。身体动作、数据、
+        原始影像和生成后的视觉同时存在于空间中,让观众从不同角度感知同一次交互。
+      </p>
+      <p class="dim">
+        通过持续变化、影像穿透和延迟反馈,交互不再只是简单的"输入—输出",而成为
+        一个需要停留、等待和感知的过程。在这个过程中,潜空间获得了可感知的空间
+        形式,时间也重新获得了一定的厚度。
+        <span class="dim">(柏格森;Paglen;Parikka)</span>
+      </p>
+    </div>
   </div>
 
-  <div class="bleed beside">
-    <figure>
-      <img loading="lazy" src="images/2026-08-23-installation-arrangement-render.jpg" alt="Render of the installation: a projection frame at standing height with three dataset screens along one edge, a separate plinth carrying the machine-vision readout, and a person reaching toward it">
-      <figcaption class="en">
-        The arrangement as built: the projection at standing height, the three
-        dataset screens along its edge, and the readout on its own plinth at the
-        hand — all in view at once, none of them read first.
-      </figcaption>
-      <figcaption class="zh">
-        装置的实际布置:投影立于站立高度,三块数据集屏沿其侧边排开,读数屏在
-        手边、置于独立基座上——同时进入视野,谁也不必先被读。
-      </figcaption>
-    </figure>
-
-    <ul class="chain en">
-      <li>A finger touches the interaction screen — sliding, tapping, pausing.</li>
-      <li>The touch moves along the c axis of the latent space, changing which state is addressed.</li>
-      <li><span class="turn">The system does not obey at once.</span> While the hand is held, c approaches its target smoothly without arriving; on release it returns at a constant rate.</li>
-      <li>On the projection, the ink moves between dispersal and condensation.</li>
-      <li>Through this continuous exploration, time regains its thickness.</li>
-      <li class="end">Whether consciousness can be sensed is left to the body.</li>
-    </ul>
-
-    <ul class="chain zh">
-      <li>手指触碰交互屏——滑动、点击、暂停。</li>
-      <li>触摸在潜空间的 c 轴上移动,改变被调用的状态。</li>
-      <li><span class="turn">系统不立即服从。</span>按住时,c 值向目标平滑逼近而不到达;松开后,以恒定速率退回。</li>
-      <li>投影上,墨在弥散与凝聚之间变化。</li>
-      <li>在这一持续探索的过程里,时间重新有了厚度。</li>
-      <li class="end">意识能否被感知,交还给身体。</li>
-    </ul>
-  </div>
+  <figure class="bleed">
+    <img loading="lazy" src="images/2026-08-23-installation-arrangement-render.jpg" alt="Render of the installation: a layered projection frame at standing height, a separate plinth carrying the information screen, and a person reaching toward it">
+    <figcaption class="en">
+      The arrangement as built: the layered projection at standing height, the
+      information screen on its own plinth at the hand — both in view at once,
+      neither read first.
+    </figcaption>
+    <figcaption class="zh">
+      装置的实际布置:多层投影立于站立高度,信息屏在手边、置于独立基座上——
+      两者同时进入视野,谁也不必先被读。
+    </figcaption>
+  </figure>
 </section>
 
 <!-- ══ PROCESS ═══════════════════════════════ -->
