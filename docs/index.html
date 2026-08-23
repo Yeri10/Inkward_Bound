@@ -175,22 +175,6 @@
      larger, which made the top of the page a different document from the rest. */
   .lead{font-size:inherit;line-height:1.62;letter-spacing:-.003em}
   html[data-lang="zh"] .lead{letter-spacing:.005em;line-height:1.85}
-  /* The research question. Set apart from the opening statement rather than
-     continuing it: the paragraphs above describe the work, this asks what the
-     work is for. A rule on the left and the label above it do that separating,
-     so the question itself can stay at body size and be read as a sentence
-     rather than a pull-quote. */
-  .rq{
-    margin:2.8rem 0 0;padding-left:1.6rem;
-    border-left:2px solid var(--rule);
-  }
-  .rq-label{
-    display:block;margin-bottom:.7rem;
-    font-size:.78em;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--dim);opacity:.62;
-  }
-  .rq p{font-size:var(--sub);line-height:1.55;letter-spacing:-.006em;margin:0}
-  html[data-lang="zh"] .rq p{letter-spacing:.005em;line-height:1.85}
   .dim{color:var(--dim)}
   em{font-style:italic}
   strong{font-weight:600}
@@ -383,13 +367,6 @@
       In the seconds when the system does not obey at once, time regains its
       thickness, bound inward.
     </p>
-    <div class="rq">
-      <span class="rq-label mono">Research question</span>
-      <p>
-        When AI compresses consciousness that unfolds over time into retrievable
-        coordinates, how can the body re-enter and experience it?
-      </p>
-    </div>
   </div>
   <div class="zh">
     <p class="lead">
@@ -399,13 +376,21 @@
     <p class="lead">
       在系统不立即服从的那几秒里,时间重新有了厚度,朝向内里。
     </p>
-    <div class="rq">
-      <span class="rq-label mono">研究问题</span>
-      <p>
-        当 AI 把在时间中展开的意识压缩为可检索的坐标,身体如何重新进入并经验它?
-      </p>
-    </div>
   </div>
+</section>
+
+<!-- ══ RESEARCH QUESTION ═════════════════════ -->
+<section class="wrap r" id="question">
+  <h2 class="mono kicker en"><span class="num">00</span>Research question</h2>
+  <h2 class="mono kicker zh"><span class="num">00</span>研究问题</h2>
+
+  <p class="subtitle en">
+    When AI compresses consciousness that unfolds over time into retrievable
+    coordinates, how can the body re-enter and experience it?
+  </p>
+  <p class="subtitle zh">
+    当 AI 把在时间中展开的意识压缩为可检索的坐标,身体如何重新进入并经验它?
+  </p>
 </section>
 
 <!-- ══ VIDEO ═════════════════════════════════ -->
