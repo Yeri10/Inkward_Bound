@@ -247,6 +247,22 @@
   .steps td:first-child{color:var(--dimmer);width:2.4rem}
   .steps td:last-child{color:var(--dim)}
 
+  /* The interaction chain. A table would put these in rows to be compared, but
+     each link causes the next one, so they are set as a single descending
+     sequence with a rule down the left holding them together. The last link is
+     the one the work will not answer, and is marked rather than numbered. */
+  .chain{list-style:none;margin:2rem 0 0;padding-left:1.5rem;border-left:1px solid var(--rule)}
+  .chain li{position:relative;margin-bottom:1.5rem;line-height:1.55}
+  .chain li:last-child{margin-bottom:0}
+  .chain li::before{
+    content:"";position:absolute;left:-1.5rem;top:.62em;
+    width:.75rem;height:1px;background:var(--rule);
+  }
+  .chain .turn{color:var(--dim)}
+  /* The open question the chain arrives at: no rule tick, set apart above. */
+  .chain li.end{margin-top:2.2rem;padding-top:1.6rem;border-top:1px solid var(--rule)}
+  .chain li.end::before{display:none}
+
   /* ── video ──────────────────────────────── */
   .video-slot{
     aspect-ratio:16/9;border:1px solid var(--rule);
@@ -710,6 +726,15 @@
       structure again through time.
       <span class="dim">(Merleau-Ponty; Varela, Thompson &amp; Rosch; Wang Yangming)</span>
     </p>
+
+    <ul class="chain">
+      <li>A finger touches the interaction screen — sliding, tapping, pausing.</li>
+      <li>The touch moves along the c axis of the latent space, changing which state is addressed.</li>
+      <li><span class="turn">The system does not obey at once.</span> While the hand is held, c approaches its target smoothly without arriving; on release it returns at a constant rate.</li>
+      <li>On the projection, the ink moves between dispersal and condensation.</li>
+      <li>In that lag, time regains its thickness — the only part of the work that is genuinely temporal.</li>
+      <li class="end">Whether consciousness can be sensed is left to the body.</li>
+    </ul>
   </div>
 
   <div class="zh">
@@ -728,6 +753,15 @@
       而是在时间中重新经验一个已经被空间化的结构。
       <span class="dim">(Merleau-Ponty;Varela、Thompson &amp; Rosch;王阳明)</span>
     </p>
+
+    <ul class="chain">
+      <li>手指触碰交互屏——滑动、点击、暂停。</li>
+      <li>触摸在潜空间的 c 轴上移动,改变被调用的状态。</li>
+      <li><span class="turn">系统不立即服从。</span>按住时,c 值向目标平滑逼近而不到达;松开后,以恒定速率退回。</li>
+      <li>投影上,墨在弥散与凝聚之间变化。</li>
+      <li>在那段迟滞里,时间重新有了厚度——这是整件作品里唯一具有时间性的部分。</li>
+      <li class="end">意识能否被感知,交还给身体。</li>
+    </ul>
   </div>
 </section>
 
@@ -751,22 +785,34 @@
      stops reading as this text's illustration. -->
 <section class="wide r">
   <div class="wrap">
-    <h3 class="en">Two screens, neither annotating the other</h3>
-    <h3 class="zh">两块屏幕,谁也不是谁的注解</h3>
+    <h3 class="en">Three surfaces, none annotating the other</h3>
+    <h3 class="zh">三个面,谁也不是谁的注解</h3>
     <p class="dim en">
-      The projection carries the ink changing state, seen frontally: you are inside
-      it. A second screen carries machine-vision readouts, coordinates and
-      parameters, seen from above: you are over it. One is qualitative multiplicity,
-      the other quantitative. They are present at once and equal in standing — if
+      The installation spatialises latent space across three surfaces. The
+      <strong>interaction screen</strong> is where the body enters the system. The
+      <strong>projection</strong> carries the ink changing state, seen frontally:
+      you are inside it — the layered fabric becomes the latent field, ink states
+      indexed along the c axis and moved through by touch, dispersing and
+      interpenetrating without boundary, impossible to count out. The
+      <strong>small screen</strong> carries machine-vision readouts, coordinates
+      and parameters, seen from above: you are over it, the system reading the
+      body as data. One is qualitative multiplicity, the other quantitative — the
+      same thing in two modes of being, present at once and equal in standing. If
       one had to be read before the other, the second would become an instruction
       manual, and would imply that the data side is the more real one. Every shift
       of the eyes performs an act of spatialisation in person.
+      <span class="dim">(Bergson; Paglen; Parikka)</span>
     </p>
     <p class="dim zh">
-      投影承载墨的状态变化,正面观看:你在里面。副屏承载机器视觉的读数、坐标与
-      参数,俯视观看:你在上方。一边是质的多样性,另一边是量的多样性。两者同时
-      在场、地位平等——若必须先读其一再读其二,副屏就成了说明书,并暗示数据
-      那一边更真实。观众每一次移开视线,都在亲身做一次空间化。
+      装置通过三个面把潜空间空间化。<strong>交互屏</strong>是身体进入系统的入口。
+      <strong>投影</strong>承载墨的状态变化,正面观看:你在里面——层叠的投影布成为
+      潜空间的场域,墨的状态沿 c 轴被索引,由触摸穿行其间,弥散、相互渗透、没有
+      边界,数不出来。<strong>副屏</strong>承载机器视觉的读数、坐标与参数,俯视观看:
+      你在上方,系统正把身体读作数据。一边是质的多样性,另一边是量的多样性——
+      同一件事的两种存在方式,同时在场、地位平等。若必须先读其一再读其二,副屏就
+      成了说明书,并暗示数据那一边更真实。观众每一次移开视线,都在亲身做一次
+      空间化。
+      <span class="dim">(柏格森;Paglen;Parikka)</span>
     </p>
   </div>
 
