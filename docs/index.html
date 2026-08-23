@@ -226,10 +226,12 @@
      narrower centred measure and reads as a plate rather than a banner. */
   .portrait{max-width:33rem;margin-left:auto;margin-right:auto}
   .portrait figcaption{margin-left:auto;margin-right:auto}
-  /* A tall frame beside a wide one. The wide column gets the larger share
-     because it carries a node graph whose labels have to stay readable, and
-     the two are centred against each other since their heights cannot match. */
-  .pair-uneven{display:grid;grid-template-columns:1fr 1.55fr;gap:2.2rem;align-items:center}
+  /* A tall frame beside a wide one, rendered to the same height by the same
+     means as .pair-fit: each column takes a share proportional to its image's
+     aspect ratio, so width/ratio comes out equal. 0.648:1 and 2.036:1 — the
+     portrait ends up narrow, but it is a detail of ink and reads at any size,
+     while the node graph needs every pixel of the width it gets. */
+  .pair-uneven{display:grid;grid-template-columns:0.648fr 2.036fr;gap:2.2rem}
   /* Two strips of different proportion, rendered to the same height so their
      captions start on one line. Giving each column a share proportional to its
      image's aspect ratio makes the heights identical — width/ratio is then the
