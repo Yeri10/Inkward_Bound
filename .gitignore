@@ -28,3 +28,11 @@ InWard Bound System/*.[0-9][0-9][0-9].toe
 # Web-delivery copies of the documentation video (33MB) — generated from the
 # source in Movie/ with ffmpeg, see docs/index.html
 !docs/media/
+
+# Camera-original recordings dropped into docs/ for encoding. The web-delivery
+# copies live in docs/media/ and are tracked; the originals are hundreds of MB
+# and exceed GitHub's 100MB per-file limit.
+docs/*.mp4
+docs/*.mov
+docs/*.MP4
+docs/*.MOV

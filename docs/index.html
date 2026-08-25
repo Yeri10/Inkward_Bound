@@ -297,12 +297,6 @@
   .beside{display:grid;grid-template-columns:1.35fr 1fr;gap:2.6rem;align-items:center}
 
   /* ── video ──────────────────────────────── */
-  .video-slot{
-    aspect-ratio:16/9;border:1px solid var(--rule);
-    display:flex;align-items:center;justify-content:center;
-    background:rgba(255,255,255,.015);
-  }
-  .video-slot .mono{color:var(--dimmer);text-align:center;padding:1rem}
   /* Scoped to figures so it cannot reach the cover, where the video has to
      fill its box rather than size itself to its own aspect ratio. */
   figure video{width:100%;height:auto;display:block}
@@ -455,23 +449,9 @@
   <h2 class="mono kicker solo zh"><span class="num">01</span>作品</h2>
 
   <figure>
-    <!--
-      ▸ STILL NEEDED: a recording of the installation itself — the touch screen
-        and the projection together, with a hand in shot.
-        1. encode it to  docs/media/installation.mp4
-        2. delete the placeholder block below (class "video-slot")
-        3. remove the two comment markers around the <video> element after it
-        (The capture-experiment video lives in section 03, where it belongs.)
-    -->
-    <div class="video-slot">
-      <span class="mono en">Installation recording<br>to be added</span>
-      <span class="mono zh">装置现场记录<br>待添加</span>
-    </div>
-    <!--
     <video controls playsinline preload="none" poster="media/installation-poster.jpg">
       <source src="media/installation.mp4" type="video/mp4">
     </video>
-    -->
     <figcaption class="en">
       The installation in use. A touch screen carries the visitor's hand; a
       projection carries the ink. Holding still for long enough draws the ink
