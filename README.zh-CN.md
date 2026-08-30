@@ -185,12 +185,12 @@ Inkward_Bound/
 
 **© 2026 Yerie 保留全部权利。**
 
-本仓库分三部分授权,完整条款见 [LICENSE](LICENSE)。
+本仓库分三部分授权,完整条款见 [LICENSE.zh-CN](LICENSE.zh-CN)(英文版:[LICENSE](LICENSE))。
 
 | | 条款 |
 |---|---|
 | **作品本体** —— 数据集照片、训练权重、latent atlas、视频、图像、TouchDesigner 工程 | 保留全部权利。可依 [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) 在署名、非商业、不修改的前提下分享。不得改编、不得商用,亦不得以本数据集训练模型。 |
-| **代码** —— 为本项目编写的浏览器界面与训练脚本 | [MIT](LICENSE) |
+| **代码** —— 为本项目编写的浏览器界面与训练脚本 | [MIT](LICENSE.zh-CN) |
 | **第三方** —— `train_text_to_image_lora.py`(HuggingFace)、`p5.js` | 分别为 Apache-2.0 与 MIT,原样保留,沿用其自身声明 |
 
 超出上述条款的使用——展览、出版、教学、模型训练——请来函取得许可。
