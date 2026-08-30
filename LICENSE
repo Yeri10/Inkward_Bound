@@ -1,0 +1,92 @@
+# Licence
+
+Inkward Bound — © 2026 Yerie. All rights reserved.
+
+This repository contains three kinds of material, and they are not licensed on
+the same terms. Read the part that covers what you want to use.
+
+---
+
+## 1. The work
+
+The installation and everything that constitutes it:
+
+- the photographs in `ink_dataset/` and their captions
+- the trained LoRA weights and the generated latent atlas
+- the axis videos and every image and video under `docs/`
+- the TouchDesigner project
+
+**© 2026 Yerie. All rights reserved.**
+
+These may be shared for non-commercial reference under
+[Creative Commons Attribution–NonCommercial–NoDerivatives 4.0 International
+(CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+You may copy and redistribute the material in any medium or format, provided
+that you credit *Inkward Bound* (Yerie, 2026) and link to this repository.
+
+You may **not**:
+
+- use the material commercially
+- distribute a modified, transformed or built-upon version of it
+- train a machine-learning model on the dataset photographs
+
+Permission beyond these terms — exhibition, publication, teaching use, model
+training — is available on request. Please ask.
+
+---
+
+## 2. The code
+
+The source written for this project:
+
+- `InkWard_Bound_Interface/app.js` and `public/sketch.js`
+- `training/prepare_dataset.py`, `generate_atlas.py`,
+  `measure_ink_coverage.py`, `bake_transitions.py`
+
+is licensed under the **MIT Licence**:
+
+> Copyright © 2026 Yerie
+>
+> Permission is hereby granted, free of charge, to any person obtaining a copy
+> of this software and associated documentation files (the "Software"), to deal
+> in the Software without restriction, including without limitation the rights
+> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+> copies of the Software, and to permit persons to whom the Software is
+> furnished to do so, subject to the following conditions:
+>
+> The above copyright notice and this permission notice shall be included in all
+> copies or substantial portions of the Software.
+>
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+> SOFTWARE.
+
+The MIT terms cover the code only. They do not grant any right to the work
+described in section 1, even where the code produces it.
+
+---
+
+## 3. Third-party material
+
+Included under its own licence, unchanged:
+
+| File | Origin | Licence |
+|---|---|---|
+| `training/train_text_to_image_lora.py` | HuggingFace `diffusers` | Apache-2.0 |
+| `InkWard_Bound_Interface/public/p5.js` | p5.js | MIT |
+
+Their original copyright headers are retained in the files and continue to
+apply. Nothing in sections 1 or 2 modifies them.
+
+The LoRA is trained on Stable Diffusion 1.5, which carries the CreativeML Open
+RAIL-M licence; anyone using the weights is bound by its use restrictions in
+addition to the terms above.
+
+---
+
+Yerie — MA Computational Arts, Goldsmiths, University of London, 2026

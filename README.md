@@ -187,3 +187,17 @@ Inkward_Bound/
 ## Process evidence
 
 The [process log](docs/PROCESS_LOG.md) links development decisions to dated commits and retained TouchDesigner versions, so that visual and technical development can be reviewed together rather than as a finished result.
+
+## Licence
+
+**© 2026 Yerie. All rights reserved.**
+
+This repository is licensed in three parts — see [LICENSE](LICENSE) for the full terms.
+
+| | Terms |
+|---|---|
+| **The work** — dataset photographs, trained weights, latent atlas, videos, images, TouchDesigner project | All rights reserved. Shareable for non-commercial reference with attribution under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). No derivatives, no commercial use, and no model training on the dataset. |
+| **The code** — the browser interface and the training scripts written for this project | [MIT](LICENSE) |
+| **Third-party** — `train_text_to_image_lora.py` (HuggingFace), `p5.js` | Apache-2.0 and MIT respectively, unchanged, under their own headers |
+
+Permission beyond these terms — exhibition, publication, teaching, model training — is available on request.
